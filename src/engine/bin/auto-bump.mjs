@@ -9,13 +9,9 @@ import { FsUtils } from '../lib/fs-utils.mjs';
 const { success } = ResultUtils;
 const { runIfDirect } = FsUtils;
 
-// bin/ → engine/ → src/ → cli/ → packages/ → root
-const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../../');
-const PACKAGE_PATHS = [
-  path.join(ROOT_DIR, 'package.json'),
-  path.join(ROOT_DIR, 'packages', 'cli', 'package.json'),
-  path.join(ROOT_DIR, 'packages', 'app', 'package.json'),
-];
+// bin/ → engine/ → src/ → root
+const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../');
+const PACKAGE_PATHS = [path.join(ROOT_DIR, 'package.json')];
 
 // --- Orchestrator ---
 
@@ -87,12 +83,7 @@ function readLastCommitMessage() {
 }
 
 function resolveRootPackagePath() {
-  const candidates = PACKAGE_PATHS.filter((p) => {
-    if (!fs.existsSync(p)) return false;
-    const pkg = JSON.parse(fs.readFileSync(p, 'utf8'));
-    return pkg.workspaces !== undefined;
-  });
-  return candidates[0] ?? PACKAGE_PATHS[0];
+  return PACKAGE_PATHS[0];
 }
 
 function resolvePackagePaths() {

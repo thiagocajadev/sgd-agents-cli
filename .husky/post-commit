@@ -1,1 +1,1 @@
-node packages/cli/src/engine/bin/auto-bump.mjs
+node src/engine/bin/auto-bump.mjs
