@@ -89,7 +89,7 @@ When you prefix a message to the agent, it enters the corresponding cycle:
 | `feat: <description>` | Feature | Agent runs SPEC → PLAN → CODE → TEST → END                |
 | `fix: <description>`  | Fix     | Agent runs SPEC → PLAN → CODE → TEST → END with RCA focus |
 | `docs: <description>` | Docs    | Agent updates changelogs, ADRs, or specs                  |
-| No prefix             | Direct  | Agent makes the change immediately (trivial edits only)   |
+| No prefix             | —       | Agent asks: "land, feat, fix, or docs?" — then proceeds   |
 
 The agent **stops and waits for your approval** at SPEC and PLAN before writing any code.
 

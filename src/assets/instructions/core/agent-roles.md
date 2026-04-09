@@ -25,6 +25,11 @@ Dev → Planning: SPEC + PLAN → [Dev approval]
     Planning: Review + Report → [Dev approval] → END
 ```
 
+## Scope Rule — When to Use Multi-Agent
+
+- **[M] and [L] tasks**: always spawn Fast after PLAN approval.
+- **[S] tasks** (1–2 files, isolated scope): Planning executes CODE + TEST directly — no Fast spawn. Overhead exceeds benefit at this scale.
+
 ## Planning Role — Responsibilities
 
 - Load full governance context before SPEC: backlog, flavor, competencies.

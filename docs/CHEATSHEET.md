@@ -91,12 +91,12 @@ npx sdg-agents clear     # Remove the entire .ai/ governance layer
 
 Prefix your message to the AI Agent to activate the corresponding governance cycle:
 
-| Trigger                    | Cycle   | Intent                                                                   |
-| :------------------------- | :------ | :----------------------------------------------------------------------- |
-| `feat: <description>`      | Feature | New implementation — requires SPEC and PLAN approval before any code.    |
-| `fix: <description>`       | Fix     | Bug resolution — Root Cause Analysis and regression test mandatory.      |
-| `docs: <description>`      | Docs    | Technical memory sync — Changelogs, ADRs, Specs.                         |
-| Trivial change (no prefix) | Direct  | Single isolated edit with no new behavior — CODE directly, no CHANGELOG. |
+| Trigger               | Cycle   | Intent                                                                |
+| :-------------------- | :------ | :-------------------------------------------------------------------- |
+| `feat: <description>` | Feature | New implementation — requires SPEC and PLAN approval before any code. |
+| `fix: <description>`  | Fix     | Bug resolution — Root Cause Analysis and regression test mandatory.   |
+| `docs: <description>` | Docs    | Technical memory sync — Changelogs, ADRs, Specs.                      |
+| No prefix             | —       | Agent asks: "land, feat, fix, or docs?" — then proceeds.              |
 
 ---
 

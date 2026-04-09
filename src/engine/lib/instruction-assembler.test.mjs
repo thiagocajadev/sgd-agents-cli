@@ -127,11 +127,11 @@ describe('InstructionAssembler', () => {
       assert.ok(result.includes('The Law of Visual Excellence'));
     });
 
-    it('should include the First Session note with land: kickoff guidance', () => {
+    it('should include land: in the intent routing table', () => {
       const selections = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
       const result = buildMasterInstructions(selections);
-      assert.ok(result.includes('First Session'));
       assert.ok(result.includes('land:'));
+      assert.ok(result.includes('feat:'));
     });
 
     it('should include the Working Protocol workflow content', () => {

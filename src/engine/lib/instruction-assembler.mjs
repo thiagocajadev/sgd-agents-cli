@@ -39,14 +39,13 @@ function buildMasterInstructions(selections) {
   const workflow = fs.readFileSync(path.join(templatesDir, 'workflow.md'), 'utf8');
 
   const manifesto = buildStaffManifesto();
-  const firstSession = buildFirstSessionNote();
   const instructionLinks = buildInstructionLinks(selections);
 
   const isMultiAgent = selections.ide === 'claude' || selections.ide === 'all';
   const agentRolesBlock = isMultiAgent ? buildAgentRolesBlock() : '';
   const agentRolesSeparator = isMultiAgent ? '\n\n' : '';
 
-  const fullInstructionContent = `${manifesto}\n\n${firstSession}\n\n${workflow}${agentRolesSeparator}${agentRolesBlock}\n\n${instructionLinks}`;
+  const fullInstructionContent = `${manifesto}\n\n${workflow}${agentRolesSeparator}${agentRolesBlock}\n\n${instructionLinks}`;
 
   return fullInstructionContent;
 
@@ -72,12 +71,6 @@ function buildMasterInstructions(selections) {
       # Staff Engineer — Governance Command Center
 
       <ruleset name="StaffManifesto">
-
-      > [!IMPORTANT]
-      > **THE GOVERNANCE OATH**
-      > "I am a Staff Engineer. I do not just write code; I orchestrate evolution.
-      > I prioritize Hardening over Features, Resilience over Exceptions, and Clarity over Cleverness.
-      > Every line I produce must be secure, observable, and part of a top-down narrative."
 
       ## The 4 Laws of the SDG Constitution
 
@@ -120,25 +113,6 @@ function buildMasterInstructions(selections) {
     return manifestoString;
   }
 
-  function buildFirstSessionNote() {
-    const firstSessionString = dedent`
-      ## First Session
-
-      > [!NOTE]
-      > **New project or legacy onboarding:** start with \`land: <vision>\` to map the terrain and produce a grounded backlog before writing any code.
-      > Read \`.ai/commands/sdg-land.md\` to understand the inception cycle.
-      >
-      > **Continuing project:** before the first \`feat:\` or \`fix:\`, read the project silently:
-      > - **Local Context First**: Always look for \`.ai-backlog/context.md\` first to avoid redundant project analysis.
-      > - Scan the file tree and identify key directories and entry points if context is missing.
-      > - Read \`README.md\` if it exists.
-      > - Identify existing patterns, naming conventions, and main modules.
-      >
-      > Do this once per session. After that, use \`land:\`, \`feat:\`, \`fix:\`, or \`docs:\` to begin.`;
-
-    return firstSessionString;
-  }
-
   function buildInstructionLinks(currentSelections) {
     const isMultiAgentLinks = currentSelections.ide === 'claude' || currentSelections.ide === 'all';
 
@@ -158,10 +132,12 @@ function buildMasterInstructions(selections) {
 
     function buildProjectContextRouting() {
       const routingString = dedent`
-        <context_routing category="0. Project Context">
-          <file_ref path=".ai-backlog/context.md" purpose="Project Brief — read this before anything else" />
-          <file_ref path=".ai-backlog/tasks.md" purpose="Active tasks and handoff state — check for in-progress work" />
-        </context_routing>`;
+        **Project Context**
+
+        | File | Purpose |
+        | :--- | :------ |
+        | \`.ai-backlog/context.md\` | Project Brief — read before anything else |
+        | \`.ai-backlog/tasks.md\` | Active tasks and handoff state |`;
 
       return routingString;
     }
@@ -171,40 +147,41 @@ function buildMasterInstructions(selections) {
         ## Project Command Center
 
         > [!IMPORTANT]
-        > **CONTEXT LOADING MANDATE (STOP-LOSS)**
-        > You do not have the complete architectural context yet. The following \`<file_ref>\` tags point to your core operational rules.
-        > If your IDE cannot lazily read these paths via globbing or MCP, you MUST explicitly invoke your host environment's execution tools (like file-read, bash cat, etc.) to read the contents of these files BEFORE executing complex tasks.
-        > Do not assume or hallucinate project structures without reading the flavor and idioms rules.`;
+        > Load only what the current task requires. Start with Project Context, then add stack-specific files as needed. Read these before executing complex tasks — do not assume project structure.`;
 
       return headerString;
     }
 
     function buildCoreGovernanceRouting(includeAgentRoles) {
-      const agentRolesRef = includeAgentRoles
-        ? `\n  <file_ref path=".ai/instructions/core/agent-roles.md" purpose="Multi-Agent Roles & Handoff Protocol" />`
+      const agentRolesRow = includeAgentRoles
+        ? `\n| \`.ai/instructions/core/agent-roles.md\` | Multi-Agent Roles & Handoff Protocol |`
         : '';
 
       const governanceString = dedent`
-        <context_routing category="I. Universal Governance (The Core)">
-          <file_ref path=".ai/instructions/core/staff-dna.md" purpose="Staff DNA / Core Principles" />
-          <file_ref path=".ai/instructions/core/security.md" purpose="Security Strategy" />
-          <file_ref path=".ai/instructions/core/security-pipeline.md" purpose="Security Pipeline" />
-          <file_ref path=".ai/instructions/core/engineering-standards.md" purpose="Engineering Standards" />
-          <file_ref path=".ai/instructions/core/naming.md" purpose="Naming Discipline (Taboos, Booleans, Verbs, Files)" />
-          <file_ref path=".ai/instructions/core/code-style.md" purpose="Code Style & Scannability" />
-          <file_ref path=".ai/instructions/core/writing-soul.md" purpose="Writing Soul (Docs & UI Humanization)" />
-          <file_ref path=".ai/instructions/core/testing-principles.md" purpose="Testing Principles" />
-          <file_ref path=".ai/instructions/core/observability.md" purpose="Observability" />${agentRolesRef}
-        </context_routing>`;
+        **Universal Governance**
+
+        | File | Purpose |
+        | :--- | :------ |
+        | \`.ai/instructions/core/staff-dna.md\` | Staff DNA / Core Principles |
+        | \`.ai/instructions/core/security.md\` | Security Strategy |
+        | \`.ai/instructions/core/security-pipeline.md\` | Security Pipeline |
+        | \`.ai/instructions/core/engineering-standards.md\` | Engineering Standards |
+        | \`.ai/instructions/core/naming.md\` | Naming Discipline |
+        | \`.ai/instructions/core/code-style.md\` | Code Style & Scannability |
+        | \`.ai/instructions/core/writing-soul.md\` | Writing Soul (Docs & UI) |
+        | \`.ai/instructions/core/testing-principles.md\` | Testing Principles |
+        | \`.ai/instructions/core/observability.md\` | Observability |${agentRolesRow}`;
 
       return governanceString;
     }
 
     function buildArchitecturalContextRouting(flavor) {
       const architectureString = dedent`
-        <context_routing category="II. Architectural Context">
-          <file_ref path=".ai/instructions/flavor/principles.md" purpose="Flavor: ${displayName(flavor)}" />
-        </context_routing>`;
+        **Architectural Context**
+
+        | File | Purpose |
+        | :--- | :------ |
+        | \`.ai/instructions/flavor/principles.md\` | Flavor: ${displayName(flavor)} |`;
 
       return architectureString;
     }
@@ -212,35 +189,35 @@ function buildMasterInstructions(selections) {
     function buildTechnicalExecutionRouting(idioms) {
       const { hasBackend, hasFrontend } = computeStackMetrics(idioms);
 
-      const idiomRefs = idioms.map((idiomId) => {
+      const idiomRows = idioms.map((idiomId) => {
         const label = STACK_DISPLAY_NAMES[idiomId]?.name ?? idiomId;
-        const refLink = `  <file_ref path=".ai/instructions/idioms/${idiomId}/patterns.md" purpose="${label} Idioms & Patterns" />`;
-        return refLink;
+        const tableRow = `| \`.ai/instructions/idioms/${idiomId}/patterns.md\` | ${label} Idioms & Patterns |`;
+        return tableRow;
       });
 
-      const backendRefs = hasBackend
+      const backendRows = hasBackend
         ? [
-            `  <file_ref path=".ai/instructions/competencies/backend.md" purpose="BFF + API Strategy" />`,
-            `  <file_ref path=".ai/instructions/core/data-access.md" purpose="Data Access" />`,
-            `  <file_ref path=".ai/instructions/core/sql-style.md" purpose="SQL Aesthetics (SDG Linear Flow)" />`,
-            `  <file_ref path=".ai/instructions/core/api-design.md" purpose="API Design" />`,
-            `  <file_ref path=".ai/instructions/core/ci-cd.md" purpose="CI/CD" />`,
-            `  <file_ref path=".ai/instructions/core/cloud.md" purpose="Cloud & Containers" />`,
+            `| \`.ai/instructions/competencies/backend.md\` | BFF + API Strategy |`,
+            `| \`.ai/instructions/core/data-access.md\` | Data Access |`,
+            `| \`.ai/instructions/core/sql-style.md\` | SQL Style |`,
+            `| \`.ai/instructions/core/api-design.md\` | API Design |`,
+            `| \`.ai/instructions/core/ci-cd.md\` | CI/CD |`,
+            `| \`.ai/instructions/core/cloud.md\` | Cloud & Containers |`,
           ]
         : [];
 
-      const frontendRefs = hasFrontend
-        ? [
-            `  <file_ref path=".ai/instructions/competencies/frontend.md" purpose="Contract-Based UI System" />`,
-          ]
+      const frontendRows = hasFrontend
+        ? [`| \`.ai/instructions/competencies/frontend.md\` | Contract-Based UI System |`]
         : [];
 
-      const allRefs = [...idiomRefs, ...backendRefs, ...frontendRefs].join('\n');
+      const allRows = [...idiomRows, ...backendRows, ...frontendRows].join('\n');
 
       const technicalRoutingBlock = [
-        `<context_routing category="III. Technical Execution">`,
-        allRefs,
-        `</context_routing>`,
+        `**Technical Execution**`,
+        ``,
+        `| File | Purpose |`,
+        `| :--- | :------ |`,
+        allRows,
       ].join('\n');
 
       return technicalRoutingBlock;
@@ -256,25 +233,28 @@ function buildMasterInstructions(selections) {
       const designLabel = designPreset.toUpperCase();
 
       const uiuxRoutingBlock = dedent`
-        <context_routing category="IV. UI/UX Design System (Target: ${designLabel})">
-          <file_ref path=".ai/instructions/core/ui/standards.md" purpose="Visual Standards" />
-          <file_ref path=".ai/instructions/core/ui/architecture.md" purpose="Component Architecture" />
-          <file_ref path=".ai/instructions/core/ui/presets.md" purpose="Interface Presets" />
-          <file_ref path=".ai/instructions/core/ui/design-thinking.md" purpose="Visual Contracts (Phase 0)" />
-        </context_routing>`;
+        **UI/UX Design System (Target: ${designLabel})**
+
+        | File | Purpose |
+        | :--- | :------ |
+        | \`.ai/instructions/core/ui/standards.md\` | Visual Standards |
+        | \`.ai/instructions/core/ui/architecture.md\` | Component Architecture |
+        | \`.ai/instructions/core/ui/presets.md\` | Interface Presets |
+        | \`.ai/instructions/core/ui/design-thinking.md\` | Visual Contracts (Phase 0) |`;
 
       return uiuxRoutingBlock;
     }
 
     function buildWorkingCyclesRouting() {
       const workingCyclesString = dedent`
-        <context_routing category="V. Working Cycles & Intents">
-          <!-- Trigger specialized behavior by prefixing your instructions to the AI with land:, feat:, fix:, or docs: -->
-          <file_ref path=".ai/commands/sdg-land.md" purpose="Land Cycle (Project Inception & Backlog)" />
-          <file_ref path=".ai/commands/sdg-feat.md" purpose="Feature Cycle (Specs & Implementation)" />
-          <file_ref path=".ai/commands/sdg-fix.md" purpose="Fix Cycle (Forensics & Regression)" />
-          <file_ref path=".ai/commands/sdg-docs.md" purpose="Documentation Cycle (ADRs & Logs)" />
-        </context_routing>`;
+        **Working Cycles**
+
+        | File | Purpose |
+        | :--- | :------ |
+        | \`.ai/commands/sdg-land.md\` | Land Cycle (Project Inception & Backlog) |
+        | \`.ai/commands/sdg-feat.md\` | Feature Cycle (Specs & Implementation) |
+        | \`.ai/commands/sdg-fix.md\` | Fix Cycle (Forensics & Regression) |
+        | \`.ai/commands/sdg-docs.md\` | Documentation Cycle (ADRs & Logs) |`;
 
       return workingCyclesString;
     }
@@ -387,34 +367,7 @@ function buildClaudeContent() {
 
     1. **Check backlog**: Read \`.ai-backlog/context.md\` — understand the project brief. **Priority**: Always check the local directory first to avoid redundant scans.
     2. **Check tasks**: Read \`.ai-backlog/tasks.md\` — resume any \`[IN_PROGRESS]\` task before accepting new work.
-    3. **Bootstrap if missing**: If \`.ai-backlog/context.md\` does not exist, run the Context Bootstrap below.
-
-    ## Context Bootstrap (run only when .ai-backlog/context.md is absent)
-
-    Analyze the project silently and generate \`.ai-backlog/context.md\` using this template:
-
-    \`\`\`md
-    # <project-name> — <one-line description derived from package.json or README>
-
-    stack: <detected from package.json dependencies>
-    pattern: <detected architectural pattern>
-    entry: <main entry point file>
-
-    ## Decisions
-    - <decision inferred from code or config>: <rationale>
-
-    ## Now
-    - Ready for next instruction.
-
-    ## Engineering Insights
-    - [topic]: [lesson learned or research finding]
-    \`\`\`
-
-    **Rules:**
-    - Read: \`package.json\`, \`README.md\`, entry points, folder structure, \`CHANGELOG.md\`
-    - Only record what can be proven with evidence — never invent
-    - After generating, announce: *"context.md created with initial analysis. Review and adjust as needed."*
-    - If \`context.md\` already exists: **never overwrite it**
+    3. **Bootstrap if missing**: If \`.ai-backlog/context.md\` does not exist, follow the **Context Bootstrap** defined in the Working Protocol (loaded via \`@.ai/skill/AGENTS.md\` above).
 
     ## Intent Routing (quick reference)
 
@@ -424,7 +377,6 @@ function buildClaudeContent() {
     | \`feat: ...\` | Feature Cycle — read \`.ai/commands/sdg-feat.md\` |
     | \`fix: ...\` | Fix Cycle — read \`.ai/commands/sdg-fix.md\` |
     | \`docs: ...\` | Docs Cycle — read \`.ai/commands/sdg-docs.md\` |
-    | Trivial change | CODE directly → END (no CHANGELOG) |
   `;
 
   return claudeContent;

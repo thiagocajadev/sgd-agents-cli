@@ -15,10 +15,7 @@ On every request, classify intent before acting:
 | `feat: ...`               | Read `.ai/commands/sdg-feat.md` (Context Charge) → Follow **Feature Cycle** |
 | `fix: ...`                | Read `.ai/commands/sdg-fix.md` (Context Charge) → Follow **Fix Cycle**      |
 | `docs: ...`               | Read `.ai/commands/sdg-docs.md` (Context Charge) → Follow **Docs Cycle**    |
-| Trivial change            | CODE directly → END (no CHANGELOG)                                          |
 | No prefix, intent unclear | Ask once: "land, feat, fix, or docs?" — then proceed                        |
-
-**Trivial:** change a color, rename a variable, fix a typo, adjust spacing — single isolated change with no new behavior or contract.
 
 ---
 
@@ -61,7 +58,6 @@ On every request, classify intent before acting:
   - `[M]` — 3–5 files, cross-layer impact, completes in one session (5–15 min)
   - `[L]` — 6+ files or cross-session risk — **must** be split into sub-tasks (> 15 min)
 - **Task Decomposition**: Any task tagged `[L]` or that spans multiple layers **MUST** be split into numbered sub-tasks (e.g., `1.1`, `1.2`) to prevent context/token exhaustion.
-- **Constraint**: Skip this phase ONLY if the task is trivial (single-file, self-contained change).
 - **Backlog Sync**:
   - `[M]` / `[L]`: write all tasks to `.ai-backlog/tasks.md` under `## Backlog` with `[TODO]`; move first to `## Active` as `[IN_PROGRESS]`.
   - `[S]`: skip `tasks.md` — update only `context.md ## Now` at END.
@@ -78,10 +74,11 @@ On every request, classify intent before acting:
 
 ### Instructions
 
-- **Context Load**: Before writing any code, ensure all of the following are loaded:
-  - `competencies/` (backend and/or frontend) and `flavor/principles.md`
-  - `.ai/instructions/core/engineering-standards.md` — CleanCodeTactical rules
-  - `.ai/instructions/core/code-style.md` — NarrativeCascade and Vertical Scansion
+- **Context Load**: Before writing any code, load based on domain scope:
+  - `engineering-standards.md` and `code-style.md` — always required
+  - `competencies/backend.md` — if domain includes backend
+  - `competencies/frontend.md` — if domain includes frontend
+  - `flavor/principles.md` — if architectural pattern is relevant to the task
 
 - **Narrative Gate (hard gate — output before writing each function)**:
   Output this checklist with ✅/❌ before writing any function body.
@@ -166,7 +163,7 @@ On every request, classify intent before acting:
 
 1. Read `.ai-backlog/context.md` — understand the project brief.
    - **Local Priority**: Always look for the `.ai-backlog/` folder in the current directory first to avoid redundancy.
-   - **If missing**: analyze the project (read `package.json`, `README.md`, entry points, folder structure) and generate `.ai-backlog/context.md` using the bootstrap template below. Announce: _"context.md created with initial analysis. Review and adjust as needed."_ Never overwrite an existing file.
+   - **If missing**: analyze the project (read `package.json`, `README.md`, `CHANGELOG.md`, entry points, folder structure) and generate `.ai-backlog/context.md` using the bootstrap template below. Announce: _"context.md created with initial analysis. Review and adjust as needed."_ Never overwrite an existing file.
 2. Read `.ai-backlog/tasks.md` — check for `[IN_PROGRESS]` tasks before accepting new work.
 3. If an `[IN_PROGRESS]` task exists: resume it. Announce what was in progress and continue from the checkpoint.
 

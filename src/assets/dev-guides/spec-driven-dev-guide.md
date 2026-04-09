@@ -34,7 +34,6 @@ The cycle follows five mandatory phases: **SPEC → PLAN → CODE → TEST → E
   - Produce a numbered task list.
   - Use the Action Verb + Object pattern (e.g., "1. Create User domain type").
   - **Task Decomposition**: Split complex tasks into sub-tasks to maintain vertical density and prevent context exhaustion.
-  - **Triviality Exception**: Skip only for single-file, self-contained changes (e.g., fixing a label or constant).
 - **Mandate**: The agent must halt for explicit Developer approval of the Plan.
 - **Reasoning Exception**: Autonomous models with built-in reasoning may proceed to Code after validating that the plan reflects the project's engineering rules.
 
