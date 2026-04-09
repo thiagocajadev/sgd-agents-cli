@@ -60,12 +60,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thiagocajadev/sgd-agents-cli.git"
+    "url": "git+https://github.com/thiagocajadev/sdg-agents-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/thiagocajadev/sgd-agents-cli/issues"
+    "url": "https://github.com/thiagocajadev/sdg-agents-cli/issues"
   },
-  "homepage": "https://github.com/thiagocajadev/sgd-agents-cli#readme",
+  "homepage": "https://github.com/thiagocajadev/sdg-agents-cli#readme",
   "dependencies": {
     "@inquirer/prompts": "^8.3.2",
     "dedent": "^1.7.2"
