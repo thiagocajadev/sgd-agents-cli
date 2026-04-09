@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="src/assets/img/sdg-agents-icon-light.svg" alt="SDG Agents" width="160" height="160" style="border-radius: 1rem;">
-  <h1 align="center">sdg-agents</h1>
+  <img src="src/assets/img/sdg-agents-icon-light.svg" alt="SDG Agents" width="480" height="480" style="border-radius: 1rem;">
+  <h1 align="center">Spec-Driven Guide — Agents</h1>
   <p align="center">
     A CLI that installs a structured instruction set for AI agents into your project.<br>
     <a href="docs/README.pt-BR.md">Versão em Português (Brasil)</a>
@@ -10,6 +10,10 @@
 </div>
 
 <br>
+
+<p align="center">
+  <kbd><img src="src/assets/img/sdg-agents-menu-v1.png" alt="Spec Driven Guide CLI in action" /></kbd>
+</p>
 
 `sdg-agents` installs a set of markdown instruction files into your project. AI agents (Claude Code, Cursor, Windsurf, Copilot, Codex, and others) read these files and follow the defined protocol for every task.
 
@@ -155,4 +159,4 @@ npx sdg-agents clear     # Remove the .ai/ folder
 
 _Balance is the key._
 
-SDG is in constant evolution — there is no perfect solution, only continuous improvement. Feel free to contribute, fork, and share.
+SDG is in constant evolution. There is no perfect solution, only continuous improvement. Feel free to contribute, fork, and share.

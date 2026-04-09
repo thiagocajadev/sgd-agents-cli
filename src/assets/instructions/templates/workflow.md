@@ -76,14 +76,32 @@ On every request, classify intent before acting:
   - `.ai/instructions/core/engineering-standards.md` — CleanCodeTactical rules
   - `.ai/instructions/core/code-style.md` — NarrativeCascade and Vertical Scansion
 
-- **Narrative Gate (mandatory self-check before writing each function)**:
-  Verify all items pass before committing any implementation:
-  - [ ] **Stepdown Rule**: Entry point is the topmost function — callers above callees in the file
-  - [ ] **SLA**: Each function either orchestrates OR implements — never both in the same body
-  - [ ] **Guard Clauses**: All nested conditionals replaced with early returns
-  - [ ] **Explaining Returns**: Return value assigned to a named `const` — never anonymous inline objects or ternaries
-  - [ ] **Lexical Scoping**: One-off helpers defined inside their only caller, not at module level
-  - [ ] **Vertical Density**: Related variables grouped together; single blank line between logical blocks
+- **Narrative Gate (hard gate — output before writing each function)**:
+  Output this checklist with ✅/❌ before writing any function body.
+  Any ❌ = redesign first. This gate cannot be skipped or internalized.
+
+  _Structure_
+  - [ ] **Stepdown Rule** — entry point is topmost; callers above callees in the file
+  - [ ] **SLA** — this function orchestrates OR implements, never both in the same body
+  - [ ] **Guard Clauses** — all nested conditionals replaced with early returns
+  - [ ] **Lexical Scoping** — one-off helpers defined inside their only caller, not at module level
+
+  _Expression_
+  - [ ] **Explaining Returns** — return value assigned to a named `const`; no bare `return ok(...)` or anonymous inline objects
+  - [ ] **Shallow Boundaries** — no property chain deeper than 3 levels; extract a named `const` slice first
+  - [ ] **Vertical Density** — related variables grouped together; single blank line between logical blocks
+
+  _Naming_
+  - [ ] **Expressive Names** — every name reveals its role without needing a comment
+  - [ ] **Boolean Prefix** — `isLoading`, `hasError`, `isActive`; never bare `loading`, `error`, `active`
+  - [ ] **No Abbreviations** — `request`/`response`; never `req`/`res`; no framework exception
+
+  _Documentation_
+  - [ ] **Code as Documentation** — no "what" comments; only `// why:` for non-obvious constraints or deliberate trade-offs
+
+  _Module (per file)_
+  - [ ] **Revealing Module Pattern** — named object + named export at file footer; no `export default`
+  - [ ] **No God Modules** — no `helpers.js`, `utils.js`, `common.js`; name files by domain + operation
 
 - **Result Pattern**: Prefer `Result<T>` when it meaningfully clarifies the happy/failure split — do not force it where idiomatic error handling is already clear.
 - **YAGNI**: No features or refactors outside the approved SPEC.
@@ -213,6 +231,6 @@ When a message arrives during an active cycle, classify it before acting:
   - **Stop & Report** if the same error repeats 3 times.
   - **Stop & Report** if no physical progress (file writes/commands) is made in 3 turns.
   - **Stop & Report** if blocked by non-bypassable permission or access issues.
-  > </rule>
+    > </rule>
 
 </ruleset>
