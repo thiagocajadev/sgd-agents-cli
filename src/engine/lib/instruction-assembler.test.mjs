@@ -127,11 +127,11 @@ describe('InstructionAssembler', () => {
       assert.ok(result.includes('The Law of Visual Excellence'));
     });
 
-    it('should include the First Session note with feat: Foundation', () => {
+    it('should include the First Session note with land: kickoff guidance', () => {
       const selections = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
       const result = buildMasterInstructions(selections);
       assert.ok(result.includes('First Session'));
-      assert.ok(result.includes('feat: Foundation'));
+      assert.ok(result.includes('land:'));
     });
 
     it('should include the Working Protocol workflow content', () => {
@@ -140,9 +140,10 @@ describe('InstructionAssembler', () => {
       assert.ok(result.includes('Working Protocol'));
     });
 
-    it('should include intent prefix guide (feat/fix/docs)', () => {
+    it('should include intent prefix guide (land/feat/fix/docs)', () => {
       const selections = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
       const result = buildMasterInstructions(selections);
+      assert.ok(result.includes('land:'));
       assert.ok(result.includes('feat:'));
       assert.ok(result.includes('fix:'));
       assert.ok(result.includes('docs:'));

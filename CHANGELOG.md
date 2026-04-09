@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `land:` intent prefix — inception cycle that turns a raw vision into a grounded backlog of sequenced `feat:` tasks before any code is written
+
 ## [1.0.0] - 2026-04-08
 
 ### Added
+
 - Interactive CLI (`sdg init`) to scaffold AI governance context into any project
 - Governance instruction assembler — generates `.ai/skill/AGENTS.md` at runtime
 - Asset bundle system — packages governance templates into a distributable bundle

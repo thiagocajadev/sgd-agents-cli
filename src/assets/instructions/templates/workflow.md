@@ -11,11 +11,12 @@ On every request, classify intent before acting:
 
 | Signal                    | Cycle                                                                       |
 | :------------------------ | :-------------------------------------------------------------------------- |
+| `land: ...`               | Read `.ai/commands/sdg-land.md` → Follow **Land Cycle** (inception only)    |
 | `feat: ...`               | Read `.ai/commands/sdg-feat.md` (Context Charge) → Follow **Feature Cycle** |
 | `fix: ...`                | Read `.ai/commands/sdg-fix.md` (Context Charge) → Follow **Fix Cycle**      |
 | `docs: ...`               | Read `.ai/commands/sdg-docs.md` (Context Charge) → Follow **Docs Cycle**    |
 | Trivial change            | CODE directly → END (no CHANGELOG)                                          |
-| No prefix, intent unclear | Ask once: "feat, fix, or docs?" — then proceed                              |
+| No prefix, intent unclear | Ask once: "land, feat, fix, or docs?" — then proceed                        |
 
 **Trivial:** change a color, rename a variable, fix a typo, adjust spacing — single isolated change with no new behavior or contract.
 
@@ -213,7 +214,7 @@ When a message arrives during an active cycle, classify it before acting:
 | **Pivot**                    | "change the approach entirely"            | Return to SPEC, revise, wait for re-approval                                  |
 | **Unrelated request**        | "fix this other thing while you're at it" | Flag it as out-of-scope. Finish the current cycle first, then start a new one |
 
-**Hard Rule**: Never interpret a conversational message as a new `feat:` or `fix:` while a cycle is active. The cycle closes only at END.
+**Hard Rule**: Never interpret a conversational message as a new `land:`, `feat:`, or `fix:` while a cycle is active. The cycle closes only at END.
 
 > </rule>
 

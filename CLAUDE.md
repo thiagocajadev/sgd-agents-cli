@@ -51,6 +51,7 @@ entry: <main entry point file>
 
 | Prefix         | Action                                          |
 | :------------- | :---------------------------------------------- |
+| `land: ...`    | Land Cycle — read `.ai/commands/sdg-land.md`    |
 | `feat: ...`    | Feature Cycle — read `.ai/commands/sdg-feat.md` |
 | `fix: ...`     | Fix Cycle — read `.ai/commands/sdg-fix.md`      |
 | `docs: ...`    | Docs Cycle — read `.ai/commands/sdg-docs.md`    |

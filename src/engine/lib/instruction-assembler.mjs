@@ -104,16 +104,16 @@ function buildMasterInstructions(selections) {
       ## First Session
 
       > [!NOTE]
-      > **New project:** start with \`feat: Foundation\` to initialize the project structure following the governance pipeline.
-      > Read \`.ai/workflows/governance.md\` to understand the 8-phase architectural trail before starting.
+      > **New project or legacy onboarding:** start with \`land: <vision>\` to map the terrain and produce a grounded backlog before writing any code.
+      > Read \`.ai/commands/sdg-land.md\` to understand the inception cycle.
       >
-      > **Existing project:** before the first \`feat:\` or \`fix:\`, read the project silently:
+      > **Continuing project:** before the first \`feat:\` or \`fix:\`, read the project silently:
       > - **Local Context First**: Always look for \`.ai-backlog/context.md\` first to avoid redundant project analysis.
       > - Scan the file tree and identify key directories and entry points if context is missing.
       > - Read \`README.md\` if it exists.
       > - Identify existing patterns, naming conventions, and main modules.
       >
-      > Do this once per session. After that, use \`feat:\`, \`fix:\`, or \`docs:\` to begin.`;
+      > Do this once per session. After that, use \`land:\`, \`feat:\`, \`fix:\`, or \`docs:\` to begin.`;
 
     return firstSessionString;
   }
@@ -242,7 +242,8 @@ function buildMasterInstructions(selections) {
     function buildWorkingCyclesRouting() {
       const workingCyclesString = dedent`
         <context_routing category="V. Working Cycles & Intents">
-          <!-- Trigger specialized behavior by prefixing your instructions to the AI with feat:, fix:, or docs: -->
+          <!-- Trigger specialized behavior by prefixing your instructions to the AI with land:, feat:, fix:, or docs: -->
+          <file_ref path=".ai/commands/sdg-land.md" purpose="Land Cycle (Project Inception & Backlog)" />
           <file_ref path=".ai/commands/sdg-feat.md" purpose="Feature Cycle (Specs & Implementation)" />
           <file_ref path=".ai/commands/sdg-fix.md" purpose="Fix Cycle (Forensics & Regression)" />
           <file_ref path=".ai/commands/sdg-docs.md" purpose="Documentation Cycle (ADRs & Logs)" />
@@ -392,6 +393,7 @@ function buildClaudeContent() {
 
     | Prefix | Action |
     | :----- | :----- |
+    | \`land: ...\` | Land Cycle — read \`.ai/commands/sdg-land.md\` |
     | \`feat: ...\` | Feature Cycle — read \`.ai/commands/sdg-feat.md\` |
     | \`fix: ...\` | Fix Cycle — read \`.ai/commands/sdg-fix.md\` |
     | \`docs: ...\` | Docs Cycle — read \`.ai/commands/sdg-docs.md\` |
