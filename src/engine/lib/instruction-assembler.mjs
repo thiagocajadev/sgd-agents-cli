@@ -431,31 +431,41 @@ function writeAgentConfig(targetDir, content, requestedAgents = []) {
 }
 
 /**
- * Writes or updates .gitignore to block env files from being committed.
- * Idempotent — only appends entries that are not already present.
+ * Writes or updates .gitignore with SDG-managed entries.
+ * Idempotent — each block only appends entries not already present.
  */
 function writeGitignore(targetDir) {
   const gitignorePath = path.join(targetDir, '.gitignore');
 
-  const SDG_BLOCK_HEADER = '# Environment files — never commit secrets (managed by SDG Agents)';
-  const REQUIRED_ENTRIES = ['.env', '.env.*'];
+  const BLOCKS = [
+    {
+      header: '# Environment — never commit secrets',
+      entries: ['.env', '.env.*'],
+    },
+    {
+      header: '# AI artifacts — session state, not project logic',
+      entries: ['.ai-backlog/', 'tmp/', 'temp/'],
+    },
+  ];
 
   const existingContent = fs.existsSync(gitignorePath)
     ? fs.readFileSync(gitignorePath, 'utf8')
     : '';
 
   const existingLines = existingContent.split('\n').map((line) => line.trim());
-  const missingEntries = REQUIRED_ENTRIES.filter((entry) => !existingLines.includes(entry));
 
-  if (missingEntries.length === 0) return;
+  const blocksToAppend = BLOCKS.map((block) => {
+    const missingEntries = block.entries.filter((entry) => !existingLines.includes(entry));
+    if (missingEntries.length === 0) return null;
+    const alreadyHasHeader = existingContent.includes(block.header);
+    const lines = alreadyHasHeader ? missingEntries : [block.header, ...missingEntries];
+    return lines.join('\n');
+  }).filter(Boolean);
 
-  const alreadyHasHeader = existingContent.includes(SDG_BLOCK_HEADER);
-  const entriesToAppend = alreadyHasHeader ? missingEntries : [SDG_BLOCK_HEADER, ...missingEntries];
+  if (blocksToAppend.length === 0) return;
 
   const separator = existingContent.length > 0 && !existingContent.endsWith('\n') ? '\n' : '';
-  const appendBlock = `${separator}\n${entriesToAppend.join('\n')}\n`;
-
-  fs.appendFileSync(gitignorePath, appendBlock);
+  fs.appendFileSync(gitignorePath, `${separator}\n${blocksToAppend.join('\n\n')}\n`);
 }
 
 /**
