@@ -5,21 +5,14 @@
     Um CLI que instala um conjunto de instruções para agentes de IA no seu projeto.<br>
     <a href="../README.md">Read in English</a>
   </p>
+  <p align="center">
+      Leia o manifesto e o guia visual em <a href="https://specdrivenguide.org">specdrivenguide.org</a>
+  </p>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D24-brightgreen?style=flat-square&logo=nodedotjs" alt="Node" /></a>
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square" alt="License: ISC" /></a>
 </div>
 
 <br>
-
-<p align="center">
-    Leia o manifesto e o guia visual em <a href="https://specdrivenguide.org">specdrivenguide.org</a>
-</p>
-
-<br>
-
-<p align="center">
-  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sgd-agents-cli/main/src/assets/img/sdg-agents-menu-v1.png" alt="Spec Driven Guide CLI in action" /></kbd>
-</p>
 
 `sdg-agents` instala um conjunto de arquivos de instrução em markdown no seu projeto. Agentes de IA (Claude Code, Cursor, Windsurf, Copilot, Codex e outros) leem esses arquivos e seguem o protocolo definido em cada tarefa.
 
@@ -40,6 +33,10 @@ O conjunto de instruções cobre:
 ```bash
 npx sdg-agents
 ```
+
+<p align="left">
+  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sgd-agents-cli/main/src/assets/img/sdg-agents-menu-v1.png" alt="Spec Driven Guide CLI em ação" /></kbd>
+</p>
 
 O assistente interativo guia você na escolha do flavor arquitetural e um ou mais idiomas. Para uso não-interativo:
 
