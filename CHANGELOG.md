@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+## [1.10.0] - 2026-04-11
+
+### Added
+
 - **Narrative Guard** — implemented a Husky `commit-msg` hook to prevent version-bumping commits when the `CHANGELOG.md` is empty.
 
 ### Fixed
