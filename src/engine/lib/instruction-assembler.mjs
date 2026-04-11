@@ -14,7 +14,7 @@ import { FsUtils } from './fs-utils.mjs';
 
 const { displayName } = DisplayUtils;
 const { computeHashes } = ManifestUtils;
-const { getDirname } = FsUtils;
+const { getDirname, writeJsonAtomic } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
 const SOURCE_INSTRUCTIONS = path.join(__dirname, '..', '..', 'assets', 'instructions');
@@ -463,6 +463,9 @@ function writeAgentConfig(targetDir, content, requestedAgents = []) {
     const fullDir = path.join(targetDir, target.dir);
     if (!fs.existsSync(fullDir)) fs.mkdirSync(fullDir, { recursive: true });
 
+    const targetFile = path.join(fullDir, target.file);
+    const originalContent = fs.existsSync(targetFile) ? fs.readFileSync(targetFile, 'utf8') : null;
+
     let finalContent = content;
     if (agent === 'cursor') {
       finalContent = `---\ndescription: Project Governance and Architectural Rules\nglob: *\n---\n\n${content}`;
@@ -470,7 +473,9 @@ function writeAgentConfig(targetDir, content, requestedAgents = []) {
       finalContent = buildClaudeContent();
     }
 
-    fs.writeFileSync(path.join(fullDir, target.file), finalContent);
+    if (originalContent !== finalContent) {
+      fs.writeFileSync(targetFile, finalContent);
+    }
   }
 }
 
@@ -525,7 +530,13 @@ function writeManifest(targetDir, selections, pkgVersion) {
 
   const aiDir = path.join(targetDir, '.ai');
   if (!fs.existsSync(aiDir)) fs.mkdirSync(aiDir, { recursive: true });
-  fs.writeFileSync(path.join(aiDir, '.sdg-manifest.json'), JSON.stringify(manifest, null, 2));
+
+  const manifestPath = path.join(aiDir, '.sdg-manifest.json');
+  const originalContent = fs.existsSync(manifestPath)
+    ? fs.readFileSync(manifestPath, 'utf8')
+    : null;
+
+  writeJsonAtomic(manifestPath, manifest, originalContent);
 }
 
 /**
@@ -563,7 +574,7 @@ function writeAutomationScripts(targetDir, selections) {
   if (!pkg.scripts) pkg.scripts = {};
   if (!pkg.scripts.bump) {
     pkg.scripts.bump = 'node scripts/bump.mjs';
-    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
+    writeJsonAtomic(pkgPath, pkg, fs.readFileSync(pkgPath, 'utf8'));
   }
 
   // 4. Configure Husky if .husky exists
@@ -580,9 +591,10 @@ function writeAutomationScripts(targetDir, selections) {
 
     if (fs.existsSync(prePushPath)) {
       const content = fs.readFileSync(prePushPath, 'utf8');
-      if (!content.includes('npm run bump')) {
+      if (!content.includes('npm test')) {
         const separator = content.endsWith('\n') ? '' : '\n';
-        fs.appendFileSync(prePushPath, `${separator}\n${nvmShim}\n${bumpCmd}\n`);
+        const newPrePushContent = `${content}${separator}\n${nvmShim}\n${bumpCmd}\n`;
+        fs.writeFileSync(prePushPath, newPrePushContent);
       }
     } else {
       const prePushContent = dedent`

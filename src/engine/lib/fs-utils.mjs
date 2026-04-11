@@ -88,6 +88,25 @@ function runIfDirect(importMetaUrl, fn) {
   }
 }
 
+function detectIndentation(content) {
+  const lines = content.split('\n');
+  for (const line of lines) {
+    const match = line.match(/^(\s+)/);
+    if (match) return match[1];
+  }
+  return '  ';
+}
+
+function writeJsonAtomic(filePath, data, originalContent = null) {
+  const indent = originalContent ? detectIndentation(originalContent) : '  ';
+  const newContent = JSON.stringify(data, null, indent) + '\n';
+
+  if (originalContent === newContent) return false;
+
+  fs.writeFileSync(filePath, newContent);
+  return true;
+}
+
 const FsUtils = {
   getDirectories,
   copyRecursiveSync,
@@ -96,6 +115,8 @@ const FsUtils = {
   evaluateVersionCondition,
   getDirname,
   runIfDirect,
+  detectIndentation,
+  writeJsonAtomic,
 };
 
 export { FsUtils };
