@@ -9,19 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Narrative Guard** — implemented a Husky `commit-msg` hook to prevent version-bumping commits when the `CHANGELOG.md` is empty.
+
 ### Fixed
 
 ## [1.9.0] - 2026-04-11
 
 ### Added
 
+- **Maintainer Mode Sync** — integrated automatic drift detection and synchronization for the CLI project itself; when running in its own repository, the CLI now automatically ensures that core instructions in `src/assets/instructions` are reflected in the live `.ai/` directory and `AGENTS.md`.
+
 ### Fixed
 
 ## [1.8.0] - 2026-04-11
 
 ### Added
-
-- **Maintainer Mode Sync** — integrated automatic drift detection and synchronization for the CLI project itself; when running in its own repository, the CLI now automatically ensures that core instructions in `src/assets/instructions` are reflected in the live `.ai/` directory and `AGENTS.md`.
 
 ### Fixed
 
