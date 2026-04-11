@@ -576,7 +576,7 @@ function writeAutomationScripts(targetDir, selections) {
       [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
     `;
 
-    const bumpCmd = 'npm run bump fix';
+    const bumpCmd = '# Pre-push check (non-mutating)\nnpm test';
 
     if (fs.existsSync(prePushPath)) {
       const content = fs.readFileSync(prePushPath, 'utf8');
