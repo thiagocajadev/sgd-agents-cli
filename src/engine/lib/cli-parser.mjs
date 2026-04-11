@@ -17,6 +17,7 @@ function parseCliArgs(argv) {
     mode: getArgValue(argv, '--mode'),
     track: getArgValue(argv, '--track'),
     scope: getArgValue(argv, '--scope'),
+    bump: !argv.includes('--no-bump'),
   };
 }
 

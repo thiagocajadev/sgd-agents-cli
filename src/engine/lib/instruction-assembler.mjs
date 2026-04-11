@@ -528,6 +528,76 @@ function writeManifest(targetDir, selections, pkgVersion) {
   fs.writeFileSync(path.join(aiDir, '.sdg-manifest.json'), JSON.stringify(manifest, null, 2));
 }
 
+/**
+ * Injects automation scripts and configurations (Bump, Husky) if enabled.
+ * Idempotent: skips if scripts/bump.mjs exists or if selections.bump is false.
+ */
+function writeAutomationScripts(targetDir, selections) {
+  if (selections.bump === false) return;
+
+  const scriptsDir = path.join(targetDir, 'scripts');
+  const bumpScriptPath = path.join(scriptsDir, 'bump.mjs');
+
+  // 1. Check for existing bump script in package.json to avoid collision
+  const pkgPath = path.join(targetDir, 'package.json');
+  if (!fs.existsSync(pkgPath)) return;
+
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+  const hasExistingBump =
+    pkg.scripts && (pkg.scripts.bump || pkg.scripts.release || pkg.scripts.version);
+
+  if (hasExistingBump && !fs.existsSync(bumpScriptPath)) {
+    // If they have a script but not our file, we respect their script
+    return;
+  }
+
+  // 2. Write bump.mjs template
+  if (!fs.existsSync(bumpScriptPath)) {
+    if (!fs.existsSync(scriptsDir)) fs.mkdirSync(scriptsDir, { recursive: true });
+    const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'bump.mjs');
+    const templateContent = fs.readFileSync(templatePath, 'utf8');
+    fs.writeFileSync(bumpScriptPath, templateContent);
+  }
+
+  // 3. Update package.json scripts
+  if (!pkg.scripts) pkg.scripts = {};
+  if (!pkg.scripts.bump) {
+    pkg.scripts.bump = 'node scripts/bump.mjs';
+    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
+  }
+
+  // 4. Configure Husky if .husky exists
+  const huskyDir = path.join(targetDir, '.husky');
+  if (fs.existsSync(huskyDir)) {
+    const prePushPath = path.join(huskyDir, 'pre-push');
+    const nvmShim = dedent`
+      # NVM Shim (Essential for projects Staff in Linux/NVM)
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"
+    `;
+
+    const bumpCmd = 'npm run bump fix';
+
+    if (fs.existsSync(prePushPath)) {
+      const content = fs.readFileSync(prePushPath, 'utf8');
+      if (!content.includes('npm run bump')) {
+        const separator = content.endsWith('\n') ? '' : '\n';
+        fs.appendFileSync(prePushPath, `${separator}\n${nvmShim}\n${bumpCmd}\n`);
+      }
+    } else {
+      const prePushContent = dedent`
+        #!/usr/bin/env sh
+        . "$(dirname -- "$0")/_/husky.sh"
+
+        ${nvmShim}
+
+        ${bumpCmd}
+      `;
+      fs.writeFileSync(prePushPath, prePushContent, { mode: 0o755 });
+    }
+  }
+}
+
 const InstructionAssembler = {
   buildMasterInstructions,
   buildClaudeContent,
@@ -536,6 +606,7 @@ const InstructionAssembler = {
   writeBacklogFiles,
   writeGitignore,
   writeManifest,
+  writeAutomationScripts,
 };
 
 export { InstructionAssembler };

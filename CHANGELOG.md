@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+### Fixed
+
+## [1.3.0] - 2026-04-11
+
+### Added
+
+- Automated Bump & Changelog Governance — integrated a standard semantic versioning strategy into the SDG ecosystem; added `scripts/bump.mjs` template and unconditional Husky `pre-push` integration for JS/TS projects.
+- Interactive Bump Opt-out — added Step 8 to the `sdg init` wizard to allow users to toggle automated versioning.
+- CLI `--no-bump` flag — support for bypassing automation in CI/CD or specialized environments.
+
 ## [1.2.3] - 2026-04-11
 
 ### Fixed

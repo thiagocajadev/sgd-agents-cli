@@ -21,6 +21,7 @@ const {
   writeBacklogFiles,
   writeGitignore,
   writeManifest,
+  writeAutomationScripts,
 } = InstructionAssembler;
 const { success } = ResultUtils;
 const { runIfDirect } = FsUtils;
@@ -207,6 +208,7 @@ function executeQuickPipeline(targetDir, selections, { noDevGuides = false } = {
 
   printStep(5, 5, 'Injecting spec templates...');
   injectPrompts(targetDir, selections.track);
+  writeAutomationScripts(targetDir, selections);
   writeManifest(targetDir, selections, packageJson.version);
 }
 
@@ -239,6 +241,7 @@ function executeAgentsPipeline(targetDir, selections, { noDevGuides = false } = 
   writeGitignore(targetDir);
 
   printStep(5, 5, 'Finalizing manifest...');
+  writeAutomationScripts(targetDir, selections);
   writeManifest(targetDir, selections, packageJson.version);
 }
 

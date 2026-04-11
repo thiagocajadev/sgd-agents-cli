@@ -33,7 +33,7 @@ async function gatherUserSelections(targetDir = process.cwd()) {
   let scope = 'fullstack';
   let step = 0;
 
-  const finalStep = () => (selections.mode === 'prompts' ? 2 : 8);
+  const finalStep = () => (selections.mode === 'prompts' ? 2 : 9);
 
   while (step < finalStep()) {
     const context = {
@@ -74,6 +74,7 @@ async function gatherUserSelections(targetDir = process.cwd()) {
     if (stepValue.ide) currentSelections.ide = stepValue.ide;
     if (stepValue.undoLastIdiom) currentSelections.idioms.pop();
     if (stepValue.resetIdioms) currentSelections.idioms = [];
+    if (stepValue.bump !== undefined) currentSelections.bump = stepValue.bump;
     return nextScope;
   }
 }
@@ -98,8 +99,10 @@ async function executeWizardStep(step, context) {
       return promptDesignPreset(context);
     case 7:
       return promptIdeSelection();
+    case 8:
+      return promptBumpAutomation(context);
     default: {
-      const defaultResult = success({ nextStep: 8 });
+      const defaultResult = success({ nextStep: 9 });
       return defaultResult;
     }
   }
@@ -391,6 +394,24 @@ async function promptIdeSelection() {
 
   const ideResult = success({ nextStep: 8, ide: result });
   return ideResult;
+}
+
+async function promptBumpAutomation(context) {
+  const { selections } = context;
+
+  const hasJsTs = selections.idioms.some((id) => id === 'javascript' || id === 'typescript');
+
+  if (!hasJsTs) {
+    return success({ nextStep: 9, bump: false });
+  }
+
+  const result = await safeConfirm({
+    message: 'Enable automated versioning (Bump & Changelog)?',
+    default: true,
+  });
+
+  const bumpResult = success({ nextStep: 9, bump: result });
+  return bumpResult;
 }
 
 function validateSelections(selections) {
