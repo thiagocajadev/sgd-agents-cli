@@ -137,7 +137,9 @@ function buildMasterInstructions(selections) {
         | File | Purpose |
         | :--- | :------ |
         | \`.ai-backlog/context.md\` | Project Brief — read before anything else |
-        | \`.ai-backlog/tasks.md\` | Active tasks and handoff state |`;
+        | \`.ai-backlog/tasks.md\` | Active tasks and handoff state |
+        | \`.ai-backlog/learned.md\` | Lessons Learned — success patterns and research |
+        | \`.ai-backlog/troubleshoot.md\` | Troubleshooting — RCA logs and failure records |`;
 
       return routingString;
     }
@@ -292,6 +294,8 @@ function writeBacklogFiles(targetDir, selections) {
 
   writeContextFile(backlogDir, targetDir, selections);
   writeTasksFile(backlogDir);
+  writeLearnedFile(backlogDir);
+  writeTroubleshootFile(backlogDir);
 
   function writeContextFile(backlogDirPath, projectDir, currentSelections) {
     const contextPath = path.join(backlogDirPath, 'context.md');
@@ -313,9 +317,6 @@ function writeBacklogFiles(targetDir, selections) {
 
       ## Now
       [what is actively being worked on]
-
-      ## Engineering Insights
-      - [topic]: [lesson learned or research finding]
     `;
 
     fs.writeFileSync(contextPath, contextContent);
@@ -342,6 +343,46 @@ function writeBacklogFiles(targetDir, selections) {
     `;
 
     fs.writeFileSync(tasksPath, tasksContent);
+  }
+
+  function writeLearnedFile(backlogDirPath) {
+    const learnedPath = path.join(backlogDirPath, 'learned.md');
+    if (fs.existsSync(learnedPath)) return;
+
+    const learnedContent = dedent`
+      # Lessons Learned & Research
+
+      > Persistent repository for success patterns, technical research, and architecture decisions.
+      > Loaded during \`feat:\` cycles.
+
+      ## Success Patterns
+      - [topic]: [pattern or approach that worked well]
+
+      ## Research Findings
+      - [topic]: [discovery or validated hypothesis]
+    `;
+
+    fs.writeFileSync(learnedPath, learnedContent);
+  }
+
+  function writeTroubleshootFile(backlogDirPath) {
+    const troubleshootPath = path.join(backlogDirPath, 'troubleshoot.md');
+    if (fs.existsSync(troubleshootPath)) return;
+
+    const troubleshootContent = dedent`
+      # Troubleshooting & RCA Logs
+
+      > Persistent repository for failure records, Root Cause Analysis (RCA), and technical debt.
+      > Loaded during \`fix:\` cycles to prevent regression.
+
+      ## Failure Records (RCA)
+      - [date] [topic]: [what failed, why, and the "gotcha" to avoid]
+
+      ## Technical Debt & Risks
+      - [topic]: [known limitation or fragile area]
+    `;
+
+    fs.writeFileSync(troubleshootPath, troubleshootContent);
   }
 }
 

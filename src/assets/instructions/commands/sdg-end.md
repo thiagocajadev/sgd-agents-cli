@@ -30,9 +30,13 @@ If `## [Unreleased]` does not exist, create it above the most recent versioned e
 
 Update `## Now` with the next objective, or set it to `Ready for next instruction.` if nothing is pending.
 
-## Step 5 — INSIGHTS
+## Step 5 — KNOWLEDGE (INSIGHTS)
 
-Log any patterns, findings, or rework discovered during this cycle in `context.md ## Engineering Insights`. Curate stale or irrelevant entries.
+Log any patterns, findings, or rework discovered during this cycle. Curate stale or irrelevant entries.
+
+- **feat:** cycle → Update `.ai-backlog/learned.md` with success patterns and research findings.
+- **fix:** cycle → Update `.ai-backlog/troubleshoot.md` with the Root Cause Analysis (RCA) and "gotchas" discovered.
+- **Other:** If specific insights exist but don't fit the above, announce them or update `.ai-backlog/learned.md`.
 
 ## Step 6 — CURATE
 

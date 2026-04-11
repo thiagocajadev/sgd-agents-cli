@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-04-10
+
 ### Added
 
+- AI Backlog Knowledge Triad — separated project state from technical expertise by introducing dedicated `.ai-backlog/learned.md` (success patterns and research) and `.ai-backlog/troubleshoot.md` (RCA and failure logs); implemented Selective Lazy Loading to inject knowledge into the agent's context only when relevant (`feat:` for learned, `fix:` for troubleshoot)
 - `end:` intent prefix — universal cycle terminator that forces sequential execution of the END Phase checklist (SUMMARIZE → CHANGELOG → BACKLOG → CURATE → LINT → COMMIT → PUSH); adapts CHANGELOG category by active cycle type; accepts no argument
 - `land:` intent prefix — inception cycle that turns a raw vision into a grounded backlog of sequenced `feat:` tasks before any code is written
 - Multi-agent execution protocol — Planning (SPEC/PLAN/Review) and Fast (CODE/TEST) roles for Claude Code; auto-enabled when `ide: claude` or `ide: all`; graceful single-agent fallback for all other environments
@@ -17,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Governance consolidation — eliminated structural redundancies to reduce cold-context overhead per session: removed duplicate Session Start block, Governance Oath, and bootstrap template from `AGENTS.md`; converted verbose XML `<context_routing>` to markdown tables; removed redundant Phase: END sections from command files; trimmed multi-agent TIP blocks from all command files (now a single reference to `agent-roles.md`)
-- Trivial change flow removed — all requests now enter the full SPEC → PLAN cycle; no more direct-to-CODE bypass
 - Context Load in Phase: CODE is now domain-scoped — loads `backend.md`/`frontend.md` only when the task domain requires it, rather than always loading all competency files
 - Bootstrap process now reads `CHANGELOG.md` in addition to `package.json`, `README.md`, and entry points
 

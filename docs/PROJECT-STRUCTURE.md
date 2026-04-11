@@ -6,9 +6,11 @@ This document describes every directory and file installed by `sdg-agents init`.
 
 ```text
 your-project/
-├── .ai-backlog/                 ← Session memory (gitignored)
-│   ├── context.md               ← Project brief: stack, decisions, current state
-│   └── tasks.md                 ← Task list (TODO / IN_PROGRESS / DONE)
+├── .ai-backlog/                 ← Session memory & Expertise (gitignored)
+│   ├── context.md               ← Project brief: stack, tech decisions, current state
+│   ├── tasks.md                 ← Task list (TODO / IN_PROGRESS / DONE)
+│   ├── learned.md               ← Lessons learned: success patterns and research findings
+│   └── troubleshoot.md          ← Troubleshooting: RCA logs and critical failure records
 └── .ai/                         ← Instruction set (committed)
     ├── skill/
     │   └── AGENTS.md            ← Main entry point — auto-loaded by agents
@@ -34,20 +36,31 @@ Agent-specific root files are also written (`CLAUDE.md`, `.cursorrules`, `.winds
 
 Gitignored. Persists project state across sessions so any agent — in any session — can pick up where the last one stopped.
 
-**context.md** — written on first run, maintained by the agent at END of each cycle. Captures:
+**context.md** — written on first run, maintained by the agent at the END of each cycle. Captures:
 
-- Stack and frameworks detected
+- Stack and frameworks used
 - Architectural decisions and their rationale
 - Current objective (`## Now`)
-- Engineering insights from past cycles
 
-**tasks.md** — the task list. Each task has one of three states:
+**tasks.md** — the task list. Tracks atomic units of work across sessions:
 
 - `[TODO]` — pending
 - `[IN_PROGRESS]` — the active task (only one at a time)
 - `[DONE]` — completed (kept for reference)
 
 The agent reads this at session start before accepting new work.
+
+**learned.md** — the "Brain" of successful patterns. Captures:
+
+- Research findings and validated hypotheses
+- Reusable architecture patterns that worked well for this project
+- Specialized terminology and "Staff" level engineering insights
+
+**troubleshoot.md** — the "Immune System" of the project. Captures:
+
+- **Root Cause Analysis (RCA)** for every fix executed
+- Failure logs and "gotchas" discovered during development
+- Technical debt and fragile areas to be avoided in future cycles
 
 ---
 
@@ -109,6 +122,6 @@ Prompt templates for authoring the SPEC phase:
 | :---- | :--------------------------------------------------------------------------- |
 | SPEC  | `prompts/dev-tracks/`, `commands/sdg-feat.md` (or fix/docs)                  |
 | PLAN  | `.ai-backlog/tasks.md`                                                       |
-| CODE  | `core/code-style.md`, `core/engineering-standards.md`, `idioms/`, `flavors/` |
+| CODE  | `core/code-style.md`, `core/engineering-standards.md`, `learned.md`, `troubleshoot.md` |
 | TEST  | `core/testing-principles.md`                                                 |
-| END   | `.ai-backlog/context.md`, `.ai-backlog/tasks.md`                             |
+| END   | `.ai-backlog/context.md`, `.ai-backlog/tasks.md`, `learned.md`, `troubleshoot.md` |

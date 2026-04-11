@@ -10,10 +10,11 @@ We are correcting a recorded incident: $ARGUMENTS. This command prepares the con
    - **Frontend** (UI/UX) → read `.ai/instructions/competencies/frontend.md`
    - **Fullstack** → read both
 3. **Architecture Standards**: If `.ai/instructions/flavor/principles.md` exists, read the architectural principles.
-4. **Code Style & Standards** (mandatory):
+4. **Backlog Knowledge**: Read `.ai-backlog/troubleshoot.md` to load previous RCA logs and critical failure records.
+5. **Code Style & Standards** (mandatory):
    - **Engineering Standards** → read `.ai/instructions/core/engineering-standards.md`
    - **Code Style & Narrative Scansion** → read `.ai/instructions/core/code-style.md`
-5. **Diagnostic Standards**:
+6. **Diagnostic Standards**:
    - **Testing Principles** → read `.ai/instructions/core/testing-principles.md`
    - **Observability** → read `.ai/instructions/core/observability.md`
 

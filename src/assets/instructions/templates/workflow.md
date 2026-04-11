@@ -143,7 +143,7 @@ On every request, classify intent before acting:
 - [ ] **CHANGELOG** — entry appended under `## [Unreleased]` (`### Added` for feat, `### Fixed` for fix; skip for docs)
 - [ ] **BACKLOG: tasks.md** — all completed tasks moved to `## Done` with `[DONE]` status
 - [ ] **BACKLOG: context.md** — \`## Now\` updated with next objective or cleared
-- [ ] **INSIGHTS** — log patterns, research findings, or rework in \`context.md\` ## Engineering Insights (curate stale or irrelevant items)
+- [ ] **KNOWLEDGE** — Log any patterns, findings, or rework discovered during this cycle. Update \`.ai-backlog/learned.md\` (for successful feats) or \`.ai-backlog/troubleshoot.md\` (for fixed incidents). Curate stale or irrelevant items.
 - [ ] **CURATE** — final scan for slop, "AI-isms", and unfinished comments. Run `git status` to ensure only intended changes are staged.
 - [ ] **LINT** — if lint script exists (`lint`, `lint:fix`, `lint:all`, or config file detected), run it; auto-fix what's possible; block commit if errors remain
 - [ ] **COMMIT** — **PROPOSE** the commit message and **WAIT** for explicit Developer approval
@@ -184,10 +184,6 @@ entry: <main entry point file>
 ## Now
 
 - Ready for next instruction.
-
-## Engineering Insights
-
-- [topic]: [lesson learned or research finding]
 ```
 
 ### Checkpoint (after each atomic task)

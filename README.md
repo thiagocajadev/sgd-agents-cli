@@ -69,9 +69,8 @@ your-project/
 │   │   └── competencies/        ← Layer-specific rules (frontend, backend)
 │   ├── commands/                ← Context files for feat/fix/docs cycles
 │   └── dev-guides/              ← Reference files, spec templates, and guides
-└── .ai-backlog/                 ← Session memory (gitignored)
-    ├── context.md               ← Project brief, decisions, current state
-    └── tasks.md                 ← Task list (TODO / IN_PROGRESS / DONE)
+└── .ai-backlog/                 ← Session memory & Expertise (gitignored)
+    └── ...                      ← (See docs/PROJECT-STRUCTURE.md for details)
 ```
 
 `dev-guides/` is always included. It contains the 5-phase cycle guide, the internal decision-gate flow, SDLC reference, UI prompt guide, and spec templates (`prompt-tracks/`) for authoring the SPEC phase of any task.

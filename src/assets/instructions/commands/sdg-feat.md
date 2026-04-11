@@ -10,10 +10,11 @@ We are initializing a new feature: $ARGUMENTS. This command prepares the context
    - **Frontend** (UI/UX) → read `.ai/instructions/competencies/frontend.md`
    - **Fullstack** → read both
 3. **Architecture Standards**: If `.ai/instructions/flavor/principles.md` exists, read the established data pipeline (Vertical Slice, MVC, etc.).
-4. **Code Style Load** (mandatory — do not skip):
+4. **Backlog Knowledge**: Read `.ai-backlog/learned.md` to load successful patterns and past research findings.
+5. **Code Style Load** (mandatory — do not skip):
    - **Engineering Standards** → read `.ai/instructions/core/engineering-standards.md`
    - **Code Style & NarrativeCascade** → read `.ai/instructions/core/code-style.md`
-5. **Quality & Debugging**:
+6. **Quality & Debugging**:
    - **Testing Strategy** → read `.ai/instructions/core/testing-principles.md`
    - **Observability** → read `.ai/instructions/core/observability.md`
 
