@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [1.10.4] - 2026-04-11
+
+### Added
+
+### Fixed
+
+## [1.10.3] - 2026-04-11
+
+### Added
+
+### Fixed
+
+- test narrative block
+
 ## [1.10.2] - 2026-04-11
 
 ### Added
