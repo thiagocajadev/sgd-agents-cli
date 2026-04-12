@@ -48,6 +48,9 @@ This command closes the current development cycle and is the **Ultimate Guaranto
 - Propose exactly: `git commit -m "<feat|fix>: release v<version>"`.
 - **PROPOSE** and **WAIT** for explicit Developer authorization.
 
+> [!CAUTION]
+> **NEVER BYPASS THE BUMP**. You are absolutely forbidden from proposing or running a manual `git commit` that leaves versioning stuck in `[Unreleased]`. The semantic pipeline (`npm run bump`) is a **MANDATORY** automation. You must run it to synthesize the changelog and bump `package.json` before proposing the final release commit.
+
 ## Step 7 — Next step
 
 **Suggests what comes next: push · deploy · or a new task.**
