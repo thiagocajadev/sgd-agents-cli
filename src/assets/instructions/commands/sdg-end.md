@@ -1,80 +1,61 @@
-# Cycle Terminator — END Phase
+# Cycle Terminator — Phase: END (The Delivery) — MODE: PLANNING
 
 This command has no arguments. Type `end:` to close the active cycle.
 
-Executing the **Phase: END** checklist from the **Working Protocol** in strict order. Each item must be completed before advancing to the next.
+Executing the **Phase: END** checklist in strict order. Each step must be completed and announced before advancing.
 
 ---
 
-## Step 1 — SUMMARIZE
+## Step 1 — Task Summary
 
-Write one sentence per completed PLAN task. If no PLAN existed (e.g. `[S]` tasks), write a one-line summary of what changed.
+Writes one sentence per completed task. Professional, direct, and technical.
 
-## Step 2 — CHANGELOG
+## Step 2 — Changelog
 
-Prepare your technical narrative in the `CHANGELOG.md`.
+Adds an entry under `## [Unreleased]`: `### Added` for feat · `### Fixed` for fix.
 
-1. **Identify Strategy**:
-   - **Automated**: If `auto-bump.mjs` exists, you **MUST** first manually populate the `## [Unreleased]` section with your technical narrative. The automated pipeline will promote this content to the new version header during the commit. **DO NOT commit with an empty [Unreleased] section.**
-   - **Manual**: If no automation is present, you must promote the header manually (e.g., `## [1.2.0] - 2026-04-11`) or run the designated `bump` script.
+- **Hard Rule**: Do NOT run the bump script until the narrative is written.
 
-2. **Append Entry**:
-   - `feat:` cycle → Add under `### Added`
-   - `fix:` cycle → Add under `### Fixed`
-   - `docs:` cycle → Optional (for major architectural docs)
-   - `land:` cycle → Skip
+## Step 3 — Backlog Sync
 
-3. **Verify Header**: Ensure `## [Unreleased]` exists at the top. If missing, create it above the most recent version entry.
+Moves all finished tasks to `## Done` in `tasks.md`.
 
-## Step 3 — BACKLOG: tasks.md
+- **Knowledge/Insights**: Update `.ai-backlog/learned.md` or `troubleshoot.md` with findings.
+- **Zero Context Leak (Curation)**: Final scan for slop. Run `git status` — confirm:
+  - No uncommitted files (like `package-lock.json` or modified instructions).
+  - No unfinished comments (`TODO`, `FIXME`, `...`).
+  - No "AI-isms" or promotional language.
+  - Confirm only intended files are staged.
 
-- Move all `[DONE]` tasks to `## Done`.
-- If no active `tasks.md` existed (`[S]` cycle), skip.
+## Step 4 — Context Update
 
-## Step 4 — BACKLOG: context.md
+Updates `## Now` in `context.md` with the next objective or clears it.
 
-Update `## Now` with the next objective, or set it to `Ready for next instruction.` if nothing is pending.
+## Step 5 — Lint
 
-## Step 5 — KNOWLEDGE (INSIGHTS)
+Runs the project's linting script (e.g., `npm run lint`).
 
-Log any patterns, findings, or rework discovered during this cycle. Curate stale or irrelevant entries.
+- **Auto-fix**: Resolve what is possible.
+- **Blocker**: If non-auto-fixable errors remain, you **MUST** report them and stop. Do not propose a commit with lint errors.
 
-- [ ] **KNOWLEDGE** — Log findings in `.ai-backlog/learned.md` or `troubleshoot.md`. Curate stale items.
-- [ ] **CURATE** — Final scan for slop/AI-isms. Run `git status`.
-- [ ] **PURGE SESSION (GSD)** — Mandatório se chat longo (>10 mensagens). Sugira fechar chat e abrir novo após commit. Limpa "context rot".
-- [ ] **LINT** — Run `lint`, `lint:fix`, or equivalent. Block commit if errors remain.
+## Step 6 — Commit
 
-## Step 6 — CURATE (Zero Context Leak)
+Proposes a commit message following the project's naming discipline and waits for your approval.
 
-Scan all changed files for technical slop. Run `git status` — **You MUST ensure the workspace is 100% clean.**
+- **Autonomous Action**: You are **FORBIDDEN** from running `git commit` or any automated bump script that performs a commit until the Developer says "go".
 
-- No uncommitted files (like `package-lock.json` or modified instructions).
-- No unfinished comments (`TODO`, `FIXME`, `...`).
-- No "AI-isms" or promotional language.
-- Run `git status` — confirm only intended files are staged/committed.
+## Step 7 — Next Step
 
-## Step 7 — LINT
-
-If a lint script exists (`lint`, `lint:fix`, `lint:all`, or a config file is detected):
-
-- Run it and auto-fix what's possible.
-- If non-auto-fixable violations remain, surface them explicitly.
-- Block commit if errors remain.
-
-## Step 8 — COMMIT & RELEASE
-
-Propose the commit message and **WAIT** for explicit Developer approval before committing.
-
-- **Option A (Manual)**: If you just want to save progress without a version bump, commit with `feat:` or `fix:`. Remember you **MUST** have content in `[Unreleased]`.
-- **Option B (End Cycle)**: If the cycle is complete, run `npm run bump <fix|feat|major>` to consolidate the narrative and bump the version.
-
-## Step 9 — PUSH
-
-**ASK** for explicit permission before pushing to remote.
-The `pre-push` hook will **BLOCK** the push if any `[Unreleased]` narrative remains (preventing unversioned leaks to main).
+Suggests what comes next: push · deploy · or a new task.
 
 ---
 
 > [!WARNING]
-> The cycle is **INCOMPLETE** until all applicable steps above are checked.
-> Do not accept new work until END is fully executed.
+> The cycle is **INCOMPLETE** until all 7 steps are checked.
+> Do NOT accept new work or start a new cycle until this phase is finalized.
+
+---
+
+> [!WARNING]
+> The cycle is **INCOMPLETE** until all 7 steps are checked.
+> Do NOT accept new work or start a new cycle until this phase is finalized.

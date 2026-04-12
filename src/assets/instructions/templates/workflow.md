@@ -20,139 +20,95 @@ On every request, classify intent before acting:
 
 ---
 
-## Phase: SPEC (The Contract)
-
-> **Role: Planning**
+## Phase: SPEC (The Contract) — MODE: PLANNING
 
 > <rule name="PhaseSPEC">
 > [!IMPORTANT]
 > Structure the intent before any implementation. **Stop and wait for approval.**
+>
+> **Steps:**
+>
+> 1. **Intent Classification**: Reads the request and identifies the intent: `land:`, `feat:`, `fix:`, `docs:` or `end:`.
+> 2. **Goal Definition**: Writes one sentence describing what will be built and why.
+> 3. **Domain & Contracts**: Defines the domain (Backend / Frontend / Fullstack) and the inputs and outputs.
+> 4. **Verification Checklist**: Creates up to 5 yes/no checkpoints to confirm the work is done right.
+> 5. **Approval Gate**: Stops and waits for your approval before writing any code.
+>    </rule>
 
-### Instructions
-
-- **Goal:** One sentence summary.
-- **Domain:** Backend | Frontend | Fullstack.
-- **Inputs / Outputs:** Clearly defined contracts.
-- **Configuration Contract**: List all required environment variables with their purpose (keys must be **abstract**; no committed templates like `.env.example`).
-- **Specialization**:
-  - **Feat**: Focus on **Domain Modeling** and **Public Interfaces**.
-  - **Fix**: Focus on **Root Cause Analysis (RCA)** and **Reproduction Case**.
-  - **Docs**: Focus on **Structure and Accuracy** — select the appropriate template (CHANGELOG / FEAT / ADR) before drafting.
-- **Verification Checklist:** Binary pass/fail criteria (max 5 items).
-- **Hard Rule**: You **MUST STOP** and wait for explicit Developer approval before proceeding.
-  > </rule>
-
-## Phase: PLAN (The Strategy)
-
-> **Role: Planning**
+## Phase: PLAN (The Strategy) — MODE: PLANNING
 
 > <rule name="PhasePLAN">
 > [!NOTE]
 > After spec is approved, produce a numbered task list ordered by logical execution sequence. **Stop and wait for approval.**
+>
+> **Steps:**
+>
+> 1. **Task Breakdown**: Breaks the spec into concrete tasks. Each one starts with an action verb.
+> 2. **Logical Sequencing**: Orders tasks by dependency: what needs to exist first, goes first.
+> 3. **Effort Tagging**: Tags each task by size: `[S]` small · `[M]` medium · `[L]` large (must be split).
+> 4. **Sub-task Split**: Breaks every `[L]` task into numbered steps: 1.1, 1.2...
+> 5. **Backlog Sync**: Saves all tasks to `.ai-backlog/tasks.md` and marks the first one as in progress.
+> 6. **Approval Gate**: Stops and waits for your approval before writing any code.
+>    </rule>
 
-### Instructions
-
-- **Action Verb + Object**: Each task must be atomic (e.g., "1. Create User repository").
-- **Logical Order**: Tasks must be sequenced so each step unblocks the next — foundation before consumers, contracts before implementations, data layer before orchestration.
-- **Effort Estimate**: Tag each task with a relative size — structural criteria are primary, time is a secondary reference:
-  - `[S]` — 1–2 files, isolated scope, no cross-layer tracing (≤ 5 min)
-  - `[M]` — 3–5 files, cross-layer impact, completes in one session (5–15 min)
-  - `[L]` — 6+ files or cross-session risk — **must** be split into sub-tasks (> 15 min)
-- **Task Decomposition**: Any task tagged `[L]` or that spans multiple layers **MUST** be split into numbered sub-tasks (e.g., `1.1`, `1.2`) to prevent context/token exhaustion.
-- **Backlog Sync**:
-  - `[M]` / `[L]`: write all tasks to `.ai-backlog/tasks.md` under `## Backlog` with `[TODO]`; move first to `## Active` as `[IN_PROGRESS]`.
-  - `[S]`: skip `tasks.md` — update only `context.md ## Now` at END.
-- **Hard Rule**: You **MUST STOP** and wait for explicit Developer approval before proceeding.
-  > </rule>
-
-## Phase: CODE (The Execution)
-
-> **Role: Fast**
+## Phase: CODE (The Execution) — MODE: FAST
 
 > <rule name="PhaseCODE">
 > [!IMPORTANT]
 > Follow the approved plan strictly.
+>
+> **Steps:**
+>
+> 1. **Context Load**: Reads the project's standards and style guide before writing anything (read `engineering-standards.md`, `code-style.md`, and competencies).
+> 2. **Quality Gate**: Reviews every function against the guide's readability rules before moving on.
+>
+> _Narrative Gate Checklist:_
+>
+> - [ ] **Stepdown Rule** — entry point is topmost; callers above callees in the file
+> - [ ] **SLA** — this function orchestrates OR implements, never both in same body
+> - [ ] **Guard Clauses** — all nested conditionals replaced with early returns
+> - [ ] **Lexical Scoping** — one-off helpers defined inside their only caller
+> - [ ] **Explaining Returns** — return value assigned to a named `const`; no bare returns
+> - [ ] **Boolean Prefix** — `isLoading`, `hasError`, `isActive`; never bare `loading`, `error`
+> - [ ] **Code as Documentation** — no "what" comments; only `// why:` for non-obvious constraints
+>
+> 3. **Plan Adherence**: Follows the agreed plan. No extra features or refactors outside what was approved.
+> 4. **Blocker Surface**: Raises blockers immediately. Never quietly works around them.
+>    </rule>
 
-### Instructions
-
-- **Context Load**: Before writing any code, load based on domain scope:
-  - `engineering-standards.md` and `code-style.md` — always required
-  - `competencies/backend.md` — if domain includes backend
-  - `competencies/frontend.md` — if domain includes frontend
-  - `flavor/principles.md` — if architectural pattern is relevant to the task
-
-- **Narrative Gate (hard gate — output before writing each function)**:
-  Output this checklist with ✅/❌ before writing any function body.
-  Any ❌ = redesign first. This gate cannot be skipped or internalized.
-
-  _Structure_
-  - [ ] **Stepdown Rule** — entry point is topmost; callers above callees in the file
-  - [ ] **SLA** — this function orchestrates OR implements, never both in the same body
-  - [ ] **Guard Clauses** — all nested conditionals replaced with early returns
-  - [ ] **Lexical Scoping** — one-off helpers defined inside their only caller, not at module level
-
-  _Expression_
-  - [ ] **Explaining Returns** — return value assigned to a named `const`; no bare `return ok(...)` or anonymous inline objects
-  - [ ] **Shallow Boundaries** — no property chain deeper than 3 levels; extract a named `const` slice first
-  - [ ] **Vertical Density** — related variables grouped together; single blank line between logical blocks
-
-  _Naming_
-  - [ ] **Expressive Names** — every name reveals its role without needing a comment
-  - [ ] **Boolean Prefix** — `isLoading`, `hasError`, `isActive`; never bare `loading`, `error`, `active`
-  - [ ] **No Abbreviations** — `request`/`response`; never `req`/`res`; no framework exception
-
-  _Documentation_
-  - [ ] **Code as Documentation** — no "what" comments; only `// why:` for non-obvious constraints or deliberate trade-offs
-
-  _Module (per file)_
-  - [ ] **Revealing Module Pattern** — named object + named export at file footer; no `export default`
-  - [ ] **No God Modules** — no `helpers.js`, `utils.js`, `common.js`; name files by domain + operation
-
-- **Result Pattern**: Prefer `Result<T>` when it meaningfully clarifies the happy/failure split — do not force it where idiomatic error handling is already clear.
-- **YAGNI**: No features or refactors outside the approved SPEC.
-- **Blockers**: Surface issues immediately; do not work around them silently.
-  > </rule>
-
-## Phase: TEST (The Verification)
-
-> **Role: Fast**
+## Phase: TEST (The Verification) — MODE: FAST
 
 > <rule name="PhaseTEST">
 > [!IMPORTANT]
 > Verify against the Verification Checklist.
+>
+> **Steps:**
+>
+> 1. **Checklist Verification**: Goes through every item on the Spec's Verification Checklist.
+> 2. **Regression Check**: For `fix:` cycles: confirms the bug is gone and nothing else broke.
+> 3. **Fix Loop**: If something fails: fix and re-run. Up to 3 attempts before escalating.
+> 4. **Lint Fix**: Runs the linter and fixes what it can before wrapping up.
+> 5. **Report**: Reports the result of each checklist item and lint status before moving on.
+>    </rule>
 
-### Instructions
-
-- **Regression Focus**: For `fix:` cycles, the test MUST prove the bug no longer reproduces and no regressions exist.
-- **Fix Loop (max 3x)**: If any test FAILs, fix and re-run.
-- **Lint Fix**: After tests pass, run `lint --fix` (or equivalent) if a lint script is available in the project. Resolve all auto-fixable violations before leaving this phase. If non-auto-fixable violations remain, surface them explicitly.
-- **Reporting**: Report PASS/FAIL for every checklist item plus lint status. If still failing after 3 loops, STOP and report.
-  > </rule>
-
-## Phase: END (The Delivery)
-
-> **Role: Planning**
+## Phase: END (The Delivery) — MODE: PLANNING
 
 > <rule name="PhaseEND">
 > [!NOTE]
 > Close the cycle and sync documentation. **No delivery without explicit curation and authorization.**
-
-### END Checklist (mandatory — execute in order, mark each before proceeding)
-
-- [ ] **SUMMARIZE** — one sentence per completed PLAN task written in response
-- [ ] **CHANGELOG** — Prepare your technical narrative in the `CHANGELOG.md` under `## [Unreleased]`. This MUST be done before bumping.
-- [ ] **BUMP** — run \`npm run bump <feat|fix>\` to promote CHANGELOG and package.json version. Skip if not applicable.
-- [ ] **BACKLOG: tasks.md** — all completed tasks moved to `## Done` with `[DONE]` status
-- [ ] **BACKLOG: context.md** — \`## Now\` updated with next objective or cleared
-- [ ] **KNOWLEDGE** — Log any patterns, findings, or rework discovered during this cycle. Update \`.ai-backlog/learned.md\` (for successful feats) or \`.ai-backlog/troubleshoot.md\` (for fixed incidents). Curate stale or irrelevant items.
-- [ ] **CURATE** — final scan for slop, "AI-isms", and unfinished comments. Run `git status` to ensure only intended changes are staged.
-- [ ] **LINT** — if lint script exists (`lint`, `lint:fix`, `lint:all`, or config file detected), run it; auto-fix what's possible; block commit if errors remain
-- [ ] **COMMIT** — **PROPOSE** the commit message and **WAIT** for explicit Developer approval
-- [ ] **PUSH** — **ASK** for explicit permission before pushing to remote
-
+>
+> **Steps:**
+>
+> 1. **Task Summary**: Writes one sentence per completed task.
+> 2. **Changelog**: Adds an entry under `## [Unreleased]`: `### Added` for feat · `### Fixed` for fix.
+> 3. **Backlog Sync**: Moves all finished tasks to `## Done` in `tasks.md`.
+> 4. **Context Update**: Updates `## Now` in `context.md` with the next objective or clears it.
+> 5. **Lint**: Runs any final linting scripts, fixes what's possible, and blocks the commit if errors remain.
+> 6. **Commit**: Proposes a commit message and waits for your approval.
+> 7. **Next Step**: Suggests what comes next: push · deploy · or a new task.
+>
 > [!WARNING]
-> Do NOT consider the cycle closed until every applicable item above is checked.
-> If any item is skipped, the cycle is **INCOMPLETE** — return and complete it before accepting new work.
+> Do NOT perform `git commit` or `git push` autonomously. Always **PROPOSE** and **WAIT**.
 > </rule>
 
 ## Rule: Task Handoff (Cross-Session & Cross-Agent Continuity)
@@ -218,6 +174,9 @@ When a message arrives during an active cycle, classify it before acting:
 | **Plan adjustment**          | "skip step 3" / "add a step for X"        | Update the plan, confirm if the change is significant, continue               |
 | **Pivot**                    | "change the approach entirely"            | Return to SPEC, revise, wait for re-approval                                  |
 | **Unrelated request**        | "fix this other thing while you're at it" | Flag it as out-of-scope. Finish the current cycle first, then start a new one |
+
+**State Recovery**: After any conversational interruption, explicitly state your current position before continuing.
+_Example: "Resuming Cycle Feat — Phase: SPEC — Step 3 (Domain & Contracts)."_
 
 **Hard Rule**: Never interpret a conversational message as a new `land:`, `feat:`, or `fix:` while a cycle is active. The cycle closes only at END.
 

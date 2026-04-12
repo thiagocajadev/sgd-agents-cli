@@ -6,7 +6,7 @@
 
 ## Roles
 
-| Role         | Phases                  | Model default              | Mindset                          |
+| Role         | Phases (Cycles)         | Model default              | Mindset                          |
 | :----------- | :---------------------- | :------------------------- | :------------------------------- |
 | **Planning** | SPEC, PLAN, Review, END | claude-sonnet-4-6 thinking | Analytical — strategy and design |
 | **Fast**     | CODE, TEST              | claude-sonnet-4-6          | Operational — execute and verify |
@@ -18,7 +18,7 @@ Dev → Planning: SPEC + PLAN → [Dev approval]
                ↓
     Planning spawns Fast via Agent tool
                ↓
-         Fast: CODE + TEST
+          Fast: CODE + TEST
                ↓
     Fast returns output to Planning
                ↓
@@ -33,7 +33,7 @@ Dev → Planning: SPEC + PLAN → [Dev approval]
 ## Planning Role — Responsibilities
 
 - Load full governance context before SPEC: backlog, flavor, competencies.
-- Produce SPEC and PLAN. Stop and wait for Dev approval at each.
+- Produce SPEC and PLAN (MODE: PLANNING). Stop and wait for Dev approval at each.
 - When PLAN is approved, invoke the Agent tool to delegate CODE + TEST to Fast.
 - **Handoff prompt must include** (never omit):
   - The approved SPEC (goal, inputs/outputs, verification checklist)
@@ -45,7 +45,7 @@ Dev → Planning: SPEC + PLAN → [Dev approval]
 ## Fast Role — Responsibilities
 
 - Load only what is required for CODE: engineering standards, code style, idiom patterns.
-- Do not re-derive strategy. The SPEC and PLAN are the contract — follow them exactly.
+- Do not re-derive strategy. The SPEC and PLAN are the contract — follow them exactly (MODE: FAST).
 - Apply Narrative Gate before every function body.
 - Run tests and lint. Return a structured report: tasks completed, gate results, test status.
 - Do not proceed to END. Return control to Planning.
@@ -58,7 +58,7 @@ Planning invokes Fast using the Agent tool with `model: "sonnet"`:
 Agent({
   model: "sonnet",
   prompt: `
-    ## Role: Fast — CODE + TEST
+    ## Role: Fast — CODE + TEST — MODE: FAST
 
     You are the Fast agent. Execute only CODE and TEST phases.
     Do not plan, do not strategize. Follow the contract below exactly.
@@ -98,7 +98,7 @@ Any ❌ → Planning fixes inline or sends back to Fast for a targeted correctio
 **If the Agent tool is not available** (Gemini, Cursor, Windsurf, Cline, or any non-Claude Code environment):
 
 - Execute all phases as a single agent.
-- Apply Planning mindset during SPEC and PLAN (analytical, stop for approval).
-- Apply Fast mindset during CODE and TEST (operational, no strategic detours).
-- The role annotations in the workflow (`> **Role: Planning**`, `> **Role: Fast**`) serve as mindset cues — treat them as discipline markers, not execution boundaries.
+- Apply Planning mindset during SPEC and PLAN (MODE: PLANNING, stop for approval).
+- Apply Fast mindset during CODE and TEST (MODE: FAST, no strategic detours).
+- The mode annotations in the workflow (`MODE: PLANNING`, `MODE: FAST`) serve as mindset cues — treat them as discipline markers, not execution boundaries.
 - Proceed through END normally.

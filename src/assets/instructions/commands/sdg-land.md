@@ -14,7 +14,7 @@ We are landing on a project: $ARGUMENTS. This command runs once, at the very beg
 
 ---
 
-## Phase: VISION
+## Phase: VISION — MODE: PLANNING
 
 Parse the input prompt. Extract only what was explicitly stated — no assumptions, no embellishments.
 
@@ -29,7 +29,7 @@ If the prompt is too vague to extract these three points, ask one clarifying que
 
 ---
 
-## Phase: SURVEY (legacy only — skip if greenfield)
+## Phase: SURVEY — MODE: PLANNING (legacy only — skip if greenfield)
 
 Read the project silently. Do not announce findings yet.
 
@@ -41,7 +41,7 @@ If the project has no code at all, treat it as greenfield.
 
 ---
 
-## Phase: SCOPE
+## Phase: SCOPE — MODE: PLANNING
 
 Define the MVP boundary. This is the most important step.
 
@@ -56,7 +56,7 @@ Present the scope boundary before generating the backlog. If the vision is clear
 
 ---
 
-## Phase: BACKLOG
+## Phase: BACKLOG — MODE: PLANNING
 
 Generate two outputs:
 
@@ -105,13 +105,14 @@ Structure the backlog as ordered epics, each decomposed into concrete `feat:` ta
 ### Epic 2 — [Name]
 
 - [TODO] feat: [atomic task]
+- [TODO] feat: [atomic task]
 ```
 
 Move the first task of Epic 1 to `## Active` as `[IN_PROGRESS]` only after the developer approves.
 
 ---
 
-## Phase: STOP
+## Phase: STOP — MODE: PLANNING
 
 Present a summary of what was produced:
 

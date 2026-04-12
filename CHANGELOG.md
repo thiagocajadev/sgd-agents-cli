@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Hardened Action Workflow** — refactored the Working Protocol to a strict 5-phase execution flow (SPEC, PLAN, CODE, TEST, END) with mandatory manual approval gates for delivery.
+- **Token Discipline 2.0** — retired upfront "Step 0" context loading in favor of just-in-time loading during SPEC and CODE phases based on specific demand.
+- **Narrative Gate Restoration** — reintegrated the full function-level quality checklist into the CODE phase.
+- **Official English Standardization** — synchronized all instruction assets with official English terminology and "MODE: PLANNING/FAST" mindset labels.
+
 ### Fixed
 
 ## [1.14.2] - 2026-04-11
