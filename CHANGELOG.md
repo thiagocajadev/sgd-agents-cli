@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **CHANGELOG Date Timezone Drift** — switched from UTC-based `toISOString()` to local `en-CA` formatting in all bump scripts and templates; ensures dates in promoted headers match the developer's machine clock instead of jumping +1 day ahead in late-night releases.
 
-## [1.14.0] - 2026-04-12
+## [1.14.0] - 2026-04-11
 
 ### Added
 
@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-## [1.13.0] - 2026-04-12
+## [1.13.0] - 2026-04-11
 
 ### Added
 
@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-## [1.11.3] - 2026-04-12
+## [1.11.3] - 2026-04-11
 
 ### Added
 
@@ -53,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Missing Skill Recovery** — Fixed a bug where `.ai/skill/CAVEMAN.md` was not generated during project initialization.
 
-## [1.11.2] - 2026-04-12
+## [1.11.2] - 2026-04-11
 
 ### Added
 
@@ -61,7 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-## [1.11.1] - 2026-04-12
+## [1.11.1] - 2026-04-11
 
 ### Added
 
@@ -69,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Release Sync Recovery** — synchronized missing source assets in `src/assets/` and updated backlog context after metadata-only bump.
 
-## [1.11.0] - 2026-04-12
+## [1.11.0] - 2026-04-11
 
 ### Added
 
