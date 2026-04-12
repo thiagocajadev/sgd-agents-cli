@@ -6,16 +6,15 @@ We are correcting a recorded incident: $ARGUMENTS. This command prepares the con
 
 ## Phase: SPEC (The Contract) — MODE: PLANNING
 
-Follow the **Phase: SPEC** from the **Working Protocol**, ensuring all 5 steps are executed and announced. Fix specialization:
+Follow the **Phase: SPEC** from the **Working Protocol**. Apply these specific Context Charges:
 
-- **1. Intent Classification**: Confirmed as `fix:`.
-- **2. Goal Definition**: Writes one sentence describing the incident and the reason for the fix.
-- **3. Domain & Contracts**:
+- **Step 1 (Intent)**: Confirmed as `fix:`.
+- **Step 2 (Goal)**: Highlight the incident and the core reason for the fix.
+- **Step 3 (Domain & Contracts)**:
   - **Root Cause Analysis (RCA)**: Explicitly identify the layer, file, and line where the contract or logic breaks.
   - **Observed vs Expected**: Contrast the current broken behavior with the desired outcome.
   - **Minimal Surface**: Ensure the proposed fix targets ONLY the bug. No refactors allowed.
-- **4. Verification Checklist**: Creates up to 5 yes/no checkpoints, including the **Reproduction Case** as the primary validator.
-- **5. Approval Gate**: Stops and waits for your approval before writing any code.
+- **Step 4 (Verification)**: Ensure the **Reproduction Case** is the primary validator checkpoint.
 
 ---
 

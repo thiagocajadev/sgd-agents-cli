@@ -41,9 +41,8 @@ function buildMasterInstructions(selections) {
   const manifesto = buildStaffManifesto();
   const instructionLinks = buildInstructionLinks(selections);
 
-  const isMultiAgent = selections.ide === 'claude' || selections.ide === 'all';
-  const agentRolesBlock = isMultiAgent ? buildAgentRolesBlock() : '';
-  const agentRolesSeparator = isMultiAgent ? '\n\n' : '';
+  const agentRolesBlock = buildAgentRolesBlock();
+  const agentRolesSeparator = '\n\n';
 
   const fullInstructionContent = `${manifesto}\n\n${workflow}${agentRolesSeparator}${agentRolesBlock}\n\n${instructionLinks}`;
 
@@ -54,14 +53,7 @@ function buildMasterInstructions(selections) {
       ## Agent Roles
 
       > [!NOTE]
-      > Multi-agent execution is active. Read \`.ai/instructions/core/agent-roles.md\` for the full protocol.
-
-      | Role         | Phases                  | Model                      |
-      | :----------- | :---------------------- | :------------------------- |
-      | **Planning** | SPEC, PLAN, Review, END | claude-sonnet-4-6 thinking |
-      | **Fast**     | CODE, TEST              | claude-sonnet-4-6          |
-
-      **Handoff:** Planning spawns Fast via the Agent tool when PLAN is approved. Fast returns a structured report. Planning reviews before END.`;
+      > Read \`.ai/instructions/core/agent-roles.md\` for the Agent Roles and Execution Protocol.`;
 
     return agentRolesString;
   }
@@ -70,56 +62,19 @@ function buildMasterInstructions(selections) {
     const manifestoString = dedent`
       # Staff Engineer — Governance Command Center
 
-      <ruleset name="StaffManifesto">
-
-      ## The 4 Laws of the SDG Constitution
-
-      ### 1. The Law of Hardening (Security-First)
-      > <rule name="LawOfHardening">
-      > Total configuration isolation. Zero runtime surprises. Fail fast if the environment is incomplete. Default to deny at every boundary.
-      > </rule>
-
-      ### 2. The Law of Resilience (Stability)
-      > <rule name="LawOfResilience">
-      > Defensive dominance. Software must withstand both failure and repetition. Idempotency and graceful degradation are non-negotiable.
-      > </rule>
-
-      ### 3. The Law of the Cascade (Narrative)
-      > <rule name="NarrativeCascade">
       > [!IMPORTANT]
-      > **Code should be like a short story, a complete and meaningful narrative.**
-      >
-      > **The Principles:**
-      > - **Stepdown Rule**: Callers sitting at the top. The file reads top-down from headline to details.
-      > - **Rich Object Flow**: Peer elements receive the same rich object, maintaining consistent contracts.
-      > - **Explaining Returns**: The return reflects the final task or a named result. Avoid large anonymous objects.
-      > - **SLA (Single Level of Abstraction)**: Orchestrate or implement — never both in the same body.
-      > - **Shallow Boundaries**: Destructure Level 1/2. Stop deep navigation dead in its tracks.
-      > - **Vertical Density**: Visual grouping of related variables/logic with single blank lines (para-logical grouping).
-      > - **Revealing Module Pattern**: Define functions/logic first, create a named object at the end, then export only that object.
-      > - **Lexical Scoping**: One-off helpers must be encapsulated inside their parent's scope.
-      > - **Humanized Writing**: Apply \`.ai/instructions/core/writing-soul.md\` to all documentation, UI text, and communication. Eliminate "AI-isms" and promotional slop to maintain a pulse in every technical artifact.
-      >
-      > *Comments explain "why", never "what". If naming is right, comments disappear.*
-      > </rule>
-
-      ### 4. The Law of Visual Excellence (Aesthetics)
-      > <rule name="LawOfVisualExcellence">
-      > Premium aesthetics by default. High contrast, modern typography, and meaningful micro-interactions. Maintain the chosen design language with absolute rigor.
-      > </rule>
-
-      </ruleset>`;
+      > This project follows the Universal Engineering Manifesto.
+      > You MUST read and adhere strictly to the 6 Laws defined in \`.ai/instructions/core/staff-dna.md\`.
+    `;
 
     return manifestoString;
   }
 
   function buildInstructionLinks(currentSelections) {
-    const isMultiAgentLinks = currentSelections.ide === 'claude' || currentSelections.ide === 'all';
-
     const blocks = [
       buildContextRoutingHeader(),
       buildProjectContextRouting(),
-      buildCoreGovernanceRouting(isMultiAgentLinks),
+      buildCoreGovernanceRouting(),
       buildArchitecturalContextRouting(currentSelections.flavor),
       buildTechnicalExecutionRouting(currentSelections.idioms),
       buildUIUXDesignRouting(currentSelections),
@@ -154,10 +109,8 @@ function buildMasterInstructions(selections) {
       return headerString;
     }
 
-    function buildCoreGovernanceRouting(includeAgentRoles) {
-      const agentRolesRow = includeAgentRoles
-        ? `\n| \`.ai/instructions/core/agent-roles.md\` | Multi-Agent Roles & Handoff Protocol |`
-        : '';
+    function buildCoreGovernanceRouting() {
+      const agentRolesRow = `\n| \`.ai/instructions/core/agent-roles.md\` | Multi-Agent Roles & Handoff Protocol |`;
 
       const governanceString = dedent`
         **Universal Governance**
@@ -437,12 +390,6 @@ function writeAgentConfig(targetDir, content, requestedAgents = []) {
   const skillDir = path.join(targetDir, '.ai', 'skill');
   if (!fs.existsSync(skillDir)) fs.mkdirSync(skillDir, { recursive: true });
   fs.writeFileSync(path.join(skillDir, 'AGENTS.md'), content);
-
-  const cavemanSource = path.join(SOURCE_INSTRUCTIONS, 'core', 'caveman.md');
-  if (fs.existsSync(cavemanSource)) {
-    const cavemanContent = fs.readFileSync(cavemanSource, 'utf8');
-    fs.writeFileSync(path.join(skillDir, 'CAVEMAN.md'), cavemanContent);
-  }
 
   if (!requestedAgents || requestedAgents.length === 0) return;
 

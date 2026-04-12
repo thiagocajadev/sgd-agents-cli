@@ -5,6 +5,16 @@
 > [!NOTE]
 > Standard operational workflow for AI agents. This is the **Single Source of Truth** for the context-driven lifecycle.
 
+## 5 Steps
+
+A practical workflow for every development cycle:
+
+- **SPEC (THE CONTRACT)**: Write down what you're building and why. No code until there's a clear agreement.
+- **PLAN (THE STRATEGY)**: Break the work into ordered steps. Small and clear enough that anyone can follow.
+- **CODE (THE EXECUTION)**: Follow the plan. Write what was agreed, nothing more.
+- **TEST (THE VERIFICATION)**: Check that what was built matches what was agreed. Catch problems before they ship.
+- **END (THE DELIVERY)**: Close the cycle: update the changelog, sync the backlog, and move on.
+
 ## Intent Routing
 
 On every request, classify intent before acting:
@@ -26,8 +36,6 @@ On every request, classify intent before acting:
 > [!IMPORTANT]
 > Structure the intent before any implementation. **Stop and wait for approval.**
 >
-> **Steps:**
->
 > 1. **Intent Classification**: Reads the request and identifies the intent: `land:`, `feat:`, `fix:`, `docs:` or `end:`.
 > 2. **Goal Definition**: Writes one sentence describing what will be built and why.
 > 3. **Domain & Contracts**: Defines the domain (Backend / Frontend / Fullstack) and the inputs and outputs.
@@ -40,8 +48,6 @@ On every request, classify intent before acting:
 > <rule name="PhasePLAN">
 > [!NOTE]
 > After spec is approved, produce a numbered task list ordered by logical execution sequence. **Stop and wait for approval.**
->
-> **Steps:**
 >
 > 1. **Task Breakdown**: Breaks the spec into concrete tasks. Each one starts with an action verb.
 > 2. **Logical Sequencing**: Orders tasks by dependency: what needs to exist first, goes first.
@@ -56,8 +62,6 @@ On every request, classify intent before acting:
 > <rule name="PhaseCODE">
 > [!IMPORTANT]
 > Follow the approved plan strictly.
->
-> **Steps:**
 >
 > 1. **Context Load**: Reads the project's standards and style guide before writing anything (read `engineering-standards.md`, `code-style.md`, and competencies).
 > 2. **Quality Gate**: Reviews every function against the guide's readability rules before moving on.
@@ -80,9 +84,7 @@ On every request, classify intent before acting:
 
 > <rule name="PhaseTEST">
 > [!IMPORTANT]
-> Verify against the Verification Checklist.
->
-> **Steps:**
+> Check that what was built matches what was agreed.
 >
 > 1. **Checklist Verification**: Goes through every item on the Spec's Verification Checklist.
 > 2. **Regression Check**: For `fix:` cycles: confirms the bug is gone and nothing else broke.
@@ -95,20 +97,18 @@ On every request, classify intent before acting:
 
 > <rule name="PhaseEND">
 > [!NOTE]
-> Close the cycle and sync documentation. **No delivery without explicit curation and authorization.**
->
-> **Steps:**
+> Close the cycle: update the changelog, sync the backlog, and move on.
 >
 > 1. **Task Summary**: Writes one sentence per completed task.
-> 2. **Changelog**: Adds a narrative entry under `## [Unreleased]`.
-> 3. **Zero-Leak Staging**: Runs `git add .` to capture all side-effects and metadata.
-> 4. **Context Resilience**: Updates `context.md` (or bootstraps it if missing).
-> 5. **Self-Healing Quality**: Runs linting and attempts auto-repair (`lint --fix`) if needed.
-> 6. **Release (Audit & Commit)**: Runs `npm run bump <feat|fix>`, performs a final workspace audit, and proposes a semantic release commit.
-> 7. **Final Delivery**: Proposes `git push` and a fresh session.
+> 2. **Changelog**: Adds an entry under `## [Unreleased]`: `### Added` for feat · `### Fixed` for fix.
+> 3. **Backlog Sync**: Moves all finished tasks to `## Done` in `tasks.md`.
+> 4. **Context Update**: Updates `## Now` in `context.md` with the next objective or clears it.
+> 5. **Lint**: Runs the linter, fixes what's possible, and blocks the commit if errors remain.
+> 6. **Commit**: Proposes a commit message and waits for your approval.
+> 7. **Next step**: Suggests what comes next: push · deploy · or a new task.
 >
 > [!WARNING]
-> Do NOT perform `git commit` or `git push` autonomously. Always **PROPOSE** and **WAIT**.
+> Do NOT perform `git commit` autonomously. Always **PROPOSE** and **WAIT**.
 > </rule>
 
 ## Rule: Task Handoff (Cross-Session & Cross-Agent Continuity)
@@ -187,7 +187,7 @@ _Example: "Resuming Cycle Feat — Phase: SPEC — Step 3 (Domain & Contracts)."
 > <rule name="TokenDiscipline">
 > [!IMPORTANT]
 > **Maximize technical density. Minimal linguistic fluff.**
-> Follow `.ai/skill/CAVEMAN.md` (Caveman Full) for all chat interactions.
+> Follow `.ai/instructions/core/caveman.md` (Caveman Full) for all chat interactions.
 
 - **GSD (Fresh Contexts)**: After atomic task `END`, suggest new chat session to purge context rot.
 - **Mouth Smaller**: No articles, fillers, or hedging. Start with conclusions.

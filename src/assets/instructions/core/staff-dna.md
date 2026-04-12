@@ -3,38 +3,51 @@
 <ruleset name="UniversalStaffEngineeringDNA">
 
 > [!NOTE]
-> This ruleset defines the technical standards governing code quality, architecture, and agent interaction. specialized rulesets inherit these mandates for implementation details.
+> This ruleset defines the technical standards governing code quality, architecture, and agent interaction. Specialized rulesets inherit these mandates for implementation details.
 
-## Law 1: The Law of Hardening (Security Execution)
+## Law 1: The Law of Hardening (Security-First)
 
 <rule name="LawOfHardening">
 > [!IMPORTANT]
-> **Configuration isolation and boundary-level security enforcement. Fail-fast protocols for incomplete environments. Default-to-deny access control.**
+> **Total configuration isolation. Zero runtime surprises. Fail fast if the environment is incomplete. Default to deny at every boundary.**
 > [AppSec & Hardening](.ai/instructions/core/security.md) | [DevSecOps Pipeline](.ai/instructions/core/security-pipeline.md)
 </rule>
 
-## Law 2: The Law of Resilience (Fault Tolerance)
+## Law 2: The Law of Resilience (Stability)
 
 <rule name="LawOfResilience">
 > [!IMPORTANT]
-> **Defensive design for system stability and execution repetition. Idempotency and failure management protocols (graceful degradation) are mandatory standards.**
+> **Defensive dominance. Software must withstand both failure and repetition. Idempotency and graceful degradation are non-negotiable.**
 > [Engineering & Resilience Standards](.ai/instructions/core/engineering-standards.md)
 </rule>
 
-## Law 3: The Law of the Cascade (Orchestration Scansion)
+## Law 3: The Law of the Cascade (Narrative)
 
 <rule name="NarrativeCascade">
 > [!IMPORTANT]
-> **Caller-callee separation using top-down orchestration. Entry points must reveal high-level logic through vertical density and para-logical grouping.**
-> Code is the documentation — expressive naming replaces block comments. If a comment is required to explain logic, refactor the naming until it remains self-describing.
+> **Code should be like a short story, a complete and meaningful narrative.**
+>
+> **The Principles:**
+> - **Stepdown Rule**: Callers sitting at the top. The file reads top-down from headline to details.
+> - **Rich Object Flow**: Peer elements receive the same rich object, maintaining consistent contracts.
+> - **Explaining Returns**: The return reflects the final task or a named result. Avoid large anonymous objects.
+> - **SLA (Single Level of Abstraction)**: Orchestrate or implement — never both in the same body.
+> - **Shallow Boundaries**: Destructure Level 1/2. Stop deep navigation dead in its tracks.
+> - **Vertical Density**: Visual grouping of related variables/logic with single blank lines (para-logical grouping).
+> - **Revealing Module Pattern**: Define functions/logic first, create a named object at the end, then export only that object.
+> - **Lexical Scoping**: One-off helpers must be encapsulated inside their parent's scope.
+> - **Humanized Writing**: Apply `.ai/instructions/core/writing-soul.md` to all documentation, UI text, and communication. Eliminate "AI-isms" and promotional slop to maintain a pulse in every technical artifact.
+>
+> *Comments explain "why", never "what". If naming is right, comments disappear.*
+>
 > See `NarrativeCascade` rule → [Engineering Standards](.ai/instructions/core/engineering-standards.md)
 </rule>
 
-## Law 4: The Law of Visual Excellence (Consistency)
+## Law 4: The Law of Visual Excellence (Aesthetics)
 
 <rule name="LawOfVisualExcellence">
 > [!IMPORTANT]
-> **Rigorous adherence to semantic design tokens. High-contrast typography and layout consistency for technical interfaces.**
+> **Premium aesthetics by default. High contrast, modern typography, and meaningful micro-interactions. Maintain the chosen design language with absolute rigor.**
 > [UI/UX Standards & Design Tokens](.ai/instructions/core/ui/standards.md)
 </rule>
 

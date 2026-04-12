@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [1.17.0] - 2026-04-12
+
+### Added
+
+- **Agent Governance Refactor** — Hardened the SDG Agents CLI workflow instructions. Redefined the 6 core Staff DNA laws as the undisputed Single Source of Truth (SSOT), removing duplication from the Assembler.
+- **Environment-Agnostic Roles** — Refactored `.ai/instructions/core/agent-roles.md` to define Single-Agent as the universal standard execution trace across IDEs, treating sub-agent orchestration (`claude`) strictly as an enhanced extension.
+- **Token Discipline Consolidation** — Streamlined `CAVEMAN.md` generation to eliminate redundant path allocations within the workspace.
+
+### Fixed
+
 ## [1.16.0] - 2026-04-12
 
 ### Added

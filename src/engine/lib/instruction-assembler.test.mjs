@@ -118,13 +118,11 @@ describe('InstructionAssembler', () => {
   });
 
   describe('buildMasterInstructions()', () => {
-    it('should include all 4 Golden Laws', () => {
+    it('should include pointer to Universal Engineering Manifesto', () => {
       const selections = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
       const result = buildMasterInstructions(selections);
-      assert.ok(result.includes('The Law of Hardening'));
-      assert.ok(result.includes('The Law of Resilience'));
-      assert.ok(result.includes('The Law of the Cascade'));
-      assert.ok(result.includes('The Law of Visual Excellence'));
+      assert.ok(result.includes('Universal Engineering Manifesto'));
+      assert.ok(result.includes('.ai/instructions/core/staff-dna.md'));
     });
 
     it('should include land: in the intent routing table', () => {
@@ -197,60 +195,16 @@ describe('InstructionAssembler', () => {
       assert.ok(result.includes('idioms/python/patterns.md'));
     });
 
-    it('should include Agent Roles block when ide is claude', () => {
+    it('should unconditionally include Agent Roles block', () => {
       const selections = {
         flavor: 'lite',
         idioms: ['go'],
         versions: {},
         designPreset: null,
-        ide: 'claude',
       };
       const result = buildMasterInstructions(selections);
       assert.ok(result.includes('## Agent Roles'));
       assert.ok(result.includes('agent-roles.md'));
-      assert.ok(result.includes('Planning'));
-      assert.ok(result.includes('Fast'));
-    });
-
-    it('should include Agent Roles block when ide is all', () => {
-      const selections = {
-        flavor: 'lite',
-        idioms: ['go'],
-        versions: {},
-        designPreset: null,
-        ide: 'all',
-      };
-      const result = buildMasterInstructions(selections);
-      assert.ok(result.includes('## Agent Roles'));
-      assert.ok(result.includes('agent-roles.md'));
-    });
-
-    it('should not include Agent Roles block for non-Claude IDEs', () => {
-      const ides = ['cursor', 'windsurf', 'vscode', 'roocode', 'none'];
-      for (const ide of ides) {
-        const selections = {
-          flavor: 'lite',
-          idioms: ['go'],
-          versions: {},
-          designPreset: null,
-          ide,
-        };
-        const result = buildMasterInstructions(selections);
-        assert.ok(
-          !result.includes('## Agent Roles'),
-          `Expected no Agent Roles block for ide: ${ide}`
-        );
-        assert.ok(
-          !result.includes('agent-roles.md'),
-          `Expected no agent-roles.md ref for ide: ${ide}`
-        );
-      }
-    });
-
-    it('should not include Agent Roles block when ide is undefined', () => {
-      const selections = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
-      const result = buildMasterInstructions(selections);
-      assert.ok(!result.includes('## Agent Roles'));
     });
   });
 });

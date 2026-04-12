@@ -6,58 +6,54 @@ This command closes the current development cycle and is the **Ultimate Guaranto
 
 ## Step 1 — Task Summary
 
-Write a concise summary of the work performed.
+**Writes one sentence per completed task.**
 
-- One sentence per completed task from `.ai-backlog/tasks.md`.
+- Read `.ai-backlog/tasks.md` and summarize the work performed.
 - Focus on technical outcomes.
 
-## Step 2 — Changelog Narrative
+## Step 2 — Changelog
 
-Update `CHANGELOG.md` to maintain the project's technical history.
+**Adds an entry under `## [Unreleased]`: `### Added` for feat · `### Fixed` for fix.**
 
-- **Action**: Add entries under `## [Unreleased]`.
-- **Categorization**: Use `### Added` for `feat:` or `### Fixed` for `fix:`.
-- **Integrity**: Ensure the narrative allows for a professional semantic release.
+- Update `CHANGELOG.md` to maintain the project's technical history.
+- Ensure the narrative allows for a professional semantic release.
 
-## Step 3 — Backlog Sync & Catch-all Staging
+## Step 3 — Backlog Sync
 
-Synchronize state and ensure ALL side-effects are captured.
+**Moves all finished tasks to `## Done` in `tasks.md`.**
 
-- **Backlog**: Move all `Active` tasks to `Done` in `.ai-backlog/tasks.md`.
-- **Catch-all Stage**: Run `git add .` to capture metadata updates (package-lock.json, manifests) and any uncommitted side-effects.
+- Clean up `.ai-backlog/tasks.md` so the active queue is reset for the next cycle.
 - **Audit**: Perform a **Zero Context Leak** check: no `TODO` remnants or internal-only files.
 
-## Step 4 — Context Resilience (Bootstrap & Update)
+## Step 4 — Context Update
 
-Update the project context. If the project state is lost, this is the healing moment.
+**Updates `## Now` in `context.md` with the next objective or clears it.**
 
-- **Self-Healing**: If `.ai-backlog/context.md` is missing, analyze the project and **Bootstrap** it using the template from `workflow.md`.
-- **Update**: Set `## Now` to `Ready for next instruction.`.
+- If `.ai-backlog/context.md` is missing, you must bootstrap it using the template from `workflow.md`.
+- Ensure the current objective is marked complete and clear out obsolete state.
 
-## Step 5 — Technical Quality (Self-Healing Lint)
+## Step 5 — Lint
 
-Perform a final quality sweep. No delivery with broken quality.
+**Runs the linter, fixes what's possible, and blocks the commit if errors remain.**
 
-- **Lint**: Run the project's linting script.
-- **Self-Healing**: If lint fails, you **MUST** run a one-time repair attempt (e.g., `npm run lint -- --fix`) before reporting a failure.
-- **Blocker**: If non-auto-fixable errors remain, you **MUST** report them and stop.
+- Run the project's linting script with auto-fix (e.g., `npm run lint -- --fix`).
+- If non-auto-fixable errors remain, you **MUST** report them and stop.
 
-## Step 6 — Semantic Release (Audit & Commit)
+## Step 6 — Commit
 
-Execute the delivery using the automated semantic pipeline.
+**Proposes a commit message and waits for your approval.**
 
-1. **Identify**: Determine if the cycle was a `feat` or `fix`.
-2. **Execute**: Run `npm run bump <feat|fix>`.
-3. **Workspace Audit**: Run `git status` to ensure the staging area is 100% clean and nothing was left behind after the bump. Stage any remaining metadata changes with `git add .`.
-4. **Semantic Commit**: Propose exactly: `git commit -m "<feat|fix>: release v<version>"`.
-5. **Approval**: **PROPOSE** and **WAIT** for explicit Developer authorization.
+- Execute the semantic pipeline: run `npm run bump <feat|fix>`.
+- Audit the workspace and run `git add .` to capture metadata and uncommitted side-effects.
+- Propose exactly: `git commit -m "<feat|fix>: release v<version>"`.
+- **PROPOSE** and **WAIT** for explicit Developer authorization.
 
-## Step 7 — Final Stroke (Push & Purge)
+## Step 7 — Next step
 
-Complete the delivery cycle.
+**Suggests what comes next: push · deploy · or a new task.**
 
-- **Push**: Propose `git push` to synchronize remote.
-- **GSD**: Suggest starting a brand new chat session to purge the current context and prevent token rot.
+- Propose `git push` to synchronize remote.
+- Suggest starting a new cycle (`feat:`, `fix:`) or purging the agent session to restore token efficiency.
 
 ---
 

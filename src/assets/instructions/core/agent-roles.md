@@ -1,19 +1,38 @@
-# Agent Roles — Multi-Agent Execution Protocol
+# Agent Roles & Execution Protocol
 
 > [!NOTE]
-> This protocol is active when running inside **Claude Code**.
-> If you are a different agent or model, skip to **Fallback: Single-Agent Mode** at the bottom.
+> This protocol defines how AI Agents execute tasks. The universal baseline is **Single-Agent Mode**, but platforms with native Multi-Agent orchestration (e.g., Claude Code, autonomous Agentic frameworks) can utilize specialized sub-agent routing.
 
-## Roles
+## Execution Mindsets (Phases)
 
-| Role         | Phases (Cycles)         | Model default              | Mindset                          |
-| :----------- | :---------------------- | :------------------------- | :------------------------------- |
-| **Planning** | SPEC, PLAN, Review, END | claude-sonnet-4-6 thinking | Analytical — strategy and design |
-| **Fast**     | CODE, TEST              | claude-sonnet-4-6          | Operational — execute and verify |
+Regardless of the environment, execution must respect these distinct mindsets:
 
-## Execution Flow
+| Role / Mindset | Phases (Cycles)         | Responsibilities                 |
+| :------------- | :---------------------- | :------------------------------- |
+| **Planning**   | SPEC, PLAN, Review, END | Analytical — strategy and design |
+| **Fast**       | CODE, TEST              | Operational — execute and verify |
 
-```
+---
+
+## Baseline: Single-Agent Mode
+
+**This is the standard execution path for all environments (Cursor, Windsurf, Cline, Gemini, Copilot).**
+
+- Execute all phases as a single agent.
+- Apply the **Planning** mindset during SPEC and PLAN (MODE: PLANNING, stop for approval). Focus on analysis and constraints.
+- Apply the **Fast** mindset during CODE and TEST (MODE: FAST, no strategic detours). Focus purely on implementing the contract.
+- The mode annotations in the workflow (`MODE: PLANNING`, `MODE: FAST`) serve as behavioral discipline markers, not execution boundaries. Do not deviate from the approved PLAN during CODE.
+- Proceed through the END phase normally.
+
+---
+
+## Extension: Multi-Agent Mode (Native Orchestration)
+
+If your platform supports spawning sub-agents (e.g., using an `Agent()` tool), use this protocol to delegate execution, reducing primary context load.
+
+### Execution Flow
+
+```text
 Dev → Planning: SPEC + PLAN → [Dev approval]
                ↓
     Planning spawns Fast via Agent tool
@@ -25,80 +44,27 @@ Dev → Planning: SPEC + PLAN → [Dev approval]
     Planning: Review + Report → [Dev approval] → END
 ```
 
-## Scope Rule — When to Use Multi-Agent
+### Delegation Rules
 
-- **[M] and [L] tasks**: always spawn Fast after PLAN approval.
-- **[S] tasks** (1–2 files, isolated scope): Planning executes CODE + TEST directly — no Fast spawn. Overhead exceeds benefit at this scale.
+1. **[M] and [L] tasks**: Always spawn Fast after PLAN approval.
+2. **[S] tasks**: Planning executes CODE + TEST directly (Single-Agent Mode workflow). The overhead of agent transition exceeds the context benefit.
 
-## Planning Role — Responsibilities
+### Handoff Prompt Structure
 
-- Load full governance context before SPEC: backlog, flavor, competencies.
-- Produce SPEC and PLAN (MODE: PLANNING). Stop and wait for Dev approval at each.
-- When PLAN is approved, invoke the Agent tool to delegate CODE + TEST to Fast.
-- **Handoff prompt must include** (never omit):
-  - The approved SPEC (goal, inputs/outputs, verification checklist)
-  - The approved PLAN (task list with file paths)
-  - Relevant context refs: `engineering-standards.md`, `code-style.md`, idiom patterns
-- After Fast returns: review against the Narrative Gate and Verification Checklist.
-- Report to Dev with PASS/FAIL per checklist item before proceeding to END.
+When Planning invokes Fast, the payload MUST include:
 
-## Fast Role — Responsibilities
+1. The approved SPEC (goal, inputs/outputs, verification checklist).
+2. The approved PLAN (task list with file paths).
+3. Relevant context references (`engineering-standards.md`, `code-style.md`, idiom patterns).
+4. **Deliverable**: Request tasks completed, Narrative Gate results per function, test pass/fail logs, and lint status.
 
-- Load only what is required for CODE: engineering standards, code style, idiom patterns.
-- Do not re-derive strategy. The SPEC and PLAN are the contract — follow them exactly (MODE: FAST).
-- Apply Narrative Gate before every function body.
-- Run tests and lint. Return a structured report: tasks completed, gate results, test status.
-- Do not proceed to END. Return control to Planning.
+### Review Gate
 
-## Handoff — Agent Tool Invocation
-
-Planning invokes Fast using the Agent tool with `model: "sonnet"`:
-
-```
-Agent({
-  model: "sonnet",
-  prompt: `
-    ## Role: Fast — CODE + TEST — MODE: FAST
-
-    You are the Fast agent. Execute only CODE and TEST phases.
-    Do not plan, do not strategize. Follow the contract below exactly.
-
-    ## Approved SPEC
-    [paste SPEC here]
-
-    ## Approved PLAN
-    [paste task list here]
-
-    ## Context to load before coding
-    - .ai/instructions/core/engineering-standards.md
-    - .ai/instructions/core/code-style.md
-    - .ai/instructions/idioms/<stack>/patterns.md
-
-    ## Deliverable
-    Return: tasks completed, Narrative Gate results per function, test PASS/FAIL, lint status.
-  `
-})
-```
-
-## Review Gate (Planning, post-Fast)
-
-Before reporting to Dev, Planning checks:
+Before reporting back to the Developer, Planning must verify Fast's output:
 
 - [ ] Every PLAN task is marked complete in Fast's report
-- [ ] Narrative Gate passed for all functions written
-- [ ] Tests pass — no regressions
-- [ ] Lint clean
+- [ ] Narrative Gate (Stepdown rule, SLA) passed for all modified code
+- [ ] Tests pass (no regressions)
+- [ ] Linter is clean
 
-Any ❌ → Planning fixes inline or sends back to Fast for a targeted correction (max 1 loop).
-
----
-
-## Fallback: Single-Agent Mode
-
-**If the Agent tool is not available** (Gemini, Cursor, Windsurf, Cline, or any non-Claude Code environment):
-
-- Execute all phases as a single agent.
-- Apply Planning mindset during SPEC and PLAN (MODE: PLANNING, stop for approval).
-- Apply Fast mindset during CODE and TEST (MODE: FAST, no strategic detours).
-- The mode annotations in the workflow (`MODE: PLANNING`, `MODE: FAST`) serve as mindset cues — treat them as discipline markers, not execution boundaries.
-- Proceed through END normally.
+If Fast fails any metric, Planning fixes it inline or sends it back to Fast for a single, targeted correction (max 1 loop).
