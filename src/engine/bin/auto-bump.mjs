@@ -34,10 +34,9 @@ async function run() {
   // 2. Sync Package.json files
   syncAllPackages(nextVersion);
 
-  // 3. Commit the bump
-  stageAndCommit(nextVersion);
-
+  // 3. Status
   console.log(`  auto-bump: ${rootPkg.version} → ${nextVersion} (${bumpType})`);
+  console.log('  auto-bump: files updated. Manual commit required.');
   return success({ from: rootPkg.version, to: nextVersion, bump: bumpType });
 }
 
@@ -102,11 +101,6 @@ function syncAllPackages(nextVersion) {
   for (const pkgPath of paths) {
     writeVersion(pkgPath, nextVersion);
   }
-}
-
-function stageAndCommit(nextVersion) {
-  execSync('git add .', { stdio: 'inherit' });
-  execSync(`git commit -m "chore: bump version to ${nextVersion}"`, { stdio: 'inherit' });
 }
 
 // --- File Helpers ---

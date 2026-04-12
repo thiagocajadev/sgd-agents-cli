@@ -46,7 +46,8 @@ function run() {
     updateChangelog(newVersion);
 
     console.log(`✅ Success: ${oldVersion} → ${newVersion}`);
-    console.log('🔗 CHANGELOG.md updated and promoted to current date.');
+    console.log('🔗 CHANGELOG.md updated and promoted.');
+    console.log('⚠️  Files updated. Run "git commit" manually after approval.');
   } catch (error) {
     console.error('❌ Error during bump strategy:', error.message);
     process.exit(1);

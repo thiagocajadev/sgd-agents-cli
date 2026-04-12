@@ -9,7 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Working on next cycle.
+
+## [1.14.2] - 2026-04-11
+
 ### Fixed
+
+- **Hardening Agent Governance** — decoupled versioning from committing in `bump.mjs` and `auto-bump.mjs`. All manual and automated bumps now require an explicit, approved commit after files are updated.
+- **Protocol instructions update** — hardened `sdg-end.md` to reflect the decoupling of the release cycle.
 
 ## [1.14.1] - 2026-04-11
 

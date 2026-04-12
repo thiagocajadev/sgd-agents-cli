@@ -44,13 +44,10 @@ function run() {
     // 3. Update CHANGELOG.md
     updateChangelog(newVersion);
 
-    // 4. Commit the bump
-    console.log('📦 Committing release...');
-    execSync('git add .', { stdio: 'inherit' });
-    execSync(`git commit -m "chore: release ${newVersion}"`, { stdio: 'inherit' });
-
+    // 4. Verification message
     console.log(`✅ Success: ${oldVersion} → ${newVersion}`);
-    console.log('🔗 CHANGELOG.md updated and promoted to current date.');
+    console.log('🔗 CHANGELOG.md updated and promoted.');
+    console.log('⚠️  Files staged. Run "git commit" manually after approval.');
   } catch {
     console.error('\n❌ Release failed. Attempting to revert versioning changes...\n');
 
