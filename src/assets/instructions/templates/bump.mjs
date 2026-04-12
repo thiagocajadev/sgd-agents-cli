@@ -15,15 +15,17 @@ function run() {
   const args = process.argv.slice(2);
   const bumpType = args[0]; // feat, fix, major
 
-  if (!['feat', 'fix', 'major'].includes(bumpType)) {
-    console.error('❌ Error: Please specify bump type (feat, fix, or major).');
-    console.log('Usage: npm run bump <feat|fix|major>');
+  if (!['feat', 'fix', 'docs', 'land', 'major'].includes(bumpType)) {
+    console.error('❌ Error: Please specify bump type (feat, fix, docs, land, or major).');
+    console.log('Usage: npm run bump <feat|fix|docs|land|major>');
     process.exit(1);
   }
 
   const typeMap = {
     feat: 'minor',
     fix: 'patch',
+    docs: 'patch',
+    land: 'patch',
     major: 'major',
   };
 

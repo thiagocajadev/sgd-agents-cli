@@ -11,12 +11,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [1.19.0] - 2026-04-12
+
+### Added
+
+- **Universal Cycle Coverage** — extended `Phase: END` governance (`sdg-end.md`, `workflow.md`, `AGENTS.md`) to enforce CHANGELOG entries for all cycle types (`docs:` and `land:` now have explicit section mappings); bumped `scripts/bump.mjs` and template to accept `docs` and `land` as valid intents mapping to `patch`.
+- **SSOT Consolidation** — refactored `sdg-end.md` from a full 7-step redefinition into a thin pointer to the canonical `Phase: END` in `workflow.md`/`AGENTS.md`, eliminating protocol duplication across governance files.
+
+### Fixed
+
+## [1.18.2] - 2026-04-12
+
+### Added
+
+### Fixed
+
+- **Phase END: Dynamic Bump Protocol** — `workflow.md` and `AGENTS.md` updated to auto-detect the `bump` script and execute it before every release commit, eliminating pre-push narrative blockers across all cycle types.
+
 ## [1.18.1] - 2026-04-12
 
 ### Added
 
 ### Fixed
 
+- **Dynamic Semantic Delivery** — hardened `Phase: END` instructions in `workflow.md` to autonomously verify the existence of a `bump` script in `package.json` and execute `npm run bump` before proposing commits, preventing `pre-push` narrative blockers.
 - **Documentation Alignment** — updated `README.md`, `README.pt-BR.md`, and `PROJECT-STRUCTURE.md` to accurately reflect the `.ai/` tree structure, including the decoupled `.ai/instructions/templates/` and centralized `.ai/workflows/` directories.
 
 ## [1.18.0] - 2026-04-12

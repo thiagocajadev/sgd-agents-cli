@@ -1,64 +1,22 @@
 # Phase: END (The Delivery) — MODE: PLANNING
 
-This command closes the current development cycle and is the **Ultimate Guarantor of Zero Context Leak**. Follow all 7 steps with total rigor.
+This command triggers the **Phase: END** defined in the Working Protocol.
+
+> [!IMPORTANT]
+> Follow the canonical **Phase: END** checklist from `.ai/skill/AGENTS.md` (or `workflow.md`).
+> All 7 steps — Task Summary, Changelog, Backlog Sync, Context Update, Lint, Commit, Next Step — are defined there as the Single Source of Truth.
 
 ---
 
-## Step 1 — Task Summary
+## Explicit `end:` — Additional Context
 
-**Writes one sentence per completed task.**
+When this command is invoked explicitly (the user types `end:`), it serves two purposes:
 
-- Read `.ai-backlog/tasks.md` and summarize the work performed.
-- Focus on technical outcomes.
-
-## Step 2 — Changelog
-
-**Adds an entry under `## [Unreleased]`: `### Added` for feat · `### Fixed` for fix.**
-
-- Update `CHANGELOG.md` to maintain the project's technical history.
-- Ensure the narrative allows for a professional semantic release.
-
-## Step 3 — Backlog Sync
-
-**Moves all finished tasks to `## Done` in `tasks.md`.**
-
-- Clean up `.ai-backlog/tasks.md` so the active queue is reset for the next cycle.
-- **Audit**: Perform a **Zero Context Leak** check: no `TODO` remnants or internal-only files.
-
-## Step 4 — Context Update
-
-**Updates `## Now` in `context.md` with the next objective or clears it.**
-
-- If `.ai-backlog/context.md` is missing, you must bootstrap it using the template from `workflow.md`.
-- Ensure the current objective is marked complete and clear out obsolete state.
-
-## Step 5 — Lint
-
-**Runs the linter, fixes what's possible, and blocks the commit if errors remain.**
-
-- Run the project's linting script with auto-fix (e.g., `npm run lint -- --fix`).
-- If non-auto-fixable errors remain, you **MUST** report them and stop.
-
-## Step 6 — Commit
-
-**Proposes a commit message and waits for your approval.**
-
-- Execute the semantic pipeline: run `npm run bump <feat|fix>`.
-- Audit the workspace and run `git add .` to capture metadata and uncommitted side-effects.
-- Propose exactly: `git commit -m "<feat|fix>: release v<version>"`.
-- **PROPOSE** and **WAIT** for explicit Developer authorization.
+1. **Cycle Closure**: Closes an active `feat:`, `fix:`, `docs:`, or `land:` cycle through the standard END checklist.
+2. **Mid-Conversation Recovery**: If the agent lost track of cycle state, `end:` forces a reset — the agent must re-read `.ai-backlog/tasks.md` and reconstruct what was completed before running the checklist.
 
 > [!CAUTION]
-> **NEVER BYPASS THE BUMP**. You are absolutely forbidden from proposing or running a manual `git commit` that leaves versioning stuck in `[Unreleased]`. The semantic pipeline (`npm run bump`) is a **MANDATORY** automation. You must run it to synthesize the changelog and bump `package.json` before proposing the final release commit.
-
-## Step 7 — Next step
-
-**Suggests what comes next: push · deploy · or a new task.**
-
-- Propose `git push` to synchronize remote.
-- Suggest starting a new cycle (`feat:`, `fix:`) or purging the agent session to restore token efficiency.
-
----
+> **NEVER BYPASS THE BUMP**. You are absolutely forbidden from proposing a `git commit` that leaves versioning stuck in `[Unreleased]`. The semantic pipeline (`npm run bump`) is **MANDATORY** across all cycle types — `feat`, `fix`, `docs`, and `land`. Run it before every release commit.
 
 > [!WARNING]
 > The cycle is **INCOMPLETE** until all 7 steps are checked.

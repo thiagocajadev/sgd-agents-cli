@@ -100,11 +100,19 @@ On every request, classify intent before acting:
 > Close the cycle: update the changelog, sync the backlog, and move on.
 >
 > 1. **Task Summary**: Writes one sentence per completed task.
-> 2. **Changelog**: Adds an entry under `## [Unreleased]`: `### Added` for feat · `### Fixed` for fix.
+> 2. **Changelog**: Adds ONE entry for EVERY completed task. Every cycle that produces artifacts must be recorded — no commit is valid without a CHANGELOG entry.
+>
+>    | Cycle   | Section     | Use for                                   |
+>    | :------ | :---------- | :---------------------------------------- |
+>    | `feat:` | `### Added` | New feature or capability                 |
+>    | `fix:`  | `### Fixed` | Bug resolved or behavior corrected        |
+>    | `docs:` | `### Fixed` | Documentation corrected or aligned        |
+>    | `land:` | `### Added` | New project backlog and inception context |
+>
 > 3. **Backlog Sync**: Moves all finished tasks to `## Done` in `tasks.md`.
 > 4. **Context Update**: Updates `## Now` in `context.md` with the next objective or clears it.
 > 5. **Lint**: Runs the linter, fixes what's possible, and blocks the commit if errors remain.
-> 6. **Commit**: Proposes a commit message and waits for your approval.
+> 6. **Commit**: If `package.json` has a `bump` script, execute `npm run bump <feat|fix|docs|land>` matching the active cycle type. Then audit workspace with `git add .` and propose the release commit. Wait for approval.
 > 7. **Next step**: Suggests what comes next: push · deploy · or a new task.
 >
 > [!WARNING]
