@@ -103,8 +103,22 @@ function writeJsonAtomic(filePath, data, originalContent = null) {
 
   if (originalContent === newContent) return false;
 
-  fs.writeFileSync(filePath, newContent);
-  return true;
+  try {
+    fs.writeFileSync(filePath, newContent);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function safeReadJson(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+  } catch {
+    return null;
+  }
 }
 
 const FsUtils = {
@@ -117,6 +131,7 @@ const FsUtils = {
   runIfDirect,
   detectIndentation,
   writeJsonAtomic,
+  safeReadJson,
 };
 
 export { FsUtils };

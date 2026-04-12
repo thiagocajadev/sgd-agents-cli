@@ -14,7 +14,7 @@ import { FsUtils } from './fs-utils.mjs';
 
 const { displayName } = DisplayUtils;
 const { computeHashes } = ManifestUtils;
-const { getDirname, writeJsonAtomic } = FsUtils;
+const { getDirname, writeJsonAtomic, safeReadJson } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
 const SOURCE_INSTRUCTIONS = path.join(__dirname, '..', '..', 'assets', 'instructions');
@@ -243,7 +243,7 @@ function buildPromptModeStub() {
  */
 function writeBacklogFiles(targetDir, selections) {
   const backlogDir = path.join(targetDir, '.ai-backlog');
-  if (!fs.existsSync(backlogDir)) fs.mkdirSync(backlogDir, { recursive: true });
+  fs.mkdirSync(backlogDir, { recursive: true });
 
   writeContextFile(backlogDir, targetDir, selections);
   writeTasksFile(backlogDir);
@@ -258,19 +258,11 @@ function writeBacklogFiles(targetDir, selections) {
       .map((id) => STACK_DISPLAY_NAMES[id]?.name ?? id)
       .join(', ');
 
-    const contextContent = dedent`
-      # ${path.basename(projectDir)} — [what this project does in one sentence]
-
-      stack: ${stackLine}
-      pattern: [architecture pattern]
-      entry: [main entry point file]
-
-      ## Decisions
-      - [decision]: [rationale]
-
-      ## Now
-      [what is actively being worked on]
-    `;
+    const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'context.md');
+    let contextContent = fs.readFileSync(templatePath, 'utf8');
+    contextContent = contextContent
+      .replace('{{PROJECT_NAME}}', path.basename(projectDir))
+      .replace('{{STACK}}', stackLine);
 
     fs.writeFileSync(contextPath, contextContent);
   }
@@ -278,64 +270,22 @@ function writeBacklogFiles(targetDir, selections) {
   function writeTasksFile(backlogDirPath) {
     const tasksPath = path.join(backlogDirPath, 'tasks.md');
     if (fs.existsSync(tasksPath)) return;
-
-    const tasksContent = dedent`
-      # Tasks
-
-      > Managed by AI agents. Update status after each atomic task.
-      > Recovery: if lost, ask the agent to read recent git commits and reconstruct.
-
-      ## Active
-      <!-- [IN_PROGRESS] description — context of where it stopped and what comes next -->
-
-      ## Backlog
-      <!-- [TODO] description -->
-
-      ## Done
-      <!-- [DONE] description -->
-    `;
-
-    fs.writeFileSync(tasksPath, tasksContent);
+    const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'tasks.md');
+    fs.copyFileSync(templatePath, tasksPath);
   }
 
   function writeLearnedFile(backlogDirPath) {
     const learnedPath = path.join(backlogDirPath, 'learned.md');
     if (fs.existsSync(learnedPath)) return;
-
-    const learnedContent = dedent`
-      # Lessons Learned & Research
-
-      > Persistent repository for success patterns, technical research, and architecture decisions.
-      > Loaded during \`feat:\` cycles.
-
-      ## Success Patterns
-      - [topic]: [pattern or approach that worked well]
-
-      ## Research Findings
-      - [topic]: [discovery or validated hypothesis]
-    `;
-
-    fs.writeFileSync(learnedPath, learnedContent);
+    const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'learned.md');
+    fs.copyFileSync(templatePath, learnedPath);
   }
 
   function writeTroubleshootFile(backlogDirPath) {
     const troubleshootPath = path.join(backlogDirPath, 'troubleshoot.md');
     if (fs.existsSync(troubleshootPath)) return;
-
-    const troubleshootContent = dedent`
-      # Troubleshooting & RCA Logs
-
-      > Persistent repository for failure records, Root Cause Analysis (RCA), and technical debt.
-      > Loaded during \`fix:\` cycles to prevent regression.
-
-      ## Failure Records (RCA)
-      - [date] [topic]: [what failed, why, and the "gotcha" to avoid]
-
-      ## Technical Debt & Risks
-      - [topic]: [known limitation or fragile area]
-    `;
-
-    fs.writeFileSync(troubleshootPath, troubleshootContent);
+    const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'troubleshoot.md');
+    fs.copyFileSync(templatePath, troubleshootPath);
   }
 }
 
@@ -369,7 +319,7 @@ function buildClaudeContent() {
 function writeAgentConfig(targetDir, content, requestedAgents = []) {
   // Always create the generic fallback AGENTS.md and CAVEMAN.md
   const skillDir = path.join(targetDir, '.ai', 'skill');
-  if (!fs.existsSync(skillDir)) fs.mkdirSync(skillDir, { recursive: true });
+  fs.mkdirSync(skillDir, { recursive: true });
   fs.writeFileSync(path.join(skillDir, 'AGENTS.md'), content);
 
   if (!requestedAgents || requestedAgents.length === 0) return;
@@ -395,7 +345,7 @@ function writeAgentConfig(targetDir, content, requestedAgents = []) {
     if (!target) continue;
 
     const fullDir = path.join(targetDir, target.dir);
-    if (!fs.existsSync(fullDir)) fs.mkdirSync(fullDir, { recursive: true });
+    fs.mkdirSync(fullDir, { recursive: true });
 
     const targetFile = path.join(fullDir, target.file);
     const originalContent = fs.existsSync(targetFile) ? fs.readFileSync(targetFile, 'utf8') : null;
@@ -463,7 +413,7 @@ function writeManifest(targetDir, selections, pkgVersion) {
   };
 
   const aiDir = path.join(targetDir, '.ai');
-  if (!fs.existsSync(aiDir)) fs.mkdirSync(aiDir, { recursive: true });
+  fs.mkdirSync(aiDir, { recursive: true });
 
   const manifestPath = path.join(aiDir, '.sdg-manifest.json');
   const originalContent = fs.existsSync(manifestPath)
@@ -485,9 +435,9 @@ function writeAutomationScripts(targetDir, selections) {
 
   // 1. Check for existing bump script in package.json to avoid collision
   const pkgPath = path.join(targetDir, 'package.json');
-  if (!fs.existsSync(pkgPath)) return;
+  const pkg = safeReadJson(pkgPath);
+  if (!pkg) return;
 
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
   const hasExistingBump =
     pkg.scripts && (pkg.scripts.bump || pkg.scripts.release || pkg.scripts.version);
 
@@ -498,7 +448,7 @@ function writeAutomationScripts(targetDir, selections) {
 
   // 2. Write bump.mjs template
   if (!fs.existsSync(bumpScriptPath)) {
-    if (!fs.existsSync(scriptsDir)) fs.mkdirSync(scriptsDir, { recursive: true });
+    fs.mkdirSync(scriptsDir, { recursive: true });
     const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'bump.mjs');
     const templateContent = fs.readFileSync(templatePath, 'utf8');
     fs.writeFileSync(bumpScriptPath, templateContent);

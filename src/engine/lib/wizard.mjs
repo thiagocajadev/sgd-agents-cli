@@ -32,6 +32,7 @@ async function gatherUserSelections(targetDir = process.cwd()) {
   };
   let scope = 'fullstack';
   let step = 0;
+  let historyStack = [];
 
   const finalStep = () => (selections.mode === 'prompts' ? 2 : 9);
 
@@ -53,8 +54,37 @@ async function gatherUserSelections(targetDir = process.cwd()) {
       return handleQuickSetup();
     }
 
-    step = stepResult.value.nextStep;
-    scope = applyStepResult(selections, scope, stepResult.value);
+    const isGoingBack = stepResult.value.nextStep < step;
+
+    if (isGoingBack) {
+      if (historyStack.length > 0) {
+        // Pop until we reach the target previous step
+        let lastState;
+        while (
+          historyStack.length > 0 &&
+          historyStack[historyStack.length - 1].step >= stepResult.value.nextStep
+        ) {
+          lastState = historyStack.pop();
+        }
+        if (lastState) {
+          step = lastState.step;
+          selections = lastState.selections;
+          scope = lastState.scope;
+        } else {
+          step = 0;
+        }
+      } else {
+        step = 0;
+      }
+    } else {
+      historyStack.push({
+        step,
+        scope,
+        selections: JSON.parse(JSON.stringify(selections)),
+      });
+      step = stepResult.value.nextStep;
+      scope = applyStepResult(selections, scope, stepResult.value);
+    }
   }
 
   const wizardResult = success(selections);
@@ -72,8 +102,6 @@ async function gatherUserSelections(targetDir = process.cwd()) {
     if (stepValue.designPreset) currentSelections.designPreset = stepValue.designPreset;
     if (stepValue.idiom) currentSelections.idioms.push(stepValue.idiom);
     if (stepValue.ide) currentSelections.ide = stepValue.ide;
-    if (stepValue.undoLastIdiom) currentSelections.idioms.pop();
-    if (stepValue.resetIdioms) currentSelections.idioms = [];
     if (stepValue.bump !== undefined) currentSelections.bump = stepValue.bump;
     return nextScope;
   }
@@ -295,7 +323,7 @@ async function promptFrontendIdiom(context) {
   });
 
   if (result === 'back') {
-    const backResult = success({ nextStep: 2, undoLastIdiom: scope === 'fullstack' });
+    const backResult = success({ nextStep: 2 });
     return backResult;
   }
 
@@ -324,7 +352,7 @@ async function promptVersionSelections(context) {
     });
 
     if (result === 'back') {
-      const backResult = success({ nextStep: 2, resetIdioms: true });
+      const backResult = success({ nextStep: 2 });
       return backResult;
     }
     versions[idiom] = result;

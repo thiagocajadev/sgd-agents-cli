@@ -27,9 +27,9 @@ function prepareProjectStructure(targetDir) {
   const workflowsDir = path.join(targetDir, '.ai', 'workflows');
   const commandsDir = path.join(targetDir, '.ai', 'commands');
 
-  if (!fs.existsSync(instructionsDir)) fs.mkdirSync(instructionsDir, { recursive: true });
-  if (!fs.existsSync(workflowsDir)) fs.mkdirSync(workflowsDir, { recursive: true });
-  if (!fs.existsSync(commandsDir)) fs.mkdirSync(commandsDir, { recursive: true });
+  fs.mkdirSync(instructionsDir, { recursive: true });
+  fs.mkdirSync(workflowsDir, { recursive: true });
+  fs.mkdirSync(commandsDir, { recursive: true });
 }
 
 /**
@@ -140,7 +140,7 @@ function injectCompetencies(selections, projectAiInstructions) {
   if (!hasBackend && !hasFrontend) return;
 
   const competenciesDir = path.join(projectAiInstructions, 'competencies');
-  if (!fs.existsSync(competenciesDir)) fs.mkdirSync(competenciesDir, { recursive: true });
+  fs.mkdirSync(competenciesDir, { recursive: true });
 
   if (hasBackend) {
     const src = path.join(SOURCE_COMPETENCIES, 'backend.md');
@@ -158,7 +158,7 @@ function injectFilteredIdiom(idiom, targetVersion, projectAiInstructions) {
   if (!fs.existsSync(idiomSrc)) return;
 
   const projectIdiomDir = path.join(projectAiInstructions, 'idioms', idiom);
-  if (!fs.existsSync(projectIdiomDir)) fs.mkdirSync(projectIdiomDir, { recursive: true });
+  fs.mkdirSync(projectIdiomDir, { recursive: true });
 
   for (const file of fs.readdirSync(idiomSrc)) {
     const srcFile = path.join(idiomSrc, file);
@@ -166,7 +166,9 @@ function injectFilteredIdiom(idiom, targetVersion, projectAiInstructions) {
 
     if (file.endsWith('.md') || file.endsWith('.xml')) {
       let content = fs.readFileSync(srcFile, 'utf8');
-      content = filterContentByVersion(content, targetVersion);
+      if (content.includes('version=')) {
+        content = filterContentByVersion(content, targetVersion);
+      }
       fs.writeFileSync(destFile, content, 'utf8');
     } else {
       copyRecursiveSync(srcFile, destFile);
