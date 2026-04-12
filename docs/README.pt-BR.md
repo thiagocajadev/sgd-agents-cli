@@ -66,8 +66,10 @@ seu-projeto/
 │   │   ├── core/                ← Regras de engenharia (estilo, nomenclatura, segurança, testes)
 │   │   ├── flavors/             ← Padrões arquiteturais (vertical-slice, mvc, etc.)
 │   │   ├── idioms/              ← Convenções por linguagem (TS, Python, Go, etc.)
-│   │   └── competencies/        ← Regras por camada (frontend, backend)
+│   │   ├── competencies/        ← Regras por camada (frontend, backend)
+│   │   └── templates/           ← Templates de contexto e backlog
 │   ├── commands/                ← Arquivos de contexto para os ciclos feat/fix/docs
+│   ├── workflows/               ← Protocolo de workflow
 │   └── dev-guides/              ← Arquivos de referência, templates de spec e guias
 └── .ai-backlog/                 ← Memória de sessão & Expertise (gitignored)
     └── ...                      ← (Veja docs/PROJECT-STRUCTURE.md para detalhes)

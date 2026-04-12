@@ -21,7 +21,8 @@ your-project/
     │   │   └── engineering-standards.md ← Tactical rules (clean code, resilience, DoD)
     │   ├── flavors/             ← Architectural patterns (vertical-slice, mvc, etc.)
     │   ├── idioms/              ← Language conventions (typescript, python, go, etc.)
-    │   └── competencies/        ← Layer rules (frontend, backend)
+    │   ├── competencies/        ← Layer rules (frontend, backend)
+    │   └── templates/           ← Context and backlog templates
     ├── commands/                ← Context files for feat/fix/docs cycles
     ├── workflows/               ← Workflow protocol
     └── prompts/
@@ -118,10 +119,10 @@ Prompt templates for authoring the SPEC phase:
 
 ## How the Files Are Used Per Phase
 
-| Phase | Files read                                                                   |
-| :---- | :--------------------------------------------------------------------------- |
-| SPEC  | `prompts/dev-tracks/`, `commands/sdg-feat.md` (or fix/docs)                  |
-| PLAN  | `.ai-backlog/tasks.md`                                                       |
+| Phase | Files read                                                                             |
+| :---- | :------------------------------------------------------------------------------------- |
+| SPEC  | `prompts/dev-tracks/`, `commands/sdg-feat.md` (or fix/docs)                            |
+| PLAN  | `.ai-backlog/tasks.md`                                                                 |
 | CODE  | `core/code-style.md`, `core/engineering-standards.md`, `learned.md`, `troubleshoot.md` |
-| TEST  | `core/testing-principles.md`                                                 |
-| END   | `.ai-backlog/context.md`, `.ai-backlog/tasks.md`, `learned.md`, `troubleshoot.md` |
+| TEST  | `core/testing-principles.md`                                                           |
+| END   | `.ai-backlog/context.md`, `.ai-backlog/tasks.md`, `learned.md`, `troubleshoot.md`      |
