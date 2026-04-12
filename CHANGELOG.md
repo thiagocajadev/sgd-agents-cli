@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [1.14.1] - 2026-04-11
+
+### Added
+
+### Fixed
+
+- **CHANGELOG Date Timezone Drift** — switched from UTC-based `toISOString()` to local `en-CA` formatting in all bump scripts and templates; ensures dates in promoted headers match the developer's machine clock instead of jumping +1 day ahead in late-night releases.
+
 ## [1.14.0] - 2026-04-12
 
 ### Added
