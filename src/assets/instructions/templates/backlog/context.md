@@ -11,3 +11,7 @@ entry: [main entry point file]
 ## Now
 
 [what is actively being worked on]
+
+## Partner
+
+{{PARTNER}}

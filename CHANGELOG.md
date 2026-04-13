@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [1.20.0] - 2026-04-13
+
+### Added
+
+- **Partner Metadata Step** — Added Step 9 to the interactive wizard to capture developer name and role; implemented `## Partner` section in `context.md` with localized greetings (PT-BR/EN).
+- **Hardened Input Sanitization** — Implemented `safeInput` with Unicode normalization, HTML/Script stripping, and Markdown escaping; enforced 2-50 character limits for developer names.
+- **Wizard Architectural Refactor** — Replaced magic numbers with semantic `WIZARD_STEPS` identifiers and implemented an index-based `STEP_ORDER` for resilient navigation.
+- **Intelligent Context Injection** — Upgraded the instruction assembler to safely inject the `## Partner` section into existing `context.md` files without overwriting user changes.
+- **Backend-Only UI Optimization** — Modernized the wizard flow to automatically skip design-related presets when the project scope is set to Backend single-idiom.
+
+### Fixed
+
 ## [1.19.2] - 2026-04-12
 
 ### Added

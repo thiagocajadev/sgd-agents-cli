@@ -150,6 +150,10 @@ entry: <main entry point file>
 ## Now
 
 - Ready for next instruction.
+
+## Partner
+
+- <description of the dev partner and preferred language>
 ```
 
 ### Checkpoint (after each atomic task)

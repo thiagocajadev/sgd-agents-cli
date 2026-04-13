@@ -10,10 +10,39 @@ import { PromptUtils } from './prompt-utils.mjs';
 const { displayName } = DisplayUtils;
 const { getDirectories, getDirname } = FsUtils;
 const { success, fail } = ResultUtils;
-const { safeSelect, safeConfirm } = PromptUtils;
+const { safeSelect, safeConfirm, safeInput } = PromptUtils;
 
 const __dirname = getDirname(import.meta.url);
 const SOURCE_INSTRUCTIONS = path.join(__dirname, '..', '..', 'assets', 'instructions');
+
+const WIZARD_STEPS = {
+  INITIAL: 'initial',
+  SCOPE: 'scope',
+  TRACK: 'track',
+  FLAVOR: 'flavor',
+  BACKEND: 'backend',
+  FRONTEND: 'frontend',
+  VERSIONS: 'versions',
+  DESIGN: 'design',
+  IDE: 'ide',
+  BUMP: 'bump',
+  PARTNER: 'partner',
+  DONE: 'done',
+};
+
+const STEP_ORDER = [
+  WIZARD_STEPS.INITIAL,
+  WIZARD_STEPS.SCOPE,
+  WIZARD_STEPS.FLAVOR,
+  WIZARD_STEPS.BACKEND,
+  WIZARD_STEPS.FRONTEND,
+  WIZARD_STEPS.VERSIONS,
+  WIZARD_STEPS.DESIGN,
+  WIZARD_STEPS.IDE,
+  WIZARD_STEPS.BUMP,
+  WIZARD_STEPS.PARTNER,
+  WIZARD_STEPS.DONE,
+];
 
 async function gatherUserSelections(targetDir = process.cwd()) {
   const availableFlavors = getDirectories(path.join(SOURCE_INSTRUCTIONS, 'flavors'));
@@ -31,12 +60,10 @@ async function gatherUserSelections(targetDir = process.cwd()) {
     ide: 'none',
   };
   let scope = 'fullstack';
-  let step = 0;
+  let step = WIZARD_STEPS.INITIAL;
   let historyStack = [];
 
-  const finalStep = () => (selections.mode === 'prompts' ? 2 : 9);
-
-  while (step < finalStep()) {
+  while (step !== WIZARD_STEPS.DONE) {
     const context = {
       scope,
       step,
@@ -54,7 +81,9 @@ async function gatherUserSelections(targetDir = process.cwd()) {
       return handleQuickSetup();
     }
 
-    const isGoingBack = stepResult.value.nextStep < step;
+    const currentStepIndex = STEP_ORDER.indexOf(step);
+    const nextStepIndex = STEP_ORDER.indexOf(stepResult.value.nextStep);
+    const isGoingBack = nextStepIndex < currentStepIndex;
 
     if (isGoingBack) {
       if (historyStack.length > 0) {
@@ -62,7 +91,7 @@ async function gatherUserSelections(targetDir = process.cwd()) {
         let lastState;
         while (
           historyStack.length > 0 &&
-          historyStack[historyStack.length - 1].step >= stepResult.value.nextStep
+          STEP_ORDER.indexOf(historyStack[historyStack.length - 1].step) >= nextStepIndex
         ) {
           lastState = historyStack.pop();
         }
@@ -71,10 +100,10 @@ async function gatherUserSelections(targetDir = process.cwd()) {
           selections = lastState.selections;
           scope = lastState.scope;
         } else {
-          step = 0;
+          step = WIZARD_STEPS.INITIAL;
         }
       } else {
-        step = 0;
+        step = WIZARD_STEPS.INITIAL;
       }
     } else {
       historyStack.push({
@@ -103,6 +132,10 @@ async function gatherUserSelections(targetDir = process.cwd()) {
     if (stepValue.idiom) currentSelections.idioms.push(stepValue.idiom);
     if (stepValue.ide) currentSelections.ide = stepValue.ide;
     if (stepValue.bump !== undefined) currentSelections.bump = stepValue.bump;
+    if (stepValue.partner) {
+      currentSelections.partner = currentSelections.partner || {};
+      Object.assign(currentSelections.partner, stepValue.partner);
+    }
     return nextScope;
   }
 }
@@ -111,27 +144,28 @@ async function executeWizardStep(step, context) {
   const { mode } = context.selections;
 
   switch (step) {
-    case 0:
+    case WIZARD_STEPS.INITIAL:
       return promptInitialChoice();
-    case 1:
+    case WIZARD_STEPS.SCOPE:
       return mode === 'prompts' ? promptTrackSelection(context) : promptProjectScope();
-    case 2:
+    case WIZARD_STEPS.FLAVOR:
       return promptArchitectureFlavor(context);
-    case 3:
+    case WIZARD_STEPS.BACKEND:
       return promptBackendIdiom(context);
-    case 4:
+    case WIZARD_STEPS.FRONTEND:
       return promptFrontendIdiom(context);
-    case 5:
+    case WIZARD_STEPS.VERSIONS:
       return promptVersionSelections(context);
-    case 6:
+    case WIZARD_STEPS.DESIGN:
       return promptDesignPreset(context);
-    case 7:
+    case WIZARD_STEPS.IDE:
       return promptIdeSelection();
-    case 8:
+    case WIZARD_STEPS.BUMP:
       return promptBumpAutomation(context);
+    case WIZARD_STEPS.PARTNER:
+      return promptPartnerInfo(context);
     default: {
-      const defaultResult = success({ nextStep: 9 });
-      return defaultResult;
+      return success({ nextStep: WIZARD_STEPS.DONE });
     }
   }
 }
@@ -157,7 +191,7 @@ async function promptInitialChoice() {
     return backResult;
   }
 
-  const initialChoiceResult = success({ nextStep: 1, mode: result });
+  const initialChoiceResult = success({ nextStep: WIZARD_STEPS.SCOPE, mode: result });
   return initialChoiceResult;
 }
 
@@ -172,6 +206,10 @@ function handleQuickSetup() {
     versions: {
       javascript: 'latest',
       typescript: 'latest',
+    },
+    partner: {
+      name: 'Human Developer',
+      role: 'Dev Partner',
     },
   });
   return quickSetupResult;
@@ -202,7 +240,7 @@ async function promptTrackSelection(context) {
   });
 
   if (track === 'back') {
-    const backResult = success({ nextStep: 0 });
+    const backResult = success({ nextStep: WIZARD_STEPS.INITIAL });
     return backResult;
   }
 
@@ -213,14 +251,13 @@ async function promptTrackSelection(context) {
       default: false,
     });
     if (!proceed) {
-      const cancelResult = success({ nextStep: 1 });
+      const cancelResult = success({ nextStep: WIZARD_STEPS.SCOPE });
       return cancelResult;
     }
   }
 
-  // 2 is the final step for Prompts mode
-  const trackResult = success({ nextStep: 2, track });
-  return trackResult;
+  // Final step for Prompts mode
+  return success({ nextStep: WIZARD_STEPS.DONE, track });
 }
 
 async function promptProjectScope() {
@@ -235,11 +272,11 @@ async function promptProjectScope() {
   });
 
   if (scope === 'back') {
-    const backResult = success({ nextStep: 0 });
+    const backResult = success({ nextStep: WIZARD_STEPS.INITIAL });
     return backResult;
   }
 
-  const scopeResult = success({ nextStep: 2, scope });
+  const scopeResult = success({ nextStep: WIZARD_STEPS.FLAVOR, scope });
   return scopeResult;
 }
 
@@ -253,11 +290,11 @@ async function promptArchitectureFlavor(context) {
   });
 
   if (flavor === 'back') {
-    const backResult = success({ nextStep: 1 });
+    const backResult = success({ nextStep: WIZARD_STEPS.SCOPE });
     return backResult;
   }
 
-  const flavorResult = success({ nextStep: 3, flavor });
+  const flavorResult = success({ nextStep: WIZARD_STEPS.BACKEND, flavor });
   return flavorResult;
 
   function buildFlavorChoices(flavors) {
@@ -283,7 +320,7 @@ async function promptBackendIdiom(context) {
   const { scope, availableIdioms } = context;
 
   if (scope === 'frontend') {
-    const skipResult = success({ nextStep: 4 });
+    const skipResult = success({ nextStep: WIZARD_STEPS.FRONTEND });
     return skipResult;
   }
 
@@ -297,11 +334,11 @@ async function promptBackendIdiom(context) {
   });
 
   if (result === 'back') {
-    const backResult = success({ nextStep: 0 });
+    const backResult = success({ nextStep: WIZARD_STEPS.INITIAL });
     return backResult;
   }
 
-  const backendIdiomResult = success({ nextStep: 4, idiom: result });
+  const backendIdiomResult = success({ nextStep: WIZARD_STEPS.FRONTEND, idiom: result });
   return backendIdiomResult;
 }
 
@@ -309,7 +346,7 @@ async function promptFrontendIdiom(context) {
   const { scope, availableIdioms } = context;
 
   if (scope === 'backend') {
-    const skipResult = success({ nextStep: 5 });
+    const skipResult = success({ nextStep: WIZARD_STEPS.VERSIONS });
     return skipResult;
   }
 
@@ -323,11 +360,11 @@ async function promptFrontendIdiom(context) {
   });
 
   if (result === 'back') {
-    const backResult = success({ nextStep: 2 });
+    const backResult = success({ nextStep: WIZARD_STEPS.FLAVOR });
     return backResult;
   }
 
-  const frontendIdiomResult = success({ nextStep: 5, idiom: result });
+  const frontendIdiomResult = success({ nextStep: WIZARD_STEPS.VERSIONS, idiom: result });
   return frontendIdiomResult;
 }
 
@@ -352,22 +389,22 @@ async function promptVersionSelections(context) {
     });
 
     if (result === 'back') {
-      const backResult = success({ nextStep: 2 });
+      const backResult = success({ nextStep: WIZARD_STEPS.FLAVOR });
       return backResult;
     }
     versions[idiom] = result;
   }
 
-  const versionsResult = success({ nextStep: 6, versions });
+  const versionsResult = success({ nextStep: WIZARD_STEPS.DESIGN, versions });
   return versionsResult;
 }
 
 async function promptDesignPreset(context) {
-  const { selections } = context;
+  const { selections, scope } = context;
 
   const hasFrontend = selections.idioms.some((id) => STACK_DISPLAY_NAMES[id]?.isFrontend);
-  if (!hasFrontend) {
-    const skipResult = success({ nextStep: 7 });
+  if (scope === 'backend' || !hasFrontend) {
+    const skipResult = success({ nextStep: WIZARD_STEPS.IDE });
     return skipResult;
   }
 
@@ -387,16 +424,16 @@ async function promptDesignPreset(context) {
   });
 
   if (result === 'back') {
-    const backResult = success({ nextStep: 4 });
+    const backResult = success({ nextStep: WIZARD_STEPS.FRONTEND });
     return backResult;
   }
 
   if (result === 'other') {
-    const noPresetResult = success({ nextStep: 7 });
+    const noPresetResult = success({ nextStep: WIZARD_STEPS.IDE });
     return noPresetResult;
   }
 
-  const presetResult = success({ nextStep: 7, designPreset: result });
+  const presetResult = success({ nextStep: WIZARD_STEPS.IDE, designPreset: result });
   return presetResult;
 }
 
@@ -416,11 +453,11 @@ async function promptIdeSelection() {
   });
 
   if (result === 'back') {
-    const backResult = success({ nextStep: 6 });
+    const backResult = success({ nextStep: WIZARD_STEPS.DESIGN });
     return backResult;
   }
 
-  const ideResult = success({ nextStep: 8, ide: result });
+  const ideResult = success({ nextStep: WIZARD_STEPS.BUMP, ide: result });
   return ideResult;
 }
 
@@ -430,7 +467,7 @@ async function promptBumpAutomation(context) {
   const hasJsTs = selections.idioms.some((id) => id === 'javascript' || id === 'typescript');
 
   if (!hasJsTs) {
-    return success({ nextStep: 9, bump: false });
+    return success({ nextStep: WIZARD_STEPS.PARTNER, bump: false });
   }
 
   const result = await safeConfirm({
@@ -438,8 +475,32 @@ async function promptBumpAutomation(context) {
     default: true,
   });
 
-  const bumpResult = success({ nextStep: 9, bump: result });
+  const bumpResult = success({ nextStep: WIZARD_STEPS.PARTNER, bump: result });
   return bumpResult;
+}
+
+async function promptPartnerInfo(_context) {
+  const name = await safeInput({
+    message: 'Primary Developer Name or Nickname? (e.g. Thiago) [Optional]',
+    minLength: 2,
+    maxLength: 50,
+  });
+
+  if (name === 'back') return success({ nextStep: WIZARD_STEPS.BUMP });
+
+  const role = await safeInput({
+    message: 'Primary Role? (e.g. Dev founder, Tech Lead, CTO) [Optional]',
+    maxLength: 50,
+  });
+
+  if (role === 'back') return success({ nextStep: WIZARD_STEPS.PARTNER }); // Re-ask name
+
+  const partner = {
+    name: name || null,
+    role: role || null,
+  };
+
+  return success({ nextStep: WIZARD_STEPS.DONE, partner });
 }
 
 function validateSelections(selections) {

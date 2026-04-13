@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { exec } from 'node:child_process';
-import { select, checkbox, confirm } from '@inquirer/prompts';
+import { select, checkbox, confirm, input } from '@inquirer/prompts';
 
 function isExitError(err) {
   return err.name === 'ExitPromptError' || err.message?.includes('force closed');
@@ -30,6 +30,51 @@ async function safeConfirm(options) {
     return await confirm(options);
   } catch (error) {
     if (isExitError(error)) return false;
+    throw error;
+  }
+}
+
+/**
+ * Robust sanitization for terminal inputs.
+ * - Normalizes Unicode (NFKD) to decouple accents.
+ * - Strips HTML/Script tags (anti-injection).
+ * - Trims and limits length.
+ * - Escapes Markdown breaking characters (\, `, *, _, {, }, [, ], (, ), #, +, -, ., !).
+ */
+function sanitizeInput(val, maxLength = 200) {
+  if (!val) return '';
+
+  let sanitized = String(val)
+    .normalize('NFKD') // Resovle acentos estranhos / Unicode Normalization
+    .replace(/[\u0300-\u036f]/g, '') // Remove acentos remanescentes
+    .replace(/<[^>]*>?/gm, '') // Strip HTML tags
+    .trim();
+
+  // Escaping Markdown characters to prevent breaking context.md structure
+  sanitized = sanitized.replace(/([\\`*_{}[\]()#+\-.!])/g, '\\$1');
+
+  return sanitized.slice(0, maxLength);
+}
+
+async function safeInput(options) {
+  const { minLength = 0, maxLength = 200, ...inquirerOptions } = options;
+
+  try {
+    while (true) {
+      const response = await input(inquirerOptions);
+      if (response === 'back') return 'back'; // Natural exit if they type "back"
+
+      const sanitized = sanitizeInput(response, maxLength);
+
+      if (minLength > 0 && sanitized.length < minLength) {
+        console.log(`\n  ⚠️  Input too short (minimum ${minLength} characters).\n`);
+        continue;
+      }
+
+      return sanitized;
+    }
+  } catch (error) {
+    if (isExitError(error)) return 'back';
     throw error;
   }
 }
@@ -132,6 +177,8 @@ const PromptUtils = {
   safeSelect,
   safeCheckbox,
   safeConfirm,
+  safeInput,
+  sanitizeInput,
 };
 
 export { PromptUtils };

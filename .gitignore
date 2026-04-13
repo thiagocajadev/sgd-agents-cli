@@ -43,6 +43,7 @@ pnpm-debug.log*
 AGENTS.md
 AI_INSTRUCTIONS.md
 .github/copilot-instructions.md
+CLAUDE.md
 
 # AI artifacts — session state, not project logic
 tmp/

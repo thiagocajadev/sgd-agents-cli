@@ -250,9 +250,50 @@ function writeBacklogFiles(targetDir, selections) {
   writeLearnedFile(backlogDir);
   writeTroubleshootFile(backlogDir);
 
+  function detectProjectLanguage(projectDir) {
+    const pkgPath = path.join(projectDir, 'package.json');
+    if (!fs.existsSync(pkgPath)) return 'en';
+
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+      // Basic detection via common Portuguese strings or i18n configs
+      const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+      if (deps['i18next'] || deps['react-i18next']) {
+        const localesDir = path.join(projectDir, 'src', 'locales');
+        if (fs.existsSync(localesDir) && fs.readdirSync(localesDir).includes('pt-BR'))
+          return 'pt-BR';
+      }
+      if (
+        pkg.description?.toLowerCase().includes('guia') ||
+        pkg.description?.toLowerCase().includes('sistema')
+      ) {
+        return 'pt-BR';
+      }
+    } catch {
+      return 'en';
+    }
+    return 'en';
+  }
+
   function writeContextFile(backlogDirPath, projectDir, currentSelections) {
     const contextPath = path.join(backlogDirPath, 'context.md');
-    if (fs.existsSync(contextPath)) return;
+
+    const language = detectProjectLanguage(projectDir);
+    const partner = currentSelections.partner || {};
+    const name = partner.name || (language === 'pt-BR' ? 'Dev Parceiro' : 'Dev Partner');
+    const role = partner.role || (language === 'pt-BR' ? 'Fundador/Dev' : 'Founder/Dev');
+
+    let partnerInfo = '';
+    if (language === 'pt-BR') {
+      partnerInfo = `${name} é o ${role}. Diga "Oi ${name.split(' ')[0]}". Comunicação em Português Brasileiro.`;
+    } else {
+      partnerInfo = `${name} is the ${role}. Say "Hello ${name.split(' ')[0]}". Communication in English.`;
+    }
+
+    if (fs.existsSync(contextPath)) {
+      handleContextInjection(contextPath, partnerInfo);
+      return;
+    }
 
     const stackLine = (currentSelections.idioms ?? [])
       .map((id) => STACK_DISPLAY_NAMES[id]?.name ?? id)
@@ -262,9 +303,19 @@ function writeBacklogFiles(targetDir, selections) {
     let contextContent = fs.readFileSync(templatePath, 'utf8');
     contextContent = contextContent
       .replace('{{PROJECT_NAME}}', path.basename(projectDir))
-      .replace('{{STACK}}', stackLine);
+      .replace('{{STACK}}', stackLine)
+      .replace('{{PARTNER}}', partnerInfo);
 
     fs.writeFileSync(contextPath, contextContent);
+  }
+
+  function handleContextInjection(contextPath, partnerInfo) {
+    const existingContent = fs.readFileSync(contextPath, 'utf8');
+    if (existingContent.includes('## Partner')) return;
+
+    const separator = existingContent.endsWith('\n') ? '' : '\n';
+    const injection = `\n## Partner\n\n${partnerInfo}\n`;
+    fs.appendFileSync(contextPath, `${separator}${injection}`);
   }
 
   function writeTasksFile(backlogDirPath) {
