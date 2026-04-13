@@ -24,7 +24,7 @@
 - **Parameter Contract**: Choose **Rich Object Flow** (domain objects) or **Primitive Flow** (IDs at boundaries). No mixing in same flow.
 - **Data vs Presentation**: Decouple logic from formatting. Compute pure data, then format.
 - **Shallow Boundaries**: Max 3 levels property traversal. Slice into named `const` first.
-- **Lexical Scoping**: One-off helpers nested in parent. No `export default`.
+- **Narrative Siblings**: One-off helpers follow caller as local siblings. No `export default`.
 - **No God Modules**: No `helpers.js`, `utils.js`, `common.js`. Name by domain + operation.
 - **Explaining Returns**: Assign result to named `const` before returning (mandatory).
 - **Narrative Logic**: Apply Narrative Cascade (SLA + Stepdown).
@@ -60,7 +60,7 @@ Mandatório: `no-multi-spaces` (eslint), `no-unused-vars` (eslint), `prettier`.
 
 - **SLA (Single Level of Abstraction):** Each function body either **orchestrates** (calls other named functions) or **implements** (computes, transforms, formats) — never both in the same body. A function that loops AND formats AND queries a DB is three functions pretending to be one.
 - **Top-Down File Structure:** The highest-level function is defined first. Readers should never scroll down to understand what a file does.
-- **No Orphan Logic:** Any expression that doesn't fit the current abstraction level must be extracted to a named function — either lexically (nested inside its parent) or as a sibling if reused.
+- **No Orphan Logic:** Any expression that doesn't fit the current abstraction level must be extracted to a named function — defined as a sibling if reused or immediately following its parent (Narrative Siblings).
 - **Comments explain "why", never "what".** If naming is right, comments about what the code does should disappear. A comment that restates the code is a naming failure.
 
 ````carousel
@@ -86,7 +86,7 @@ function buildOrderSummary(order) {
 <!-- slide -->
 ```js
 // ✅ THE STAFF PATTERN — "The Narrative Cascade"
-// Stepdown Rule: Orchestrator sits at top. Lexical Scoping: helpers nested inside their parent.
+// Stepdown Rule: Orchestrator sits at top. Narrative Siblings: helpers follow their parent as local siblings.
 // Shallow Boundaries: max 2 levels. Data-first, Presentation-later (SLA).
 function buildOrderSummary(order) {
   const header = buildHeader(order);
@@ -96,35 +96,37 @@ function buildOrderSummary(order) {
   const sections = [header, lineItems, extras].filter((section) => section !== null);
   const summary = sections.join('\n\n');
   return summary;
+}
 
-  function buildHeader(order) {
-    const { id } = order;
-    const { name } = order.customer; // Shallow Boundary: level 2
+function buildHeader(order) {
+  const { id } = order;
+  const { name } = order.customer; // Shallow Boundary: level 2
 
-    const headerLine = `ORDER #${id} — ${name}`;
-    return headerLine;
-  }
+  const headerLine = `ORDER #${id} — ${name}`;
+  return headerLine;
+}
 
-  function buildLineItems(order) {
-    const lines = order.items.map((item) => `  ${item.name}  ×${item.qty}  $${item.price}`);
-    const lineItemsBlock = lines.join('\n');
-    return lineItemsBlock;
-  }
+function buildLineItems(order) {
+  const lines = order.items.map((item) => `  ${item.name}  ×${item.qty}  $${item.price}`);
+  const lineItemsBlock = lines.join('\n');
+  return lineItemsBlock;
+}
 
-  function buildExtrasSection(order) {
-    const extraData = computeExtras(order); // Decision Layer — pure data
-    if (extraData.length === 0) return null;
+function buildExtrasSection(order) {
+  const extraData = computeExtras(order); // Decision Layer — pure data
+  if (extraData.length === 0) return null;
 
-    const extrasBlock = formatExtras(extraData); // Presentation Layer — pure formatting
-    return extrasBlock;
+  const extrasBlock = formatExtras(extraData); // Presentation Layer — pure formatting
+  return extrasBlock;
+}
 
-    function computeExtras(order) {
-      const { discount, shipping } = order; // Shallow Boundaries: destructure inside body
-      const discountItem = discount ? [{ code: discount.code, amount: discount.amount }] : [];
-      const shippingItem = shipping.method !== 'pickup' ? [{ address: shipping.address }] : [];
-      const extraData = [...discountItem, ...shippingItem];
-      return extraData;
-    }
+function computeExtras(order) {
+  const { discount, shipping } = order; // Shallow Boundaries: destructure inside body
+  const discountItem = discount ? [{ code: discount.code, amount: discount.amount }] : [];
+  const shippingItem = shipping.method !== 'pickup' ? [{ address: shipping.address }] : [];
+  const extraData = [...discountItem, ...shippingItem];
+  return extraData;
+}
 > **Single Level of Abstraction is the hardest rule to follow and the most valuable.**
 
 - **SLA (Single Level of Abstraction):** Each function body either **orchestrates** (calls other named functions) or **implements** (computes, transforms, formats) — never both in the same body.
@@ -198,7 +200,7 @@ function buildOrderSummary(order) {
 
 - [ ] **Stepdown Rule**: entry point is the first function after imports/constants
 - [ ] **SLA applied**: every function either orchestrates or implements — never both
-- [ ] **Lexical Scoping**: every helper used by only one function is declared _inside_ that function
+- [ ] **Narrative Siblings**: every helper used by only one function is declared as a local sibling immediately following its caller
 - [ ] **Explaining Returns**: named `const` above every return statement
 - [ ] **No framework abbreviations**: `req` → `request`, `res` → `response`
 - [ ] **Vertical Density applied**: logical parts grouped by "Paragraphs of Intent"

@@ -107,7 +107,7 @@ The agent sequences the spec into atomic, estimable tasks.
 
 High-density execution following strict architectural standards.
 
-- **Narrative Gate**: Self-check for **Stepdown Rule**, **SLA**, and **Lexical Scoping**.
+- **Narrative Gate**: Self-check for **Stepdown Rule**, **SLA**, and **Narrative Siblings**.
 - **Plan Adherence**: No "bonus" features or refactors (YAGNI).
 - **Blocker Surface**: The agent flags issues immediately rather than working around them.
 - **Circuit Breaker**: If the same error repeats 3 times, or no physical progress (file writes, commands) is made in 3 consecutive turns, the agent **stops and reports** rather than looping indefinitely.

@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.4.2] - 2026-04-13
+
+### Added
+
+### Fixed
+
+## [2.4.1] - 2026-04-13
+
+### Added
+
+- **Narrative Siblings Pattern (Law 3 Evolution)** — redefined the Lexical Scoping rule to favor local module-level functions (siblings) over nested functions. This transition standardizes function placement immediately following their caller (Stepdown Rule) to eliminate nesting debt and simplify maintenance of growing logic.
+
+### Fixed
+
 ## [2.4.0] - 2026-04-13
 
 ### Added

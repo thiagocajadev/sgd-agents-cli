@@ -55,7 +55,7 @@ if (canDelete) {
 - **Stepdown Rule**: Higher-level functions appear at the top of the file; lower-level helpers go to the bottom.
 - **Guard Clauses**: Prefer early returns over nested conditionals. Kill the "Arrow Antipattern".
 - **Explaining Returns**: The final value must be assigned to a named variable before returning — `const result = ...; return result;`. Never return large anonymous objects or inline ternaries.
-- **Lexical Scoping (Nested Helpers)**: If a helper is only used by one function, define it as a nested function inside it to maintain clean scoping.
+- **Narrative Siblings (Local Helpers)**: If a helper is only used by one function, define it as a local (non-exported) sibling immediately following its caller to maintain clean top-down scannability.
 
 #### Guard Clauses
 
@@ -111,23 +111,11 @@ function buildUserCard(user) {
 ```
 ````
 
-#### Lexical Scoping
+#### Narrative Siblings
 
 ````carousel
 ```typescript
-// ❌ BAD: Helper at module level — implies reuse that does not exist; pollutes the public scope
-function formatCurrency(amount) {
-  return `$${amount.toFixed(2)}`;
-}
-
-export function buildOrderSummary(order) {
-  const summary = { total: formatCurrency(order.total) };
-  return summary;
-}
-```
-<!-- slide -->
-```typescript
-// ✅ GOOD: Helper nested inside its only consumer — its scope is its documentation
+// ❌ BAD: Helper nested inside parent — creates nesting debt and complicates maintenance
 export function buildOrderSummary(order) {
   function formatCurrency(amount) {
     return `$${amount.toFixed(2)}`;
@@ -135,6 +123,18 @@ export function buildOrderSummary(order) {
 
   const summary = { total: formatCurrency(order.total) };
   return summary;
+}
+```
+<!-- slide -->
+```typescript
+// ✅ GOOD: Helper defined as local sibling — maintains Stepdown Rule and flat structure
+export function buildOrderSummary(order) {
+  const summary = { total: formatCurrency(order.total) };
+  return summary;
+}
+
+function formatCurrency(amount) {
+  return `$${amount.toFixed(2)}`;
 }
 ```
 ````

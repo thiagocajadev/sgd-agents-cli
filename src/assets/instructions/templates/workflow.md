@@ -110,7 +110,7 @@ On every request, classify intent before acting:
 > - [ ] **Stepdown Rule** — entry point is topmost; callers above callees in the file
 > - [ ] **SLA** — this function orchestrates OR implements, never both in same body
 > - [ ] **Guard Clauses** — all nested conditionals replaced with early returns
-> - [ ] **Lexical Scoping** — one-off helpers defined inside their only caller
+> - [ ] **Narrative Siblings** — one-off helpers defined as local siblings immediately following their caller
 > - [ ] **Explaining Returns** — return value assigned to a named `const`; no bare returns
 > - [ ] **Boolean Prefix** — `isLoading`, `hasError`, `isActive`; never bare `loading`, `error`
 > - [ ] **Named Expectations** (Tests) — `input`/`actual`/`expected` triad; no magic values in `assert`

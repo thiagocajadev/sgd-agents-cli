@@ -46,7 +46,7 @@ function loadDynamicRules() {
 const HEURISTIC_MAP = {
   'Stepdown Rule': (_content) => ({ pass: true }), // Primarily manual
   'SLA applied': (_content) => ({ pass: true }), // Primarily manual
-  'Lexical Scoping': (content) => {
+  'Narrative Siblings': (content) => {
     const topLevelFunctions = (content.match(/^function\s+\w+/gm) || []).length;
     const exportedCount = (content.match(/^\s+\w+,/gm) || []).length;
     // Balance is the Key: Increase threshold to 12 to favor "Chapters" over "Monolithic Nesting"
@@ -121,7 +121,7 @@ export const GOVERNANCE_RULES = {
   LAW_3_NARRATIVE: {
     id: 'narrative',
     label: 'Law 3: Narrative Cascade',
-    checkpoint: 'Stepdown Rule; SLA; Lexical Scoping.',
+    checkpoint: 'Stepdown Rule; SLA; Narrative Siblings.',
   },
 };
 

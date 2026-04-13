@@ -35,7 +35,7 @@
 > - **Shallow Boundaries**: Destructure Level 1/2. Stop deep navigation dead in its tracks.
 > - **Vertical Density**: Visual grouping of related variables/logic with single blank lines (para-logical grouping).
 > - **Revealing Module Pattern**: Define functions/logic first, create a named object at the end, then export only that object.
-> - **Lexical Scoping**: One-off helpers must be encapsulated inside their parent's scope.
+> - **Narrative Siblings**: One-off helpers must be defined as local (non-exported) siblings immediately following their caller.
 > - **Humanized Writing**: Apply `.ai/instructions/core/writing-soul.md` to all documentation, UI text, and communication. Eliminate "AI-isms" and promotional slop to maintain a pulse in every technical artifact.
 >
 > *Comments explain "why", never "what". If naming is right, comments disappear.*
