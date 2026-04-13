@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Creative Dev-Guides Hub** — added specialized guides for Instagram, TikTok, LinkedIn, and YouTube (including safe zones and prompt logic).
+- **Hardened Ruleset Injection** — restored recursion for dev-guides subfolders in the injection engine.
+
+### Added
+
+- **Creative Design Toolkit (Option 4)** — Implemented a specialized "Injection" flow for brand identity, logos, social media (IG, TikTok, LinkedIn, YouTube), and landing page blueprints; added `core/creative`, `prompts/creatives`, and specialized `dev-guides/creatives/` assets to the instruction ecosystem.
+
 ### Fixed
 
 ## [1.20.1] - 2026-04-13

@@ -78,6 +78,7 @@ function buildMasterInstructions(selections) {
       buildArchitecturalContextRouting(currentSelections.flavor),
       buildTechnicalExecutionRouting(currentSelections.idioms),
       buildUIUXDesignRouting(currentSelections),
+      buildCreativeToolkitRouting(currentSelections),
       buildWorkingCyclesRouting(),
     ];
 
@@ -198,6 +199,22 @@ function buildMasterInstructions(selections) {
         | \`.ai/instructions/core/ui/design-thinking.md\` | Visual Contracts (Phase 0) |`;
 
       return uiuxRoutingBlock;
+    }
+
+    function buildCreativeToolkitRouting(_selectionsObj) {
+      const creativeDir = path.join(SOURCE_INSTRUCTIONS, 'core', 'creative');
+      if (!fs.existsSync(creativeDir)) return null;
+
+      const creativeToolkitBlock = dedent`
+        **Creative Design Toolkit**
+
+        | File | Purpose |
+        | :--- | :------ |
+        | \`.ai/instructions/core/creative/branding.md\` | Brand DNA & Visual Identity |
+        | \`.ai/instructions/core/creative/social-media.md\` | Social Media Hub (IG, TikTok, LI, YT) |
+        | \`.ai/instructions/core/creative/landing-page.md\` | Landing Page Blueprint |`;
+
+      return creativeToolkitBlock;
     }
 
     function buildWorkingCyclesRouting() {

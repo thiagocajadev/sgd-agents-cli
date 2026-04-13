@@ -69,6 +69,8 @@ function injectRulesets(targetDir, selections, { noDevGuides = false } = {}) {
   }
 
   if (!noDevGuides) injectDevGuides(targetDir);
+
+  injectCreativeToolkit(targetDir);
 }
 
 /**
@@ -122,11 +124,40 @@ function collectOutputSummary(selections) {
     directories.push('.ai/workflows/');
     directories.push('.ai/commands/');
     directories.push('.ai/dev-guides/');
+
+    // Creative toolkit directories (if injected)
+    directories.push('.ai/instructions/core/creative/');
+    directories.push('.ai/prompts/creatives/');
   } else if (mode === 'prompts') {
     if (track) directories.push('.ai/prompts/dev-tracks/');
   }
 
   return { directories };
+}
+
+/**
+ * Injected the specialized Creative Design Toolkit assets.
+ */
+function injectCreativeToolkit(targetDir) {
+  const sourceCreative = path.join(SOURCE_INSTRUCTIONS, 'core', 'creative');
+  const sourceCreativePrompts = path.join(SOURCE_INSTRUCTIONS, 'templates', 'creatives');
+  const sourceCreativeGuides = path.join(SOURCE_DEV_GUIDES, 'creatives');
+
+  const destCreative = path.join(targetDir, '.ai', 'instructions', 'core', 'creative');
+  const destCreativePrompts = path.join(targetDir, '.ai', 'prompts', 'creatives');
+  const destCreativeGuides = path.join(targetDir, '.ai', 'dev-guides', 'creatives');
+
+  if (fs.existsSync(sourceCreative)) {
+    copyRecursiveSync(sourceCreative, destCreative);
+  }
+
+  if (fs.existsSync(sourceCreativePrompts)) {
+    copyRecursiveSync(sourceCreativePrompts, destCreativePrompts);
+  }
+
+  if (fs.existsSync(sourceCreativeGuides)) {
+    copyRecursiveSync(sourceCreativeGuides, destCreativeGuides);
+  }
 }
 
 // --- Private ---
@@ -182,4 +213,5 @@ export const RulesetInjector = {
   injectDevGuides,
   injectPrompts,
   collectOutputSummary,
+  injectCreativeToolkit,
 };

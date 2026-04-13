@@ -75,6 +75,10 @@ async function startInteractiveMode(args) {
             name: '2. ⚙️  Settings & Maintenance — Review rules, sync patterns, and dev tools',
             value: 'settings',
           },
+          {
+            name: '4. 🎨 Creative Design Toolkit  — Branding, Logo, Social Media & Landing Pages',
+            value: 'creatives',
+          },
           { name: '3. ❌ Exit', value: 'exit' },
         ],
       });
@@ -100,6 +104,11 @@ async function executeMenuAction(menuChoice, args) {
     case 'settings':
       await runSettingsMenu(args.targetDir);
       break;
+    case 'creatives': {
+      const { Creatives } = await import('./creatives-bundle.mjs');
+      await Creatives.run(args.targetDir);
+      break;
+    }
   }
 }
 
