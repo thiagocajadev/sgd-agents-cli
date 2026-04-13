@@ -112,7 +112,7 @@ On every request, classify intent before acting:
 > 3. **Backlog Sync**: Moves all finished tasks to `## Done` in `tasks.md`.
 > 4. **Context Update**: Updates `## Now` in `context.md` with the next objective or clears it.
 > 5. **Lint**: Runs the linter, fixes what's possible, and blocks the commit if errors remain.
-> 6. **Commit**: If `package.json` has a `bump` script, execute `npm run bump <feat|fix|docs|land>` matching the active cycle type. Then audit workspace with `git add .` and propose the release commit. Wait for approval.
+> 6. **Commit**: If `package.json` has a `bump` script, execute `npm run bump <feat|fix|docs|land>` matching the active cycle type. Then audit workspace with `git add .` and propose the release commit (Pattern: `<intent>: release v<version> - <description>`). Wait for approval.
 > 7. **Next step**: Suggests what comes next: push · deploy · or a new task.
 >
 > [!WARNING]
