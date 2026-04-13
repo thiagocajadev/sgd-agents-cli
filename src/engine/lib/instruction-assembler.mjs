@@ -205,14 +205,34 @@ function buildMasterInstructions(selections) {
       const creativeDir = path.join(SOURCE_INSTRUCTIONS, 'core', 'creative');
       if (!fs.existsSync(creativeDir)) return null;
 
-      const creativeToolkitBlock = dedent`
-        **Creative Design Toolkit**
-
-        | File | Purpose |
-        | :--- | :------ |
-        | \`.ai/instructions/core/creative/branding.md\` | Brand DNA & Visual Identity |
-        | \`.ai/instructions/core/creative/social-media.md\` | Social Media Hub (IG, TikTok, LI, YT) |
-        | \`.ai/instructions/core/creative/landing-page.md\` | Landing Page Blueprint |`;
+      const creativeToolkitBlock = [
+        `**Creative Design Toolkit**`,
+        ``,
+        `| File | Purpose |`,
+        `| :--- | :------ |`,
+        `| \`.ai/instructions/creative/branding.md\` | Brand DNA & Visual Identity |`,
+        `| \`.ai/instructions/creative/social-media.md\` | Social Media Hub (IG, TikTok, LI, YT) |`,
+        `| \`.ai/instructions/creative/landing-page.md\` | Landing Page Blueprint |`,
+        ``,
+        `**Creative Templates**`,
+        ``,
+        `| File | Purpose |`,
+        `| :--- | :------ |`,
+        `| \`.ai/instructions/creative/templates/brand-dna.md\` | Brand Identity & Personality Specs |`,
+        `| \`.ai/instructions/creative/templates/logo-spec.md\` | Logo & Iconography technical guide |`,
+        `| \`.ai/instructions/creative/templates/social-media-content.md\` | Social Media post specifications |`,
+        `| \`.ai/instructions/creative/templates/landing-page-blueprint.md\` | Conversion-focused page structure |`,
+        ``,
+        `**Creative Tactic Guides**`,
+        ``,
+        `| File | Purpose |`,
+        `| :--- | :------ |`,
+        `| \`.ai/instructions/creative/guides/prompt-guide.md\` | Pro-level Creative Prompting |`,
+        `| \`.ai/instructions/creative/guides/social/instagram.md\` | Instagram Algorithm & Format Guide |`,
+        `| \`.ai/instructions/creative/guides/social/linkedin.md\` | LinkedIn Engagement & Reach |`,
+        `| \`.ai/instructions/creative/guides/social/tiktok.md\` | TikTok Hook & Retention Strategy |`,
+        `| \`.ai/instructions/creative/guides/social/youtube.md\` | YouTube Banner & Thumbnail rules |`,
+      ].join('\n');
 
       return creativeToolkitBlock;
     }
@@ -561,6 +581,12 @@ function writeAutomationScripts(targetDir, selections) {
   }
 }
 
+function getActiveAgents(selections) {
+  const agentCandidates = [...(selections.agents || []), selections.ide];
+  const activeAgents = agentCandidates.filter((agent) => agent !== null && agent !== undefined);
+  return activeAgents;
+}
+
 const InstructionAssembler = {
   buildMasterInstructions,
   buildClaudeContent,
@@ -570,6 +596,7 @@ const InstructionAssembler = {
   writeGitignore,
   writeManifest,
   writeAutomationScripts,
+  getActiveAgents,
 };
 
 export { InstructionAssembler };

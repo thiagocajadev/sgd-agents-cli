@@ -75,10 +75,6 @@ async function startInteractiveMode(args) {
             name: '2. ⚙️  Settings & Maintenance — Review rules, sync patterns, and dev tools',
             value: 'settings',
           },
-          {
-            name: '4. 🎨 Creative Design Toolkit  — Branding, Logo, Social Media & Landing Pages',
-            value: 'creatives',
-          },
           { name: '3. ❌ Exit', value: 'exit' },
         ],
       });

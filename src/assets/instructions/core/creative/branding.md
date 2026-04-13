@@ -60,4 +60,4 @@ When generating image prompts, always define:
 
 - [ ] Is the logo recognizable at 16x16px?
 - [ ] Do colors pass WCAG contrast checks if used in UI?
-- [ ] Does the visual style align with the Brand Voice defined in `brand-dna.md`?
+- [ ] Does the visual style align with the Brand Voice defined in `.ai/instructions/creative/templates/brand-dna.md`?

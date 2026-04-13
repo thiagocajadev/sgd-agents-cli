@@ -182,13 +182,20 @@ async function promptInitialChoice() {
         name: '2. Quick setup — install with defaults (lite + JS/TS, includes everything)',
         value: 'quick',
       },
-      { name: '3. Back', value: 'back' },
+      {
+        name: '3. Creative Design Toolkit — Branding, Social Media & Landing Pages',
+        value: 'creatives',
+      },
+      { name: '4. Back', value: 'back' },
     ],
   });
 
   if (result === 'back') {
     const backResult = fail('', 'USER_BACK');
     return backResult;
+  }
+  if (result === 'creatives') {
+    return success({ nextStep: WIZARD_STEPS.DONE, mode: 'creatives' });
   }
 
   const initialChoiceResult = success({ nextStep: WIZARD_STEPS.SCOPE, mode: result });

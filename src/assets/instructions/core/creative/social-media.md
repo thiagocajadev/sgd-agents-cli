@@ -30,6 +30,7 @@ When generating 9:16 content (Stories/TikTok):
 
 - Keep all critical text/logos within the **Center 70%** of the height.
 - Leave the top and bottom edges for platform-specific overlays (usernames, hashtags, music).
+- **Deep Dive**: Read the platform-specific tactic guides in `.ai/instructions/creative/guides/social/` for algorithm-specific hook and retention strategies.
 
 ## Social Media Logic Checklist
 

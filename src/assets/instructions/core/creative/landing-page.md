@@ -2,7 +2,7 @@
 
 > [!IMPORTANT]
 > A landing page is a conversion machine. Its goal is a single action (CTA).
-> Use these rules to structure layouts and copy.
+> Use these rules to structure layouts and copy. Use the template in `.ai/instructions/creative/templates/landing-page-blueprint.md` for a complete structural breakdown.
 
 ## Information Architecture (The "Scroll" Order)
 

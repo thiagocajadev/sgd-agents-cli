@@ -9,8 +9,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+## [1.21.2] - 2026-04-13
+
+### Added
+
+### Fixed
+
+- **Shared Engine Logic** — Centralized `getActiveAgents` in `InstructionAssembler` to eliminate code duplication across injection bundles.
+- **Toolkit Manifest Traceability** — Integrated `writeManifest` into the `creatives` flow to ensure CLI version and selections are recorded in `.sdg-manifest.json` after standalone injections.
+- **Enriched Agent Routing** — Expanded the `AGENTS.md` Creative Toolkit table to include direct links to Templates and Tactic Guides, improving AI discoverability of specialized assets.
+- **Local Asset Context** — Updated skill assets with explicit local path references for better multi-agent coordination.
+- **Governance Resilience** — Removed `CLAUDE.md` from git tracking and enforced it via `.gitignore` to prevent IDE-specific meta-contamination in the repository.
+
+## [1.21.1] - 2026-04-13
+
+### Added
+
 - **Creative Dev-Guides Hub** — added specialized guides for Instagram, TikTok, LinkedIn, and YouTube (including safe zones and prompt logic).
 - **Hardened Ruleset Injection** — restored recursion for dev-guides subfolders in the injection engine.
+
+### Fixed
+
+- **Creative Toolkit Menu Navigation** — Moved the "Creative Design Toolkit" option from the main menu into the `Setup` submenu (Option 1) to align with standard project initialization workflows; removed the 🎨 emoji to maintain visual consistency.
+- **Centralized Creative Assets** — Refactored the injection engine to centralize all toolkit assets under `.ai/instructions/creative/` (Skills, Templates, and Guides), eliminating fragmented directories in `prompts/` and `dev-guides/`.
+- **Governance Path Synchronization** — Updated `AGENTS.md` and the internal assembler to reflect the new centralized paths; implemented automatic cleanup of legacy creative folders during new injections.
 
 ### Added
 

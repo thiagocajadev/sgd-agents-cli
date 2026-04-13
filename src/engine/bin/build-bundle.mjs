@@ -22,6 +22,7 @@ const {
   writeGitignore,
   writeManifest,
   writeAutomationScripts,
+  getActiveAgents,
 } = InstructionAssembler;
 const { success } = ResultUtils;
 const { runIfDirect } = FsUtils;
@@ -132,6 +133,10 @@ async function handleFinalExecutionPhase(state, targetDir, options = {}) {
     return runPromptsMode(state, targetDir, selections, { skipConfirm });
   }
 
+  if (selections.mode === 'creatives') {
+    return runCreativesMode(state, targetDir);
+  }
+
   return runAgentsMode(state, targetDir, selections, { skipConfirm, noDevGuides });
 }
 
@@ -175,6 +180,13 @@ async function runAgentsMode(
   printSuccessAgents(targetDir);
   state.step = 'done';
   return success();
+}
+
+async function runCreativesMode(state, targetDir) {
+  const { Creatives } = await import('./creatives-bundle.mjs');
+  const result = await Creatives.run(targetDir);
+  state.step = 'done';
+  return result;
 }
 
 // --- Implementation Details ---
@@ -245,11 +257,7 @@ function executeAgentsPipeline(targetDir, selections, { noDevGuides = false } = 
   writeManifest(targetDir, selections, packageJson.version);
 }
 
-function getActiveAgents(selections) {
-  const agentCandidates = [...(selections.agents || []), selections.ide];
-  const activeAgents = agentCandidates.filter((agent) => agent !== null && agent !== undefined);
-  return activeAgents;
-}
+// getActiveAgents is now imported from InstructionAssembler
 
 export const SDG = {
   run,

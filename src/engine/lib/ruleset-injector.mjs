@@ -41,7 +41,8 @@ function injectRulesets(targetDir, selections, { noDevGuides = false } = {}) {
 
   copyRecursiveSync(
     path.join(SOURCE_INSTRUCTIONS, 'core'),
-    path.join(projectAiInstructions, 'core')
+    path.join(projectAiInstructions, 'core'),
+    { exclude: ['creative'] }
   );
 
   const flavorSrc = path.join(SOURCE_INSTRUCTIONS, 'flavors', flavor);
@@ -125,9 +126,10 @@ function collectOutputSummary(selections) {
     directories.push('.ai/commands/');
     directories.push('.ai/dev-guides/');
 
-    // Creative toolkit directories (if injected)
-    directories.push('.ai/instructions/core/creative/');
-    directories.push('.ai/prompts/creatives/');
+    // Creative toolkit directories
+    directories.push('.ai/instructions/creative/');
+    directories.push('.ai/instructions/creative/templates/');
+    directories.push('.ai/instructions/creative/guides/');
   } else if (mode === 'prompts') {
     if (track) directories.push('.ai/prompts/dev-tracks/');
   }
@@ -141,22 +143,31 @@ function collectOutputSummary(selections) {
 function injectCreativeToolkit(targetDir) {
   const sourceCreative = path.join(SOURCE_INSTRUCTIONS, 'core', 'creative');
   const sourceCreativePrompts = path.join(SOURCE_INSTRUCTIONS, 'templates', 'creatives');
-  const sourceCreativeGuides = path.join(SOURCE_DEV_GUIDES, 'creatives');
+  const sourceCreativeGuides = path.join(sourceCreativePrompts, 'guides');
 
-  const destCreative = path.join(targetDir, '.ai', 'instructions', 'core', 'creative');
-  const destCreativePrompts = path.join(targetDir, '.ai', 'prompts', 'creatives');
-  const destCreativeGuides = path.join(targetDir, '.ai', 'dev-guides', 'creatives');
+  const destRoot = path.join(targetDir, '.ai', 'instructions', 'creative');
+
+  // Cleanup old structures for migration/cleanliness
+  const oldPrompts = path.join(targetDir, '.ai', 'prompts', 'creatives');
+  const oldGuides = path.join(targetDir, '.ai', 'dev-guides', 'creatives');
+  if (fs.existsSync(oldPrompts)) fs.rmSync(oldPrompts, { recursive: true, force: true });
+  if (fs.existsSync(oldGuides)) fs.rmSync(oldGuides, { recursive: true, force: true });
+
+  // Ensure root exists
+  fs.mkdirSync(destRoot, { recursive: true });
 
   if (fs.existsSync(sourceCreative)) {
-    copyRecursiveSync(sourceCreative, destCreative);
+    copyRecursiveSync(sourceCreative, destRoot);
   }
 
   if (fs.existsSync(sourceCreativePrompts)) {
-    copyRecursiveSync(sourceCreativePrompts, destCreativePrompts);
+    copyRecursiveSync(sourceCreativePrompts, path.join(destRoot, 'templates'), {
+      exclude: ['guides'],
+    });
   }
 
   if (fs.existsSync(sourceCreativeGuides)) {
-    copyRecursiveSync(sourceCreativeGuides, destCreativeGuides);
+    copyRecursiveSync(sourceCreativeGuides, path.join(destRoot, 'guides'));
   }
 }
 

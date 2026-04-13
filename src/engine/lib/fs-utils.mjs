@@ -10,13 +10,18 @@ function getDirectories(source) {
     .map((dirent) => dirent.name);
 }
 
-function copyRecursiveSync(src, dest) {
+function copyRecursiveSync(src, dest, options = {}) {
+  const { exclude = [] } = options;
   if (!fs.existsSync(src)) return;
+
+  const itemName = path.basename(src);
+  if (exclude.includes(itemName)) return;
+
   const stats = fs.statSync(src);
   if (stats.isDirectory()) {
     if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
     for (const childItemName of fs.readdirSync(src)) {
-      copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
+      copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName), options);
     }
   } else {
     fs.copyFileSync(src, dest);
