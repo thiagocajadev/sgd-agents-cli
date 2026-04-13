@@ -10,7 +10,8 @@ your-project/
 │   ├── context.md               ← Project brief: stack, tech decisions, current state
 │   ├── tasks.md                 ← Task list (TODO / IN_PROGRESS / DONE)
 │   ├── learned.md               ← Lessons learned: success patterns and research findings
-│   └── troubleshoot.md          ← Troubleshooting: RCA logs and critical failure records
+│   ├── troubleshoot.md          ← Troubleshooting: RCA logs and critical failure records
+│   └── impact-map.md            ← Blast-radius map: volatile, created at PLAN, cleared at END
 └── .ai/                         ← Instruction set (committed)
     ├── skill/
     │   └── AGENTS.md            ← Main entry point — auto-loaded by agents
@@ -64,6 +65,17 @@ The agent reads this at session start before accepting new work.
 - **Root Cause Analysis (RCA)** for every fix executed
 - Failure logs and "gotchas" discovered during development
 - Technical debt and fragile areas to be avoided in future cycles
+
+**impact-map.md** — the "Blast-Radius Filter" of the active cycle. Volatile by design:
+
+- **Created** at Phase PLAN via `git diff --name-only HEAD` + import scanning
+- **Read** at Phase CODE — the agent loads only the files listed here, ignoring the rest of the codebase
+- **Cleared** at Phase END — reset to an idle state so the next cycle starts clean
+- **Regenerated** at Session Start if missing — the agent rebuilds it from `git diff` if an `[IN_PROGRESS]` task is detected in `tasks.md`
+
+The map contains three sections: `## Changed` (files directly modified), `## Blast Radius` (files that import or call a changed file), and `## Tests at Risk` (test files covering blast-radius files). A `## Safe` section optionally marks directories that can be skipped entirely.
+
+This design is inspired by the structural philosophy of [code-review-graph](https://github.com/tirth8205/code-review-graph) — a knowledge graph tool that uses Tree-sitter ASTs and MCP to give AI agents precise context. Instead of parsing ASTs or running a Python server, the Impact Map achieves the same goal through a lightweight protocol: the agent uses `git diff` and import scanning to build a minimal read-list at the start of every cycle. No external tools, no extra dependencies — just a markdown file and a disciplined workflow.
 
 ---
 
@@ -130,10 +142,10 @@ Prompt templates for authoring the SPEC phase (replaces the legacy `prompts/` di
 
 ## How the Files Are Used Per Phase
 
-| Phase | Files read                                                                             |
-| :---- | :------------------------------------------------------------------------------------- |
-| SPEC  | `dev-guides/prompt-tracks/`, `commands/sdg-feat.md` (or fix/docs)                      |
-| PLAN  | `.ai-backlog/tasks.md`                                                                 |
-| CODE  | `core/code-style.md`, `core/engineering-standards.md`, `learned.md`, `troubleshoot.md` |
-| TEST  | `core/testing-principles.md`                                                           |
-| END   | `.ai-backlog/context.md`, `.ai-backlog/tasks.md`, `learned.md`, `troubleshoot.md`      |
+| Phase | Files read                                                                                                          |
+| :---- | :------------------------------------------------------------------------------------------------------------------ |
+| SPEC  | `dev-guides/prompt-tracks/`, `commands/sdg-feat.md` (or fix/docs)                                                   |
+| PLAN  | `.ai-backlog/tasks.md`, `.ai-backlog/impact-map.md` (written here via `git diff`)                                   |
+| CODE  | `core/code-style.md`, `core/engineering-standards.md`, `learned.md`, `troubleshoot.md`, `.ai-backlog/impact-map.md` |
+| TEST  | `core/testing-principles.md`                                                                                        |
+| END   | `.ai-backlog/context.md`, `.ai-backlog/tasks.md`, `learned.md`, `troubleshoot.md` (impact-map.md cleared here)      |

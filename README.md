@@ -26,6 +26,7 @@ The instruction set covers:
 - **Architectural guidance**: rules for your project's structural pattern (vertical slice, MVC, etc.)
 - **Creative Design Toolkit**: specialized instructions for branding, social media strategy, and landing page blueprints
 - **Harness Engineering (Memory)**: a `.ai-backlog/` folder that persists context and task state across sessions
+- **Impact Map**: a volatile blast-radius file (`.ai-backlog/impact-map.md`) created at Phase PLAN and cleared at Phase END — tells the agent exactly which files to load for the current cycle, keeping context lean and focused
 
 ---
 
@@ -74,7 +75,11 @@ your-project/
 │   ├── workflows/               ← Workflow protocol
 │   └── dev-guides/              ← Reference files, spec templates, and guides
 └── .ai-backlog/                 ← Harness Engineering (Memory) — gitignored
-    └── ...                      ← (See docs/PROJECT-STRUCTURE.md for details)
+    ├── context.md               ← Project brief
+    ├── tasks.md                 ← Active task list
+    ├── learned.md               ← Success patterns
+    ├── troubleshoot.md          ← Failure logs
+    └── impact-map.md            ← Blast-radius map (volatile — created at PLAN, cleared at END)
 ```
 
 `dev-guides/` is always included. It contains the 5-phase cycle guide, the internal decision-gate flow, SDLC reference, UI prompt guide, and spec templates (`prompt-tracks/`) for authoring the SPEC phase of any task.

@@ -54,7 +54,44 @@ On every request, classify intent before acting:
 > 3. **Effort Tagging**: Tags each task by size: `[S]` small · `[M]` medium · `[L]` large (must be split).
 > 4. **Sub-task Split**: Breaks every `[L]` task into numbered steps: 1.1, 1.2...
 > 5. **Backlog Sync**: Saves all tasks to `.ai-backlog/tasks.md` and marks the first one as in progress.
-> 6. **Approval Gate**: Stops and waits for your approval before writing any code.
+> 6. **Impact Map**: Build the blast-radius map for this cycle and write it to `.ai-backlog/impact-map.md`.
+>
+>    **Step 1 — Identify changed files** (in order of precedence):
+>    - Run `git diff --name-only HEAD` — lists files modified since the last commit (staged or unstaged)
+>    - If output is empty, run `git status --short` — catches new untracked files not yet committed
+>    - If both return empty: this is a brand-new cycle with no changes yet — write the map with `## Changed: (no changes yet — map will be updated as files are modified)` and skip the remaining steps
+>
+>    **Step 2 — Scan blast radius**: For each changed file, scan its import/require statements to find which other files depend on it. List them under `## Blast Radius`.
+>
+>    **Step 3 — Identify tests at risk**: Find test files (_.test._, _.spec._) that cover any changed or blast-radius file. List them under `## Tests at Risk`.
+>
+>    **Step 4 — Write the map**:
+>
+>    ```md
+>    # Impact Map — <cycle>: <description>
+>
+>    _Generated: <date> | Cycle: <type>_
+>
+>    ## Changed
+>
+>    - <file> (reason: <why it changed>)
+>
+>    ## Blast Radius
+>
+>    - <file> (imports or calls a changed file)
+>
+>    ## Tests at Risk
+>
+>    - <test file> (covers a changed or blast-radius file)
+>
+>    ## Safe
+>
+>    - <directory or glob> (no dependency on changed files — skip entirely)
+>    ```
+>
+>    This map is the agent's read-list for Phase CODE — load only what it contains, ignore the rest of the codebase.
+>
+> 7. **Approval Gate**: Stops and waits for your approval before writing any code.
 >    </rule>
 
 ## Phase: CODE (The Execution) — MODE: FAST
@@ -111,9 +148,17 @@ On every request, classify intent before acting:
 >
 > 3. **Backlog Sync**: Moves all finished tasks to `## Done` in `tasks.md`.
 > 4. **Context Update**: Updates `## Now` in `context.md` with the next objective or clears it.
-> 5. **Lint**: Runs the linter, fixes what's possible, and blocks the commit if errors remain.
-> 6. **Commit**: If `package.json` has a `bump` script, execute `npm run bump <feat|fix|docs|land>` matching the active cycle type. Then audit workspace with `git add .` and propose the release commit (Pattern: `<intent>: release v<version> - <description>`). Wait for approval.
-> 7. **Next step**: Suggests what comes next: push · deploy · or a new task.
+> 5. **Map Reset**: Overwrite `.ai-backlog/impact-map.md` with the idle state below. If the file does not exist, skip (idempotent).
+>
+>    ```md
+>    # Impact Map — No active cycle
+>
+>    > Volatile file. Created at Phase PLAN. Cleared at Phase END.
+>    ```
+>
+> 6. **Lint**: Runs the linter, fixes what's possible, and blocks the commit if errors remain.
+> 7. **Commit**: If `package.json` has a `bump` script, execute `npm run bump <feat|fix|docs|land>` matching the active cycle type. Then audit workspace with `git add .` and propose the release commit (Pattern: `<intent>: release v<version> - <description>`). Wait for approval.
+> 8. **Next step**: Suggests what comes next: push · deploy · or a new task.
 >
 > [!WARNING]
 > Do NOT perform `git commit` autonomously. Always **PROPOSE** and **WAIT**.
@@ -132,7 +177,11 @@ On every request, classify intent before acting:
    - **Local Priority**: Always look for the `.ai-backlog/` folder in the current directory first to avoid redundancy.
    - **If missing**: analyze the project (read `package.json`, `README.md`, `CHANGELOG.md`, entry points, folder structure) and generate `.ai-backlog/context.md` using the bootstrap template below. Announce: _"context.md created with initial analysis. Review and adjust as needed."_ Never overwrite an existing file.
 3. Read `.ai-backlog/tasks.md` — check for `[IN_PROGRESS]` tasks before accepting new work.
-4. If an `[IN_PROGRESS]` task exists: resume it. Announce what was in progress and continue from the checkpoint.
+4. **Impact Map Check**: Read `.ai-backlog/impact-map.md`.
+   - **If present and populated** (not idle): an active cycle is in progress. Load only the files listed under `## Changed` and `## Blast Radius` — skip the rest of the codebase.
+   - **If missing or idle** (`No active cycle`): no blast-radius context needed. Proceed normally.
+   - **If backlog was deleted**: recreate `impact-map.md` with the idle template (see Phase END · Map Reset). Run `git diff --name-only HEAD` — if an in-progress cycle is detected from `tasks.md`, rebuild the map from that diff.
+5. If an `[IN_PROGRESS]` task exists: resume it. Announce what was in progress and continue from the checkpoint.
 
 #### context.md Bootstrap Template
 
