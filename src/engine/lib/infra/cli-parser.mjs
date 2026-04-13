@@ -3,9 +3,9 @@ function parseCliArgs(argv) {
 
   return {
     subcommand,
-    // Note: targetDir resolution (path.resolve) should be handled by the caller
+    // Note: targetDirectory resolution (path.resolve) should be handled by the caller
     // to keep this parser pure and environment-agnostic.
-    targetDir: argv.slice(subcommand ? 1 : 0).filter(isPositionalArg)[0] || null,
+    targetDirectory: argv.slice(subcommand ? 1 : 0).filter(isPositionalArg)[0] || null,
     help: argv.includes('--help') || argv.includes('-h'),
     version: argv.includes('--version') || argv.includes('-v'),
     dryRun: argv.includes('--dry-run'),

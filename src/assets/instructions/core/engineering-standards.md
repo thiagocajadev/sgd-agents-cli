@@ -5,12 +5,12 @@
 > [!NOTE]
 > Advanced topics for Staff-level Agent operations. This ruleset defines the **tactical execution** of Clean Code, Reliability, and Delivery.
 
-## Rule: Clean Code Essentials (The Art of Simplicity)
+## Rule: Clean Code Essentials (Balance is the Key)
 
 <rule name="CleanCodeTactical">
 
 > [!IMPORTANT]
-> **Simplicity is the goal. Balance is the discipline.** Write only what the problem requires — neither under-engineered nor over-abstracted. Code must be readable, stack-agnostic, and proportional to its purpose.
+> **Balance is the Key.** Write only what the problem requires — neither under-engineered nor over-abstracted. Code must be readable, stack-agnostic, and proportional to its purpose.
 
 #### Core Discipline (Named Expectations)
 
@@ -208,6 +208,7 @@ function buildOrderSummary(order) {
 - [ ] **Boolean names carry a prefix**: (e.g., `isLoading`, `hasError`, `isActive`)
 - [ ] **No explanatory comments**: only `// why:` for non-obvious constraints
 - [ ] **No Section Banners**: zero narrative interruptions via `// --- Section ---`
+- [ ] **Pure Entry Point**: run() serves only as a high-level headline caller
 - [ ] Code reads like a "Short Story" headline-to-details (Narrative Cascade)
 
 </rule>

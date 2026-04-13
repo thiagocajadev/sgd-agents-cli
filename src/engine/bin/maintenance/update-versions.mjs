@@ -1,7 +1,7 @@
-import { STACK_VERSIONS, NO_LTS_STACKS } from '../config/stack-versions.mjs';
-import { PromptUtils } from '../lib/prompt-utils.mjs';
-import { ResultUtils } from '../lib/result-utils.mjs';
-import { FsUtils } from '../lib/fs-utils.mjs';
+import { STACK_VERSIONS, NO_LTS_STACKS } from '../../config/stack-versions.mjs';
+import { PromptUtils } from '../../lib/infra/prompt-utils.mjs';
+import { ResultUtils } from '../../lib/core/result-utils.mjs';
+import { FsUtils } from '../../lib/core/fs-utils.mjs';
 
 const { printPromptUI } = PromptUtils;
 const { success } = ResultUtils;
@@ -13,6 +13,10 @@ const TODAY = new Date().toISOString().split('T')[0];
  * Prints a ready-to-use prompt for an AI Agent to check and update stack versions.
  */
 async function run() {
+  return orchestrateVersionUpdate();
+}
+
+async function orchestrateVersionUpdate() {
   const stackList = buildStackList();
   const prompt = buildPrompt(stackList);
 
@@ -27,8 +31,12 @@ async function run() {
 function buildStackList() {
   const stacks = [];
   const entries = STACK_VERSIONS.idioms || {};
-  for (const idiomKey of Object.keys(entries)) {
-    stacks.push({ section: 'idioms', key: idiomKey, hasLts: !NO_LTS_STACKS.has(idiomKey) });
+  for (const idiomFolderKey of Object.keys(entries)) {
+    stacks.push({
+      section: 'idioms',
+      key: idiomFolderKey,
+      hasLts: !NO_LTS_STACKS.has(idiomFolderKey),
+    });
   }
   return stacks;
 }

@@ -5,12 +5,12 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 
-import { WizardUtils } from '../lib/wizard.mjs';
-import { RulesetInjector } from '../lib/ruleset-injector.mjs';
-import { InstructionAssembler } from '../lib/instruction-assembler.mjs';
-import { ResultUtils } from '../lib/result-utils.mjs';
-import { FsUtils } from '../lib/fs-utils.mjs';
-import { BundleUI } from '../lib/ui-utils.mjs';
+import { WizardUtils } from '../../lib/domain/wizard.mjs';
+import { RulesetInjector } from '../../lib/domain/ruleset-injector.mjs';
+import { InstructionAssembler } from '../../lib/domain/instruction-assembler.mjs';
+import { ResultUtils } from '../../lib/core/result-utils.mjs';
+import { FsUtils } from '../../lib/core/fs-utils.mjs';
+import { BundleUI } from '../../lib/core/ui-utils.mjs';
 
 const { gatherUserSelections, validateSelections, autoSelectVersions } = WizardUtils;
 const { prepareProjectStructure, injectRulesets, injectPrompts } = RulesetInjector;
@@ -41,22 +41,22 @@ const {
 } = BundleUI;
 
 const require = createRequire(import.meta.url);
-const packageJson = require('../../../package.json');
+const packageJson = require('../../../../package.json');
 
 /**
  * Entry point for both interactive (wizard) and non-interactive (flags) modes.
  */
-async function run(targetDir = process.cwd(), options = {}) {
+async function run(targetDirectory = process.cwd(), options = {}) {
   printWelcome();
 
   if (options.selections) {
-    return runNonInteractive(targetDir, options);
+    return runNonInteractive(targetDirectory, options);
   }
 
-  return runInteractive(targetDir, options);
+  return runInteractive(targetDirectory, options);
 }
 
-async function runNonInteractive(targetDir, options) {
+async function runNonInteractive(targetDirectory, options) {
   const { dryRun = false, noDevGuides = false, selections } = options;
 
   const validationResult = validateSelections(selections);
@@ -68,7 +68,7 @@ async function runNonInteractive(targetDir, options) {
   autoSelectVersions(selections);
 
   const state = { step: 'execute', userSelections: selections };
-  const result = await handleFinalExecutionPhase(state, targetDir, {
+  const result = await handleFinalExecutionPhase(state, targetDirectory, {
     dryRun,
     noDevGuides,
     skipConfirm: true,
@@ -79,11 +79,11 @@ async function runNonInteractive(targetDir, options) {
   }
 }
 
-async function runInteractive(targetDir, options) {
+async function runInteractive(targetDirectory, options) {
   const state = { step: 'selections', userSelections: null };
 
   while (state.step !== 'done') {
-    const result = await handleExecutionStep(state, targetDir, options);
+    const result = await handleExecutionStep(state, targetDirectory, options);
     if (result.isFailure) {
       if (result.error.code !== 'USER_BACK') {
         console.log(`\n  ⚠️  ${result.error.message}`);
@@ -93,19 +93,19 @@ async function runInteractive(targetDir, options) {
   }
 }
 
-async function handleExecutionStep(state, targetDir, options) {
+async function handleExecutionStep(state, targetDirectory, options) {
   switch (state.step) {
     case 'selections':
-      return handleSelectionPhase(state, targetDir);
+      return handleSelectionPhase(state, targetDirectory);
     case 'execute':
-      return handleFinalExecutionPhase(state, targetDir, options);
+      return handleFinalExecutionPhase(state, targetDirectory, options);
     default:
       return success();
   }
 }
 
-async function handleSelectionPhase(state, targetDir) {
-  const result = await gatherUserSelections(targetDir);
+async function handleSelectionPhase(state, targetDirectory) {
+  const result = await gatherUserSelections(targetDirectory);
   if (result.isFailure) return result;
 
   state.userSelections = result.value;
@@ -113,80 +113,80 @@ async function handleSelectionPhase(state, targetDir) {
   return success();
 }
 
-async function handleFinalExecutionPhase(state, targetDir, options = {}) {
+async function handleFinalExecutionPhase(state, targetDirectory, options = {}) {
   const { dryRun = false, noDevGuides = false, skipConfirm = false } = options;
   const selections = state.userSelections;
 
   if (selections.mode === 'quick') {
-    return runQuickMode(state, targetDir, { dryRun, noDevGuides });
+    return runQuickMode(state, targetDirectory, { dryRun, noDevGuides });
   }
 
   if (dryRun) {
-    printDryRunPreview(selections, targetDir);
+    printDryRunPreview(selections, targetDirectory);
     state.step = 'done';
     return success();
   }
 
   if (selections.mode === 'prompts') {
-    return runPromptsMode(state, targetDir, selections, { skipConfirm });
+    return runPromptsMode(state, targetDirectory, selections, { skipConfirm });
   }
 
   if (selections.mode === 'creatives') {
-    return runCreativesMode(state, targetDir);
+    return runCreativesMode(state, targetDirectory);
   }
 
-  return runAgentsMode(state, targetDir, selections, { skipConfirm, noDevGuides });
+  return runAgentsMode(state, targetDirectory, selections, { skipConfirm, noDevGuides });
 }
 
-async function runQuickMode(state, targetDir, { dryRun, noDevGuides = false }) {
-  if (dryRun) return abortForDryRun(state, targetDir, printQuickDryRun);
+async function runQuickMode(state, targetDirectory, { dryRun, noDevGuides = false }) {
+  if (dryRun) return abortForDryRun(state, targetDirectory, printQuickDryRun);
 
   printQuickSetupStart();
-  executeQuickPipeline(targetDir, state.userSelections, { noDevGuides });
+  executeQuickPipeline(targetDirectory, state.userSelections, { noDevGuides });
 
-  printQuickSuccess(targetDir);
+  printQuickSuccess(targetDirectory);
   state.step = 'done';
   return success();
 }
 
-async function runPromptsMode(state, targetDir, selections, { skipConfirm = false } = {}) {
+async function runPromptsMode(state, targetDirectory, selections, { skipConfirm = false } = {}) {
   const confirmed = skipConfirm || (await printBuildSummary(selections));
   if (!confirmed) return abortExecution(state);
 
-  printProjectRoot(targetDir);
-  executePromptsPipeline(targetDir, selections);
+  printProjectRoot(targetDirectory);
+  executePromptsPipeline(targetDirectory, selections);
 
-  printSuccessPrompts(targetDir);
+  printSuccessPrompts(targetDirectory);
   state.step = 'done';
   return success();
 }
 
 async function runAgentsMode(
   state,
-  targetDir,
+  targetDirectory,
   selections,
   { skipConfirm = false, noDevGuides = false } = {}
 ) {
   const confirmed = skipConfirm || (await printBuildSummary(selections));
   if (!confirmed) return abortExecution(state);
 
-  printProjectRoot(targetDir);
-  executeAgentsPipeline(targetDir, selections, { noDevGuides });
+  printProjectRoot(targetDirectory);
+  executeAgentsPipeline(targetDirectory, selections, { noDevGuides });
 
-  printSuccessAgents(targetDir);
+  printSuccessAgents(targetDirectory);
   state.step = 'done';
   return success();
 }
 
-async function runCreativesMode(state, targetDir) {
+async function runCreativesMode(state, targetDirectory) {
   const { Creatives } = await import('./creatives-bundle.mjs');
-  const result = await Creatives.run(targetDir);
+  const result = await Creatives.run(targetDirectory);
   state.step = 'done';
   return result;
 }
 
-function abortForDryRun(state, targetDir, printer) {
-  printer(targetDir);
+function abortForDryRun(state, targetDirectory, printer) {
+  printer(targetDirectory);
   state.step = 'done';
   return success();
 }
@@ -197,58 +197,58 @@ function abortExecution(state) {
   return success();
 }
 
-function executeQuickPipeline(targetDir, selections, { noDevGuides = false } = {}) {
+function executeQuickPipeline(targetDirectory, selections, { noDevGuides = false } = {}) {
   printStep(1, 5, 'Preparing .ai/ structure...');
-  prepareProjectStructure(targetDir);
+  prepareProjectStructure(targetDirectory);
 
   printStep(2, 5, 'Injecting rules and dev-guides...');
-  injectRulesets(targetDir, selections, { noDevGuides });
+  injectRulesets(targetDirectory, selections, { noDevGuides });
 
   printStep(3, 5, 'Assembling AGENTS.md...');
   const content = buildMasterInstructions(selections);
 
   printStep(4, 5, 'Writing agent config and backlog...');
-  writeAgentConfig(targetDir, content, getActiveAgents(selections));
-  writeBacklogFiles(targetDir, selections);
-  writeGitignore(targetDir);
+  writeAgentConfig(targetDirectory, content, getActiveAgents(selections));
+  writeBacklogFiles(targetDirectory, selections);
+  writeGitignore(targetDirectory);
 
   printStep(5, 5, 'Injecting spec templates...');
-  injectPrompts(targetDir, selections.track);
-  writeAutomationScripts(targetDir, selections);
-  writeManifest(targetDir, selections, packageJson.version);
+  injectPrompts(targetDirectory, selections.track);
+  writeAutomationScripts(targetDirectory, selections);
+  writeManifest(targetDirectory, selections, packageJson.version);
 }
 
-function executePromptsPipeline(targetDir, selections) {
+function executePromptsPipeline(targetDirectory, selections) {
   printStep(1, 3, 'Preparing .ai/ structure...');
-  prepareProjectStructure(targetDir);
+  prepareProjectStructure(targetDirectory);
 
   printStep(2, 3, `Injecting specification track: ${selections.track}...`);
-  injectPrompts(targetDir, selections.track);
+  injectPrompts(targetDirectory, selections.track);
 
   printStep(3, 3, 'Writing prompts-only fallback config...');
   const stubContent = buildPromptModeStub();
-  writeAgentConfig(targetDir, stubContent, getActiveAgents(selections));
-  writeGitignore(targetDir);
+  writeAgentConfig(targetDirectory, stubContent, getActiveAgents(selections));
+  writeGitignore(targetDirectory);
 }
 
-function executeAgentsPipeline(targetDir, selections, { noDevGuides = false } = {}) {
+function executeAgentsPipeline(targetDirectory, selections, { noDevGuides = false } = {}) {
   printStep(1, 5, 'Preparing .ai/ structure...');
-  prepareProjectStructure(targetDir);
+  prepareProjectStructure(targetDirectory);
 
   printStep(2, 5, 'Injecting rules and dev-guides...');
-  injectRulesets(targetDir, selections, { noDevGuides });
+  injectRulesets(targetDirectory, selections, { noDevGuides });
 
   printStep(3, 5, 'Assembling AGENTS.md...');
   const content = buildMasterInstructions(selections);
 
   printStep(4, 5, 'Writing agent config and backlog...');
-  writeAgentConfig(targetDir, content, getActiveAgents(selections));
-  writeBacklogFiles(targetDir, selections);
-  writeGitignore(targetDir);
+  writeAgentConfig(targetDirectory, content, getActiveAgents(selections));
+  writeBacklogFiles(targetDirectory, selections);
+  writeGitignore(targetDirectory);
 
   printStep(5, 5, 'Finalizing manifest...');
-  writeAutomationScripts(targetDir, selections);
-  writeManifest(targetDir, selections, packageJson.version);
+  writeAutomationScripts(targetDirectory, selections);
+  writeManifest(targetDirectory, selections, packageJson.version);
 }
 
 // getActiveAgents is now imported from InstructionAssembler
@@ -258,7 +258,7 @@ export const SDG = {
 };
 
 runIfDirect(import.meta.url, () => {
-  const targetDir = process.argv[2] ?? process.cwd();
+  const targetDirectory = process.argv[2] ?? process.cwd();
   const dryRun = process.argv.includes('--dry-run');
-  return run(path.resolve(targetDir), { dryRun });
+  return run(path.resolve(targetDirectory), { dryRun });
 });

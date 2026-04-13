@@ -3,9 +3,9 @@
  * Single responsibility: presentation and interaction only, no file I/O.
  */
 
-import { STACK_DISPLAY_NAMES } from '../config/stack-display.mjs';
-import { RulesetInjector } from './ruleset-injector.mjs';
-import { PromptUtils } from './prompt-utils.mjs';
+import { STACK_DISPLAY_NAMES } from '../../config/stack-display.mjs';
+import { RulesetInjector } from '../domain/ruleset-injector.mjs';
+import { PromptUtils } from '../infra/prompt-utils.mjs';
 
 const { collectOutputSummary } = RulesetInjector;
 const { safeConfirm } = PromptUtils;

@@ -1,16 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { input, confirm, select } from '@inquirer/prompts';
-import { PromptUtils } from '../lib/prompt-utils.mjs';
-import { ResultUtils } from '../lib/result-utils.mjs';
-import { FsUtils } from '../lib/fs-utils.mjs';
+import { PromptUtils } from '../../lib/infra/prompt-utils.mjs';
+import { ResultUtils } from '../../lib/core/result-utils.mjs';
+import { FsUtils } from '../../lib/core/fs-utils.mjs';
 
 const { printPromptUI } = PromptUtils;
 const { success, fail } = ResultUtils;
 const { getDirname, runIfDirect } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
-const SOURCE_ROOT = path.join(__dirname, '../..');
+const SOURCE_ROOT = path.join(__dirname, '../../..');
 const SOURCE_INSTRUCTIONS = path.join(SOURCE_ROOT, 'assets', 'instructions');
 
 const TODAY = new Date().toISOString().split('T')[0];
@@ -19,25 +19,29 @@ const TODAY = new Date().toISOString().split('T')[0];
  * Generates a prompt for an AI Agent to create a new idiom ruleset.
  */
 async function run() {
+  return orchestrateIdiomAddition();
+}
+
+async function orchestrateIdiomAddition() {
   printWelcome();
 
-  const idiomKey = await input({
+  const idiomFolderKey = await input({
     message: 'Folder name for the idiom (e.g. ruby, go, rust, swift):',
     validate: (rawInput) =>
       /^[a-z0-9-]+$/.test(rawInput.trim()) || 'Use lowercase letters, numbers and hyphens only.',
   });
 
-  const displayNameInput = await input({
+  const idiomDisplayNameInput = await input({
     message: 'Display name shown in the build menu (e.g. Go / Gin, Rust / Axum):',
     validate: (rawInput) => rawInput.trim().length > 0 || 'Required.',
   });
 
-  const hasLts = await confirm({
+  const hasLtsLifecycle = await confirm({
     message: 'Does this idiom follow a formal LTS/versioning cycle? (no = "Latest Stable" labels)',
     default: true,
   });
 
-  const scope = await select({
+  const architecturalScope = await select({
     message: 'What is the primary scope of this idiom?',
     choices: [
       { name: '1. Backend', value: 'backend' },
@@ -46,12 +50,11 @@ async function run() {
     ],
   });
 
-  const folderKey = idiomKey.trim();
-  const targetDir = path.join(SOURCE_INSTRUCTIONS, 'idioms', folderKey);
+  const targetDirectory = path.join(SOURCE_INSTRUCTIONS, 'idioms', idiomFolderKey);
 
-  if (fs.existsSync(targetDir)) {
+  if (fs.existsSync(targetDirectory)) {
     console.log(
-      `\n  Idiom "${folderKey}" already exists at ${path.relative(SOURCE_ROOT, targetDir)}.\n`
+      `\n  Idiom "${idiomFolderKey}" already exists at ${path.relative(SOURCE_ROOT, targetDirectory)}.\n`
     );
     return success();
   }
@@ -59,11 +62,11 @@ async function run() {
   let stackVersionsContent, stackDisplayContent, corePrinciples;
   try {
     stackVersionsContent = fs.readFileSync(
-      path.join(__dirname, '../config/stack-versions.mjs'),
+      path.join(SOURCE_ROOT, 'src/engine/config/stack-versions.mjs'),
       'utf8'
     );
     stackDisplayContent = fs.readFileSync(
-      path.join(__dirname, '../config/stack-display.mjs'),
+      path.join(SOURCE_ROOT, 'src/engine/config/stack-display.mjs'),
       'utf8'
     );
     corePrinciples = fs.readFileSync(
@@ -76,10 +79,10 @@ async function run() {
   }
 
   const prompt = buildPrompt({
-    key: folderKey,
-    displayName: displayNameInput.trim(),
-    hasLts,
-    scope,
+    key: idiomFolderKey,
+    displayName: idiomDisplayNameInput.trim(),
+    hasLts: hasLtsLifecycle,
+    scope: architecturalScope,
     stackVersionsContent,
     stackDisplayContent,
     corePrinciples,
@@ -88,7 +91,7 @@ async function run() {
   await printPromptUI(prompt, 'Spec Driven Guide — Add New Idiom');
 
   console.log('\n  After the AI responds, apply the files:');
-  console.log(`  - src/instructions/idioms/${folderKey}/patterns.md  (create)
+  console.log(`  - src/instructions/idioms/${idiomFolderKey}/patterns.md  (create)
   - src/config/stack-versions.mjs              (update)
   - src/config/stack-display.mjs               (update)\n`);
 

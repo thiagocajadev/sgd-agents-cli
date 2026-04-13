@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { PromptUtils } from '../lib/prompt-utils.mjs';
-import { ManifestUtils } from '../lib/manifest-utils.mjs';
-import { DisplayUtils } from '../lib/display-utils.mjs';
-import { ResultUtils } from '../lib/result-utils.mjs';
-import { FsUtils } from '../lib/fs-utils.mjs';
+import { PromptUtils } from '../../lib/infra/prompt-utils.mjs';
+import { ManifestUtils } from '../../lib/domain/manifest-utils.mjs';
+import { DisplayUtils } from '../../lib/core/display-utils.mjs';
+import { ResultUtils } from '../../lib/core/result-utils.mjs';
+import { FsUtils } from '../../lib/core/fs-utils.mjs';
 
 const { printPromptUI, isMaintainerMode } = PromptUtils;
 const { loadManifest } = ManifestUtils;
@@ -13,13 +13,17 @@ const { success } = ResultUtils;
 const { getDirname, runIfDirect } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
-const SOURCE_ROOT = path.join(__dirname, '../..');
+const SOURCE_ROOT = path.join(__dirname, '../../..');
 const SOURCE_INSTRUCTIONS = path.join(SOURCE_ROOT, 'assets', 'instructions');
 
 const PROJECT_ROOT = process.cwd();
 const TODAY = new Date().toISOString().split('T')[0];
 
 async function run() {
+  return orchestrateRulesetSync();
+}
+
+async function orchestrateRulesetSync() {
   const manifest = loadManifest(PROJECT_ROOT);
   if (!manifest) {
     console.log(
@@ -66,7 +70,7 @@ function resolveTargets(manifest) {
   // Core UI standards (Universal Design System)
   const uiSourceDir = path.join(SOURCE_INSTRUCTIONS, 'core', 'ui');
   if (fs.existsSync(uiSourceDir)) {
-    const uiFiles = fs.readdirSync(uiSourceDir).filter((f) => f.endsWith('.md'));
+    const uiFiles = fs.readdirSync(uiSourceDir).filter((file) => file.endsWith('.md'));
     for (const file of uiFiles) {
       let filePath = path.join(PROJECT_ROOT, '.ai', 'instructions', 'core', 'ui', file);
       if (!fs.existsSync(filePath)) {

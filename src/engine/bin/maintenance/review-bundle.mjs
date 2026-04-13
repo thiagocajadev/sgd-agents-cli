@@ -1,9 +1,9 @@
 import path from 'node:path';
 import { select } from '@inquirer/prompts';
-import { ManifestUtils } from '../lib/manifest-utils.mjs';
-import { DisplayUtils } from '../lib/display-utils.mjs';
-import { ResultUtils } from '../lib/result-utils.mjs';
-import { FsUtils } from '../lib/fs-utils.mjs';
+import { ManifestUtils } from '../../lib/domain/manifest-utils.mjs';
+import { DisplayUtils } from '../../lib/core/display-utils.mjs';
+import { ResultUtils } from '../../lib/core/result-utils.mjs';
+import { FsUtils } from '../../lib/core/fs-utils.mjs';
 
 const { computeHashes, compareHashes, daysAgo, loadManifest } = ManifestUtils;
 const { displayName } = DisplayUtils;
@@ -11,7 +11,7 @@ const { success } = ResultUtils;
 const { getDirname, runIfDirect } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
-const SOURCE_ROOT = path.join(__dirname, '../..');
+const SOURCE_ROOT = path.join(__dirname, '../../..');
 const SOURCE_INSTRUCTIONS = path.join(SOURCE_ROOT, 'assets', 'instructions');
 
 const PROJECT_ROOT = process.cwd();
@@ -20,6 +20,10 @@ const PROJECT_ROOT = process.cwd();
  * Orchestrator: Review Entry Point
  */
 async function run() {
+  return orchestrateReview();
+}
+
+async function orchestrateReview() {
   console.log('\n  Spec Driven Guide — Instructions Reviewer');
   console.log('  ' + '─'.repeat(50));
 
@@ -102,7 +106,7 @@ function printComparisonReport(comparison) {
 
 async function syncWithCore(manifest) {
   const { selections } = manifest;
-  const { SDG } = await import('./build-bundle.mjs');
+  const { SDG } = await import('../init/build-bundle.mjs');
 
   console.log('\n  Syncing with core instructions...\n');
 

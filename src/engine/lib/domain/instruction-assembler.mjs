@@ -7,21 +7,25 @@ import fs from 'node:fs';
 import path from 'node:path';
 import dedent from 'dedent';
 
-import { STACK_DISPLAY_NAMES } from '../config/stack-display.mjs';
-import { DisplayUtils } from './display-utils.mjs';
+import { STACK_DISPLAY_NAMES } from '../../config/stack-display.mjs';
+import { DisplayUtils } from '../core/display-utils.mjs';
 import { ManifestUtils } from './manifest-utils.mjs';
-import { FsUtils } from './fs-utils.mjs';
+import { FsUtils } from '../core/fs-utils.mjs';
 
 const { displayName } = DisplayUtils;
 const { computeHashes } = ManifestUtils;
 const { getDirname, writeJsonAtomic, safeReadJson } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
-const SOURCE_INSTRUCTIONS = path.join(__dirname, '..', '..', 'assets', 'instructions');
+const SOURCE_INSTRUCTIONS = path.join(__dirname, '../../..', 'assets', 'instructions');
 
 function computeStackMetrics(idioms) {
-  const hasBackend = idioms.some((idiomId) => STACK_DISPLAY_NAMES[idiomId]?.isBackend);
-  const hasFrontend = idioms.some((idiomId) => STACK_DISPLAY_NAMES[idiomId]?.isFrontend);
+  const hasBackend = idioms.some(
+    (idiomFolderKey) => STACK_DISPLAY_NAMES[idiomFolderKey]?.isBackend
+  );
+  const hasFrontend = idioms.some(
+    (idiomFolderKey) => STACK_DISPLAY_NAMES[idiomFolderKey]?.isFrontend
+  );
 
   const metrics = {
     hasBackend,
@@ -145,9 +149,9 @@ function buildMasterInstructions(selections) {
     function buildTechnicalExecutionRouting(idioms) {
       const { hasBackend, hasFrontend } = computeStackMetrics(idioms);
 
-      const idiomRows = idioms.map((idiomId) => {
-        const label = STACK_DISPLAY_NAMES[idiomId]?.name ?? idiomId;
-        const tableRow = `| \`.ai/instructions/idioms/${idiomId}/patterns.md\` | ${label} Idioms & Patterns |`;
+      const idiomRows = idioms.map((idiomFolderKey) => {
+        const label = STACK_DISPLAY_NAMES[idiomFolderKey]?.name ?? idiomFolderKey;
+        const tableRow = `| \`.ai/instructions/idioms/${idiomFolderKey}/patterns.md\` | ${label} Idioms & Patterns |`;
         return tableRow;
       });
 
@@ -279,31 +283,31 @@ function buildPromptModeStub() {
  * Writes .ai-backlog/context.md and .ai-backlog/tasks.md at the project root.
  * Only writes each file if it does not already exist — never overwrites user content.
  */
-function writeBacklogFiles(targetDir, selections) {
-  const backlogDir = path.join(targetDir, '.ai-backlog');
-  fs.mkdirSync(backlogDir, { recursive: true });
+function writeBacklogFiles(targetDirectory, selections) {
+  const backlogDirectory = path.join(targetDirectory, '.ai-backlog');
+  fs.mkdirSync(backlogDirectory, { recursive: true });
 
-  writeContextFile(backlogDir, targetDir, selections);
-  writeTasksFile(backlogDir);
-  writeLearnedFile(backlogDir);
-  writeTroubleshootFile(backlogDir);
+  writeContextFile(backlogDirectory, targetDirectory, selections);
+  writeTasksFile(backlogDirectory);
+  writeLearnedFile(backlogDirectory);
+  writeTroubleshootFile(backlogDirectory);
 
-  function detectProjectLanguage(projectDir) {
-    const pkgPath = path.join(projectDir, 'package.json');
-    if (!fs.existsSync(pkgPath)) return 'en';
+  function detectProjectLanguage(projectDirectory) {
+    const packagePath = path.join(projectDirectory, 'package.json');
+    if (!fs.existsSync(packagePath)) return 'en';
 
     try {
-      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+      const packageData = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
       // Basic detection via common Portuguese strings or i18n configs
-      const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+      const deps = { ...packageData.dependencies, ...packageData.devDependencies };
       if (deps['i18next'] || deps['react-i18next']) {
-        const localesDir = path.join(projectDir, 'src', 'locales');
+        const localesDir = path.join(projectDirectory, 'src', 'locales');
         if (fs.existsSync(localesDir) && fs.readdirSync(localesDir).includes('pt-BR'))
           return 'pt-BR';
       }
       if (
-        pkg.description?.toLowerCase().includes('guia') ||
-        pkg.description?.toLowerCase().includes('sistema')
+        packageData.description?.toLowerCase().includes('guia') ||
+        packageData.description?.toLowerCase().includes('sistema')
       ) {
         return 'pt-BR';
       }
@@ -313,10 +317,10 @@ function writeBacklogFiles(targetDir, selections) {
     return 'en';
   }
 
-  function writeContextFile(backlogDirPath, projectDir, currentSelections) {
-    const contextPath = path.join(backlogDirPath, 'context.md');
+  function writeContextFile(backlogDirectoryPath, projectDirectory, currentSelections) {
+    const contextPath = path.join(backlogDirectoryPath, 'context.md');
 
-    const language = detectProjectLanguage(projectDir);
+    const language = detectProjectLanguage(projectDirectory);
     const partner = currentSelections.partner || {};
     const name = partner.name || (language === 'pt-BR' ? 'Dev Parceiro' : 'Dev Partner');
     const role = partner.role || (language === 'pt-BR' ? 'Fundador/Dev' : 'Founder/Dev');
@@ -334,13 +338,13 @@ function writeBacklogFiles(targetDir, selections) {
     }
 
     const stackLine = (currentSelections.idioms ?? [])
-      .map((id) => STACK_DISPLAY_NAMES[id]?.name ?? id)
+      .map((idiomFolderKey) => STACK_DISPLAY_NAMES[idiomFolderKey]?.name ?? idiomFolderKey)
       .join(', ');
 
     const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'context.md');
     let contextContent = fs.readFileSync(templatePath, 'utf8');
     contextContent = contextContent
-      .replace('{{PROJECT_NAME}}', path.basename(projectDir))
+      .replace('{{PROJECT_NAME}}', path.basename(projectDirectory))
       .replace('{{STACK}}', stackLine)
       .replace('{{PARTNER}}', partnerInfo);
 
@@ -356,22 +360,22 @@ function writeBacklogFiles(targetDir, selections) {
     fs.appendFileSync(contextPath, `${separator}${injection}`);
   }
 
-  function writeTasksFile(backlogDirPath) {
-    const tasksPath = path.join(backlogDirPath, 'tasks.md');
+  function writeTasksFile(backlogDirectoryPath) {
+    const tasksPath = path.join(backlogDirectoryPath, 'tasks.md');
     if (fs.existsSync(tasksPath)) return;
     const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'tasks.md');
     fs.copyFileSync(templatePath, tasksPath);
   }
 
-  function writeLearnedFile(backlogDirPath) {
-    const learnedPath = path.join(backlogDirPath, 'learned.md');
+  function writeLearnedFile(backlogDirectoryPath) {
+    const learnedPath = path.join(backlogDirectoryPath, 'learned.md');
     if (fs.existsSync(learnedPath)) return;
     const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'learned.md');
     fs.copyFileSync(templatePath, learnedPath);
   }
 
-  function writeTroubleshootFile(backlogDirPath) {
-    const troubleshootPath = path.join(backlogDirPath, 'troubleshoot.md');
+  function writeTroubleshootFile(backlogDirectoryPath) {
+    const troubleshootPath = path.join(backlogDirectoryPath, 'troubleshoot.md');
     if (fs.existsSync(troubleshootPath)) return;
     const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'troubleshoot.md');
     fs.copyFileSync(templatePath, troubleshootPath);
@@ -405,9 +409,9 @@ function buildClaudeContent() {
  * it references only the rules relevant to the project's stack.
  * If agents/ides are selected, it will also dump the rules to the native target.
  */
-function writeAgentConfig(targetDir, content, requestedAgents = []) {
+function writeAgentConfig(targetDirectory, content, requestedAgents = []) {
   // Always create the generic fallback AGENTS.md and CAVEMAN.md
-  const skillDir = path.join(targetDir, '.ai', 'skill');
+  const skillDir = path.join(targetDirectory, '.ai', 'skill');
   fs.mkdirSync(skillDir, { recursive: true });
   fs.writeFileSync(path.join(skillDir, 'AGENTS.md'), content);
 
@@ -433,7 +437,7 @@ function writeAgentConfig(targetDir, content, requestedAgents = []) {
     const target = ideTargets[agent];
     if (!target) continue;
 
-    const fullDir = path.join(targetDir, target.dir);
+    const fullDir = path.join(targetDirectory, target.dir);
     fs.mkdirSync(fullDir, { recursive: true });
 
     const targetFile = path.join(fullDir, target.file);
@@ -456,8 +460,8 @@ function writeAgentConfig(targetDir, content, requestedAgents = []) {
  * Writes or updates .gitignore with SDG-managed entries.
  * Idempotent — each block only appends entries not already present.
  */
-function writeGitignore(targetDir) {
-  const gitignorePath = path.join(targetDir, '.gitignore');
+function writeGitignore(targetDirectory) {
+  const gitignorePath = path.join(targetDirectory, '.gitignore');
 
   const BLOCKS = [
     {
@@ -493,18 +497,18 @@ function writeGitignore(targetDir) {
 /**
  * Writes the .sdg-manifest.json with content hashes for future diff checks.
  */
-function writeManifest(targetDir, selections, pkgVersion) {
+function writeManifest(targetDirectory, selections, packageVersion) {
   const manifest = {
     generatedAt: new Date().toISOString(),
-    sdgAgentVersion: pkgVersion,
+    sdgAgentVersion: packageVersion,
     selections,
     contentHashes: computeHashes(selections, SOURCE_INSTRUCTIONS),
   };
 
-  const aiDir = path.join(targetDir, '.ai');
-  fs.mkdirSync(aiDir, { recursive: true });
+  const aiDirectory = path.join(targetDirectory, '.ai');
+  fs.mkdirSync(aiDirectory, { recursive: true });
 
-  const manifestPath = path.join(aiDir, '.sdg-manifest.json');
+  const manifestPath = path.join(aiDirectory, '.sdg-manifest.json');
   const originalContent = fs.existsSync(manifestPath)
     ? fs.readFileSync(manifestPath, 'utf8')
     : null;
@@ -516,19 +520,20 @@ function writeManifest(targetDir, selections, pkgVersion) {
  * Injects automation scripts and configurations (Bump, Husky) if enabled.
  * Idempotent: skips if scripts/bump.mjs exists or if selections.bump is false.
  */
-function writeAutomationScripts(targetDir, selections) {
+function writeAutomationScripts(targetDirectory, selections) {
   if (selections.bump === false) return;
 
-  const scriptsDir = path.join(targetDir, 'scripts');
+  const scriptsDir = path.join(targetDirectory, 'scripts');
   const bumpScriptPath = path.join(scriptsDir, 'bump.mjs');
 
   // 1. Check for existing bump script in package.json to avoid collision
-  const pkgPath = path.join(targetDir, 'package.json');
-  const pkg = safeReadJson(pkgPath);
-  if (!pkg) return;
+  const packagePath = path.join(targetDirectory, 'package.json');
+  const packageData = safeReadJson(packagePath);
+  if (!packageData) return;
 
   const hasExistingBump =
-    pkg.scripts && (pkg.scripts.bump || pkg.scripts.release || pkg.scripts.version);
+    packageData.scripts &&
+    (packageData.scripts.bump || packageData.scripts.release || packageData.scripts.version);
 
   if (hasExistingBump && !fs.existsSync(bumpScriptPath)) {
     // If they have a script but not our file, we respect their script
@@ -544,16 +549,16 @@ function writeAutomationScripts(targetDir, selections) {
   }
 
   // 3. Update package.json scripts
-  if (!pkg.scripts) pkg.scripts = {};
-  if (!pkg.scripts.bump) {
-    pkg.scripts.bump = 'node scripts/bump.mjs';
-    writeJsonAtomic(pkgPath, pkg, fs.readFileSync(pkgPath, 'utf8'));
+  if (!packageData.scripts) packageData.scripts = {};
+  if (!packageData.scripts.bump) {
+    packageData.scripts.bump = 'node scripts/bump.mjs';
+    writeJsonAtomic(packagePath, packageData, fs.readFileSync(packagePath, 'utf8'));
   }
 
   // 4. Configure Husky if .husky exists
-  const huskyDir = path.join(targetDir, '.husky');
-  if (fs.existsSync(huskyDir)) {
-    const prePushPath = path.join(huskyDir, 'pre-push');
+  const huskyDirectory = path.join(targetDirectory, '.husky');
+  if (fs.existsSync(huskyDirectory)) {
+    const prePushPath = path.join(huskyDirectory, 'pre-push');
     const nvmShim = dedent`
       # NVM Shim (Essential for projects Staff in Linux/NVM)
       export NVM_DIR="$HOME/.nvm"

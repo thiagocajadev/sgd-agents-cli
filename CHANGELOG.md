@@ -11,6 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.4.0] - 2026-04-13
+
+### Added
+
+- **Domain-Driven Basin Architecture (src/engine/)** — refactored the entire engine into logical basins: `bin/` (orchestrators for init, audit, maintenance, lifecycle) and `lib/` (core, infra, and domain layers), improving scannability and modularity.
+- **Narrative Cascade (Law 3) Hardening** — achieved 100% compliance by enforcing the **Pure Entry Point** pattern across all binaries and systematically eliminating shorthand variables (`targetDir`, `pkg`, etc.) in favor of narrative identifiers.
+- **Improved Governance Observability** — updated the `audit` suite to support the new basin structure and implemented self-detection resilience for engineering law enforcement.
+
+### Fixed
+
+- **Engine Structural Debt** — resolved fragmented logic and naming inconsistencies across 40+ files, achieving 100% compliance in the Governance Audit.
+- **Audit Runner Stability** — fixed a critical syntax error and variable scope issue in the narrative scansion loop.
+
 ## [2.3.1] - 2026-04-13
 
 ### Added

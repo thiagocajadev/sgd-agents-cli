@@ -8,7 +8,7 @@
 > [!IMPORTANT]
 > This flavor MUST strictly adhere to the [Universal Staff Engineering DNA](../core/staff-dna.md). All rules regarding Security (Hardening), Reliability (Resilience), and Narrative (NarrativeCascade) are inherited from the DNA.
 
-## Core Principles: Absolute Simplicity
+## Core Principles: Absolute Balance
 
 <rule name="LiteCorePrinciples">
 

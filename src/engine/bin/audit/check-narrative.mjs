@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { NARRATIVE_CHECKLIST } from '../config/governance.mjs';
-import { FsUtils } from '../lib/fs-utils.mjs';
+import { NARRATIVE_CHECKLIST } from '../../config/governance.mjs';
+import { FsUtils } from '../../lib/core/fs-utils.mjs';
 
 /**
  * Narrative Auditor — Specialized Law 3 compliance tool.
@@ -11,23 +11,47 @@ const PROJECT_ROOT = process.cwd();
 const { runIfDirect } = FsUtils;
 
 async function run() {
+  await orchestrateNarrativeAudit();
+}
+
+async function orchestrateNarrativeAudit() {
+  printHeader();
+
+  const files = collectTargetFiles();
+  const { violationsByFile, totalViolations } = scanFilesForViolations(files);
+
+  reportResults(violationsByFile, totalViolations);
+}
+
+function printHeader() {
   console.log('\n' + '─'.repeat(50));
   console.log('  📖 SDG NARRATIVE AUDIT — Law 3 Compliance');
   console.log('─'.repeat(50) + '\n');
+}
 
-  const targetDirs = [
-    path.join(PROJECT_ROOT, 'src', 'engine', 'lib'),
-    path.join(PROJECT_ROOT, 'src', 'engine', 'bin'),
+function collectTargetFiles() {
+  const targetDirectories = [
+    path.join(PROJECT_ROOT, 'src', 'engine', 'lib', 'core'),
+    path.join(PROJECT_ROOT, 'src', 'engine', 'lib', 'domain'),
+    path.join(PROJECT_ROOT, 'src', 'engine', 'lib', 'infra'),
+    path.join(PROJECT_ROOT, 'src', 'engine', 'bin', 'init'),
+    path.join(PROJECT_ROOT, 'src', 'engine', 'bin', 'audit'),
+    path.join(PROJECT_ROOT, 'src', 'engine', 'bin', 'maintenance'),
+    path.join(PROJECT_ROOT, 'src', 'engine', 'bin', 'lifecycle'),
   ];
 
-  const files = targetDirs.flatMap((dir) => {
-    if (!fs.existsSync(dir)) return [];
+  const files = targetDirectories.flatMap((directory) => {
+    if (!fs.existsSync(directory)) return [];
     return fs
-      .readdirSync(dir)
-      .filter((f) => f.endsWith('.mjs') && !f.endsWith('.test.mjs'))
-      .map((f) => path.join(dir, f));
+      .readdirSync(directory)
+      .filter((file) => file.endsWith('.mjs') && !file.endsWith('.test.mjs'))
+      .map((file) => path.join(directory, file));
   });
 
+  return files;
+}
+
+function scanFilesForViolations(files) {
   const violationsByFile = {};
   let totalViolations = 0;
 
@@ -50,7 +74,7 @@ async function run() {
     }
   }
 
-  reportResults(violationsByFile, totalViolations);
+  return { violationsByFile, totalViolations };
 }
 
 function reportResults(violationsByFile, totalViolations) {
@@ -63,8 +87,8 @@ function reportResults(violationsByFile, totalViolations) {
 
   for (const filePath of filePaths) {
     console.log(`  ❌ ${filePath}`);
-    for (const v of violationsByFile[filePath]) {
-      console.log(`     — ${v.label}: ${v.reason}`);
+    for (const violation of violationsByFile[filePath]) {
+      console.log(`     — ${violation.label}: ${violation.reason}`);
     }
     console.log('');
   }

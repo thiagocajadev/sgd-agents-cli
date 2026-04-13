@@ -11,4 +11,4 @@ if ! command -v node >/dev/null 2>&1; then
 fi
 
 # Narrative Guard: Prevent committing feat/fix without changelog narrative
-node src/engine/bin/check-narrative.mjs "$1"
+node src/engine/bin/audit/check-narrative.mjs "$1"

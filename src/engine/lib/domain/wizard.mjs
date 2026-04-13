@@ -1,11 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { STACK_VERSIONS } from '../config/stack-versions.mjs';
-import { STACK_DISPLAY_NAMES } from '../config/stack-display.mjs';
-import { DisplayUtils } from './display-utils.mjs';
-import { FsUtils } from './fs-utils.mjs';
-import { ResultUtils } from './result-utils.mjs';
-import { PromptUtils } from './prompt-utils.mjs';
+import { STACK_VERSIONS } from '../../config/stack-versions.mjs';
+import { STACK_DISPLAY_NAMES } from '../../config/stack-display.mjs';
+import { DisplayUtils } from '../core/display-utils.mjs';
+import { FsUtils } from '../core/fs-utils.mjs';
+import { ResultUtils } from '../core/result-utils.mjs';
+import { PromptUtils } from '../infra/prompt-utils.mjs';
 
 const { displayName } = DisplayUtils;
 const { getDirectories, getDirname } = FsUtils;
@@ -13,7 +13,7 @@ const { success, fail } = ResultUtils;
 const { safeSelect, safeConfirm, safeInput } = PromptUtils;
 
 const __dirname = getDirname(import.meta.url);
-const SOURCE_INSTRUCTIONS = path.join(__dirname, '..', '..', 'assets', 'instructions');
+const SOURCE_INSTRUCTIONS = path.join(__dirname, '../../..', 'assets', 'instructions');
 
 const WIZARD_STEPS = {
   INITIAL: 'initial',
@@ -44,11 +44,11 @@ const STEP_ORDER = [
   WIZARD_STEPS.DONE,
 ];
 
-async function gatherUserSelections(targetDir = process.cwd()) {
+async function gatherUserSelections(targetDirectory = process.cwd()) {
   const availableFlavors = getDirectories(path.join(SOURCE_INSTRUCTIONS, 'flavors'));
   const availableIdioms = getDirectories(path.join(SOURCE_INSTRUCTIONS, 'idioms'));
   const availableTracks = getDirectories(
-    path.join(__dirname, '..', '..', 'assets', 'dev-guides', 'prompt-tracks')
+    path.join(__dirname, '../../..', 'assets', 'dev-guides', 'prompt-tracks')
   );
 
   let selections = {
@@ -71,7 +71,7 @@ async function gatherUserSelections(targetDir = process.cwd()) {
       availableFlavors,
       availableIdioms,
       availableTracks,
-      targetDir,
+      targetDirectory,
     };
     const stepResult = await executeWizardStep(step, context);
 
@@ -227,13 +227,13 @@ async function promptTrackSelection(context) {
 
   const sortedTrackChoices = [...availableTracks]
     .sort((trackA, trackB) => trackA.localeCompare(trackB))
-    .map((trackId) => {
-      let label = displayName(trackId);
-      if (trackId === '00-lite-mode') label = '1. Lite Mode (Simple & Agile)';
-      else if (trackId === '01-new-evolution') label = '2. New Evolution (Greenfield)';
-      else if (trackId === '02-legacy-modernization')
+    .map((trackFolderKey) => {
+      let label = displayName(trackFolderKey);
+      if (trackFolderKey === '00-lite-mode') label = '1. Lite Mode (Simple & Agile)';
+      else if (trackFolderKey === '01-new-evolution') label = '2. New Evolution (Greenfield)';
+      else if (trackFolderKey === '02-legacy-modernization')
         label = '3. Legacy Modernization (Brownfield)';
-      return { name: label, value: trackId };
+      return { name: label, value: trackFolderKey };
     });
 
   const trackChoices = [
@@ -251,7 +251,7 @@ async function promptTrackSelection(context) {
     return backResult;
   }
 
-  const projectPromptsDir = path.join(context.targetDir, '.ai', 'prompts');
+  const projectPromptsDir = path.join(context.targetDirectory, '.ai', 'prompts');
   if (fs.existsSync(projectPromptsDir)) {
     const proceed = await safeConfirm({
       message: `The directory ".ai/prompts" already exists. Overwrite?`,
@@ -307,14 +307,14 @@ async function promptArchitectureFlavor(context) {
   function buildFlavorChoices(flavors) {
     return flavors
       .sort()
-      .map((flavorId) => {
-        let label = displayName(flavorId);
-        if (flavorId === 'lite') label = `0. ${label} (Simple & Agile)`;
-        else if (flavorId === 'vertical-slice') label = `1. ${label} (Recommended)`;
-        else if (flavorId === 'mvc') label = `2. ${label} (Standard Layers)`;
-        else if (flavorId === 'legacy') label = `3. ${label} (Event-Driven / SSR)`;
+      .map((flavorFolderKey) => {
+        let label = displayName(flavorFolderKey);
+        if (flavorFolderKey === 'lite') label = `0. ${label} (Simple & Agile)`;
+        else if (flavorFolderKey === 'vertical-slice') label = `1. ${label} (Recommended)`;
+        else if (flavorFolderKey === 'mvc') label = `2. ${label} (Standard Layers)`;
+        else if (flavorFolderKey === 'legacy') label = `3. ${label} (Event-Driven / SSR)`;
         else label = `Sub. ${label}`;
-        return { name: label, value: flavorId };
+        return { name: label, value: flavorFolderKey };
       })
       .sort((flavorA, flavorB) => {
         const order = { lite: 0, 'vertical-slice': 1, mvc: 2, legacy: 3 };
@@ -331,11 +331,16 @@ async function promptBackendIdiom(context) {
     return skipResult;
   }
 
-  const backendIdioms = availableIdioms.filter((id) => STACK_DISPLAY_NAMES[id]?.isBackend);
+  const backendIdioms = availableIdioms.filter(
+    (idiomFolderKey) => STACK_DISPLAY_NAMES[idiomFolderKey]?.isBackend
+  );
   const result = await safeSelect({
     message: 'Which Backend idiom / language?',
     choices: [
-      ...backendIdioms.map((id) => ({ name: STACK_DISPLAY_NAMES[id]?.name ?? id, value: id })),
+      ...backendIdioms.map((idiomFolderKey) => ({
+        name: STACK_DISPLAY_NAMES[idiomFolderKey]?.name ?? idiomFolderKey,
+        value: idiomFolderKey,
+      })),
       { name: 'Back', value: 'back' },
     ],
   });
@@ -357,11 +362,16 @@ async function promptFrontendIdiom(context) {
     return skipResult;
   }
 
-  const frontendIdioms = availableIdioms.filter((id) => STACK_DISPLAY_NAMES[id]?.isFrontend);
+  const frontendIdioms = availableIdioms.filter(
+    (idiomFolderKey) => STACK_DISPLAY_NAMES[idiomFolderKey]?.isFrontend
+  );
   const result = await safeSelect({
     message: 'Which Frontend idiom / framework?',
     choices: [
-      ...frontendIdioms.map((id) => ({ name: STACK_DISPLAY_NAMES[id]?.name ?? id, value: id })),
+      ...frontendIdioms.map((idiomFolderKey) => ({
+        name: STACK_DISPLAY_NAMES[idiomFolderKey]?.name ?? idiomFolderKey,
+        value: idiomFolderKey,
+      })),
       { name: 'Back', value: 'back' },
     ],
   });
@@ -409,7 +419,9 @@ async function promptVersionSelections(context) {
 async function promptDesignPreset(context) {
   const { selections, scope } = context;
 
-  const hasFrontend = selections.idioms.some((id) => STACK_DISPLAY_NAMES[id]?.isFrontend);
+  const hasFrontend = selections.idioms.some(
+    (idiomFolderKey) => STACK_DISPLAY_NAMES[idiomFolderKey]?.isFrontend
+  );
   if (scope === 'backend' || !hasFrontend) {
     const skipResult = success({ nextStep: WIZARD_STEPS.IDE });
     return skipResult;
@@ -471,7 +483,9 @@ async function promptIdeSelection() {
 async function promptBumpAutomation(context) {
   const { selections } = context;
 
-  const hasJsTs = selections.idioms.some((id) => id === 'javascript' || id === 'typescript');
+  const hasJsTs = selections.idioms.some(
+    (idiomFolderKey) => idiomFolderKey === 'javascript' || idiomFolderKey === 'typescript'
+  );
 
   if (!hasJsTs) {
     return success({ nextStep: WIZARD_STEPS.PARTNER, bump: false });

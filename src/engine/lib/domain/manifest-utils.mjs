@@ -1,12 +1,12 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { FsUtils } from './fs-utils.mjs';
+import { FsUtils } from '../core/fs-utils.mjs';
 
 const { getDirname } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
-const INSTRUCTIONS_DIR = path.join(__dirname, '..', '..', 'assets', 'instructions');
+const INSTRUCTIONS_DIR = path.join(__dirname, '../../..', 'assets', 'instructions');
 
 function hashFile(filePath) {
   if (!fs.existsSync(filePath)) return null;
@@ -31,10 +31,10 @@ function computeHashes(selections, instructionsDir = INSTRUCTIONS_DIR) {
   }
 
   if (idioms && Array.isArray(idioms)) {
-    for (const idiom of idioms) {
-      const idiomDir = path.join(instructionsDir, 'idioms', idiom);
+    for (const idiomFolderKey of idioms) {
+      const idiomDir = path.join(instructionsDir, 'idioms', idiomFolderKey);
       if (fs.existsSync(idiomDir)) {
-        scanDir(idiomDir, `idioms/${idiom}`, hashes);
+        scanDir(idiomDir, `idioms/${idiomFolderKey}`, hashes);
       }
     }
   }
@@ -62,18 +62,18 @@ function computeHashes(selections, instructionsDir = INSTRUCTIONS_DIR) {
   return hashes;
 }
 
-function scanDir(dir, relPrefix, hashes) {
-  if (!fs.existsSync(dir)) return;
+function scanDir(directory, relativePrefix, hashes) {
+  if (!fs.existsSync(directory)) return;
 
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const entries = fs.readdirSync(directory, { withFileTypes: true });
   for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    const relPath = path.join(relPrefix, entry.name);
+    const fullPath = path.join(directory, entry.name);
+    const relativeFilePath = path.join(relativePrefix, entry.name);
 
     if (entry.isDirectory()) {
-      scanDir(fullPath, relPath, hashes);
+      scanDir(fullPath, relativeFilePath, hashes);
     } else if (entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mjs'))) {
-      hashes[relPath] = hashFile(fullPath);
+      hashes[relativeFilePath] = hashFile(fullPath);
     }
   }
 }
@@ -83,13 +83,13 @@ function compareHashes(stored, current) {
   const unchanged = [];
   const added = [];
 
-  for (const [relPath, currentHash] of Object.entries(current)) {
-    if (!(relPath in stored)) {
-      added.push(relPath);
-    } else if (stored[relPath] !== currentHash) {
-      changed.push(relPath);
+  for (const [relativeFilePath, currentHash] of Object.entries(current)) {
+    if (!(relativeFilePath in stored)) {
+      added.push(relativeFilePath);
+    } else if (stored[relativeFilePath] !== currentHash) {
+      changed.push(relativeFilePath);
     } else {
-      unchanged.push(relPath);
+      unchanged.push(relativeFilePath);
     }
   }
 

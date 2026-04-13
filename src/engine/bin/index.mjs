@@ -8,11 +8,11 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 
-import { FsUtils } from '../lib/fs-utils.mjs';
-import { PromptUtils } from '../lib/prompt-utils.mjs';
-import { CliParser } from '../lib/cli-parser.mjs';
-import { BundleUI } from '../lib/ui-utils.mjs';
-import { VersionUtils } from '../lib/version-utils.mjs';
+import { FsUtils } from '../lib/core/fs-utils.mjs';
+import { PromptUtils } from '../lib/infra/prompt-utils.mjs';
+import { CliParser } from '../lib/infra/cli-parser.mjs';
+import { BundleUI } from '../lib/core/ui-utils.mjs';
+import { VersionUtils } from '../lib/domain/version-utils.mjs';
 
 const { runIfDirect } = FsUtils;
 const { safeSelect } = PromptUtils;
@@ -36,11 +36,11 @@ async function run() {
   }
 
   // Resolve target directory early for the entire cycle
-  args.targetDir = path.resolve(args.targetDir || process.cwd());
+  args.targetDirectory = path.resolve(args.targetDirectory || process.cwd());
 
   // Maintainer Protocol: ensuring core instructions are synced to .ai/ for the agent
   if (!args.subcommand && !args.help && !args.version) {
-    await ensureMaintainerSync(args.targetDir);
+    await ensureMaintainerSync(args.targetDirectory);
   }
 
   if (args.subcommand) {
@@ -93,26 +93,26 @@ async function startInteractiveMode(args) {
 async function executeMenuAction(menuChoice, args) {
   switch (menuChoice) {
     case 'init': {
-      const { SDG } = await import('./build-bundle.mjs');
-      await SDG.run(args.targetDir, { dryRun: args.dryRun });
+      const { SDG } = await import('./init/build-bundle.mjs');
+      await SDG.run(args.targetDirectory, { dryRun: args.dryRun });
       break;
     }
     case 'audit': {
-      const { AuditRunner } = await import('./audit-bundle.mjs');
+      const { AuditRunner } = await import('./audit/audit-bundle.mjs');
       await AuditRunner.run();
       break;
     }
     case 'narrative': {
-      const { NarrativeChecker } = await import('./check-narrative.mjs');
+      const { NarrativeChecker } = await import('./audit/check-narrative.mjs');
       await NarrativeChecker.run();
       break;
     }
     case 'settings':
-      await runSettingsMenu(args.targetDir);
+      await runSettingsMenu(args.targetDirectory);
       break;
     case 'creatives': {
-      const { Creatives } = await import('./creatives-bundle.mjs');
-      await Creatives.run(args.targetDir);
+      const { Creatives } = await import('./init/creatives-bundle.mjs');
+      await Creatives.run(args.targetDirectory);
       break;
     }
   }
@@ -124,37 +124,37 @@ async function executeSubcommand(args) {
       await handleInitSubcommand(args);
       break;
     case 'review': {
-      const { Reviewer } = await import('./review-bundle.mjs');
+      const { Reviewer } = await import('./maintenance/review-bundle.mjs');
       await Reviewer.run();
       break;
     }
     case 'sync': {
-      const { Syncer } = await import('./sync-rulesets.mjs');
+      const { Syncer } = await import('./maintenance/sync-rulesets.mjs');
       await Syncer.run();
       break;
     }
     case 'update': {
-      const { Versioning } = await import('./update-versions.mjs');
+      const { Versioning } = await import('./maintenance/update-versions.mjs');
       await Versioning.run();
       break;
     }
     case 'add': {
-      const { Idiomatic } = await import('./add-idiom.mjs');
+      const { Idiomatic } = await import('./init/add-idiom.mjs');
       await Idiomatic.run();
       break;
     }
     case 'clear': {
-      const { Cleaner } = await import('./clear-bundle.mjs');
-      await Cleaner.run(args.targetDir);
+      const { Cleaner } = await import('./maintenance/clear-bundle.mjs');
+      await Cleaner.run(args.targetDirectory);
       break;
     }
     case 'audit': {
-      const { AuditRunner } = await import('./audit-bundle.mjs');
+      const { AuditRunner } = await import('./audit/audit-bundle.mjs');
       await AuditRunner.run();
       break;
     }
     case 'narrative': {
-      const { NarrativeChecker } = await import('./check-narrative.mjs');
+      const { NarrativeChecker } = await import('./audit/check-narrative.mjs');
       await NarrativeChecker.run();
       break;
     }
@@ -170,7 +170,7 @@ async function handleInitSubcommand(args) {
     return;
   }
 
-  const { SDG } = await import('./build-bundle.mjs');
+  const { SDG } = await import('./init/build-bundle.mjs');
   const isNonInteractive = args.mode || args.flavor || args.idioms.length > 0;
 
   const selectionPayload = isNonInteractive
@@ -186,14 +186,14 @@ async function handleInitSubcommand(args) {
       }
     : null;
 
-  await SDG.run(args.targetDir, {
+  await SDG.run(args.targetDirectory, {
     dryRun: args.dryRun,
     noDevGuides: args.noDevGuides,
     selections: selectionPayload,
   });
 }
 
-async function runSettingsMenu(targetDir) {
+async function runSettingsMenu(targetDirectory) {
   const settingsChoice = await safeSelect({
     message: 'Settings & Maintenance:',
     choices: [
@@ -210,9 +210,9 @@ async function runSettingsMenu(targetDir) {
 
   switch (settingsChoice) {
     case 'update-instructions': {
-      const { ManifestUtils } = await import('../lib/manifest-utils.mjs');
-      const { SDG } = await import('./build-bundle.mjs');
-      const manifest = ManifestUtils.loadManifest(targetDir);
+      const { ManifestUtils } = await import('../lib/domain/manifest-utils.mjs');
+      const { SDG } = await import('./init/build-bundle.mjs');
+      const manifest = ManifestUtils.loadManifest(targetDirectory);
 
       if (!manifest) {
         console.log('\n  ⚠️  No saved config found (.ai/.sdg-manifest.json).');
@@ -226,38 +226,38 @@ async function runSettingsMenu(targetDir) {
       );
 
       try {
-        await SDG.run(targetDir, { selections: manifest.selections });
+        await SDG.run(targetDirectory, { selections: manifest.selections });
       } catch (error) {
         console.log(`\n  ❌ Update failed: ${error.message}\n`);
       }
       break;
     }
     case 'clear': {
-      const { Cleaner } = await import('./clear-bundle.mjs');
-      await Cleaner.run(targetDir);
+      const { Cleaner } = await import('./maintenance/clear-bundle.mjs');
+      await Cleaner.run(targetDirectory);
       break;
     }
   }
 }
 
-async function ensureMaintainerSync(targetDir) {
+async function ensureMaintainerSync(targetDirectory) {
   const { isMaintainerMode } = PromptUtils;
   if (!isMaintainerMode()) return;
 
-  const { SyncChecker } = await import('./check-sync.mjs');
+  const { SyncChecker } = await import('./audit/check-sync.mjs');
   const syncResult = SyncChecker.run();
 
   if (syncResult.isFailure) {
     console.log('\n  🛠️  MAINTAINER MODE: Drift detected in core instructions.');
     console.log('  🔄 Automatic sync in progress...\n');
 
-    const { ManifestUtils } = await import('../lib/manifest-utils.mjs');
-    const { SDG } = await import('./build-bundle.mjs');
-    const manifest = ManifestUtils.loadManifest(targetDir);
+    const { ManifestUtils } = await import('../lib/domain/manifest-utils.mjs');
+    const { SDG } = await import('./init/build-bundle.mjs');
+    const manifest = ManifestUtils.loadManifest(targetDirectory);
 
     if (manifest) {
       try {
-        await SDG.run(targetDir, { selections: manifest.selections });
+        await SDG.run(targetDirectory, { selections: manifest.selections });
         console.log('\n  ✅ Core instructions synchronized. Agent rules are up-to-date.\n');
         console.log('─'.repeat(50) + '\n');
       } catch (error) {

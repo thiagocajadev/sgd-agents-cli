@@ -1,32 +1,32 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { STACK_DISPLAY_NAMES } from '../config/stack-display.mjs';
-import { FsUtils } from './fs-utils.mjs';
+import { STACK_DISPLAY_NAMES } from '../../config/stack-display.mjs';
+import { FsUtils } from '../core/fs-utils.mjs';
 
 const { copyRecursiveSync, filterContentByVersion, getDirname } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
-const SOURCE_INSTRUCTIONS = path.join(__dirname, '..', '..', 'assets', 'instructions');
+const SOURCE_INSTRUCTIONS = path.join(__dirname, '../../..', 'assets', 'instructions');
 const SOURCE_WORKFLOWS = path.join(SOURCE_INSTRUCTIONS, 'workflows');
 const SOURCE_COMMANDS = path.join(SOURCE_INSTRUCTIONS, 'commands');
-const SOURCE_DEV_GUIDES = path.join(__dirname, '..', '..', 'assets', 'dev-guides');
+const SOURCE_DEV_GUIDES = path.join(__dirname, '../../..', 'assets', 'dev-guides');
 const SOURCE_DEV_TRACKS = path.join(SOURCE_DEV_GUIDES, 'prompt-tracks');
 const SOURCE_COMPETENCIES = path.join(SOURCE_INSTRUCTIONS, 'competencies');
 
-function prepareProjectStructure(targetDir) {
-  const instructionsDir = path.join(targetDir, '.ai', 'instructions');
-  const workflowsDir = path.join(targetDir, '.ai', 'workflows');
-  const commandsDir = path.join(targetDir, '.ai', 'commands');
+function prepareProjectStructure(targetDirectory) {
+  const instructionsDir = path.join(targetDirectory, '.ai', 'instructions');
+  const workflowsDir = path.join(targetDirectory, '.ai', 'workflows');
+  const commandsDir = path.join(targetDirectory, '.ai', 'commands');
 
   fs.mkdirSync(instructionsDir, { recursive: true });
   fs.mkdirSync(workflowsDir, { recursive: true });
   fs.mkdirSync(commandsDir, { recursive: true });
 }
 
-function injectRulesets(targetDir, selections, { noDevGuides = false } = {}) {
+function injectRulesets(targetDirectory, selections, { noDevGuides = false } = {}) {
   const { flavor, idioms } = selections;
-  const projectAiInstructions = path.join(targetDir, '.ai', 'instructions');
+  const projectAiInstructions = path.join(targetDirectory, '.ai', 'instructions');
 
   copyRecursiveSync(
     path.join(SOURCE_INSTRUCTIONS, 'core'),
@@ -39,8 +39,8 @@ function injectRulesets(targetDir, selections, { noDevGuides = false } = {}) {
     copyRecursiveSync(flavorSrc, path.join(projectAiInstructions, 'flavor'));
   }
 
-  for (const idiom of idioms) {
-    injectFilteredIdiom(idiom, selections.versions[idiom], projectAiInstructions);
+  for (const idiomFolderKey of idioms) {
+    injectFilteredIdiom(idiomFolderKey, selections.versions[idiomFolderKey], projectAiInstructions);
   }
 
   injectCompetencies(selections, projectAiInstructions);
@@ -51,25 +51,25 @@ function injectRulesets(targetDir, selections, { noDevGuides = false } = {}) {
   );
 
   if (fs.existsSync(SOURCE_WORKFLOWS)) {
-    copyRecursiveSync(SOURCE_WORKFLOWS, path.join(targetDir, '.ai', 'workflows'));
+    copyRecursiveSync(SOURCE_WORKFLOWS, path.join(targetDirectory, '.ai', 'workflows'));
   }
 
   if (fs.existsSync(SOURCE_COMMANDS)) {
-    copyRecursiveSync(SOURCE_COMMANDS, path.join(targetDir, '.ai', 'commands'));
+    copyRecursiveSync(SOURCE_COMMANDS, path.join(targetDirectory, '.ai', 'commands'));
   }
 
-  if (!noDevGuides) injectDevGuides(targetDir);
+  if (!noDevGuides) injectDevGuides(targetDirectory);
 
-  injectCreativeToolkit(targetDir);
+  injectCreativeToolkit(targetDirectory);
 }
 
-function injectDevGuides(targetDir) {
+function injectDevGuides(targetDirectory) {
   if (!fs.existsSync(SOURCE_DEV_GUIDES)) return;
-  copyRecursiveSync(SOURCE_DEV_GUIDES, path.join(targetDir, '.ai', 'dev-guides'));
+  copyRecursiveSync(SOURCE_DEV_GUIDES, path.join(targetDirectory, '.ai', 'dev-guides'));
 }
 
-function injectPrompts(targetDir, track) {
-  const projectRootPromptsDir = path.join(targetDir, '.ai', 'prompts');
+function injectPrompts(targetDirectory, track) {
+  const projectRootPromptsDir = path.join(targetDirectory, '.ai', 'prompts');
   const devTracksDir = path.join(projectRootPromptsDir, 'dev-tracks');
 
   if (fs.existsSync(projectRootPromptsDir)) {
@@ -111,15 +111,15 @@ function collectOutputSummary(selections) {
   return { directories };
 }
 
-function injectCreativeToolkit(targetDir) {
+function injectCreativeToolkit(targetDirectory) {
   const sourceCreative = path.join(SOURCE_INSTRUCTIONS, 'core', 'creative');
   const sourceCreativePrompts = path.join(SOURCE_INSTRUCTIONS, 'templates', 'creatives');
   const sourceCreativeGuides = path.join(sourceCreativePrompts, 'guides');
 
-  const destRoot = path.join(targetDir, '.ai', 'instructions', 'creative');
+  const destRoot = path.join(targetDirectory, '.ai', 'instructions', 'creative');
 
-  const oldPrompts = path.join(targetDir, '.ai', 'prompts', 'creatives');
-  const oldGuides = path.join(targetDir, '.ai', 'dev-guides', 'creatives');
+  const oldPrompts = path.join(targetDirectory, '.ai', 'prompts', 'creatives');
+  const oldGuides = path.join(targetDirectory, '.ai', 'dev-guides', 'creatives');
   if (fs.existsSync(oldPrompts)) fs.rmSync(oldPrompts, { recursive: true, force: true });
   if (fs.existsSync(oldGuides)) fs.rmSync(oldGuides, { recursive: true, force: true });
 
@@ -143,8 +143,12 @@ function injectCreativeToolkit(targetDir) {
 function injectCompetencies(selections, projectAiInstructions) {
   if (!fs.existsSync(SOURCE_COMPETENCIES)) return;
 
-  const hasBackend = selections.idioms.some((idiomId) => STACK_DISPLAY_NAMES[idiomId]?.isBackend);
-  const hasFrontend = selections.idioms.some((idiomId) => STACK_DISPLAY_NAMES[idiomId]?.isFrontend);
+  const hasBackend = selections.idioms.some(
+    (idiomFolderKey) => STACK_DISPLAY_NAMES[idiomFolderKey]?.isBackend
+  );
+  const hasFrontend = selections.idioms.some(
+    (idiomFolderKey) => STACK_DISPLAY_NAMES[idiomFolderKey]?.isFrontend
+  );
 
   if (!hasBackend && !hasFrontend) return;
 
@@ -162,18 +166,18 @@ function injectCompetencies(selections, projectAiInstructions) {
   }
 }
 
-function injectFilteredIdiom(idiom, targetVersion, projectAiInstructions) {
-  const idiomSrc = path.join(SOURCE_INSTRUCTIONS, 'idioms', idiom);
+function injectFilteredIdiom(idiomFolderKey, targetVersion, projectAiInstructions) {
+  const idiomSrc = path.join(SOURCE_INSTRUCTIONS, 'idioms', idiomFolderKey);
   if (!fs.existsSync(idiomSrc)) return;
 
-  const projectIdiomDir = path.join(projectAiInstructions, 'idioms', idiom);
+  const projectIdiomDir = path.join(projectAiInstructions, 'idioms', idiomFolderKey);
   fs.mkdirSync(projectIdiomDir, { recursive: true });
 
-  for (const file of fs.readdirSync(idiomSrc)) {
-    const srcFile = path.join(idiomSrc, file);
-    const destFile = path.join(projectIdiomDir, file);
+  for (const fileName of fs.readdirSync(idiomSrc)) {
+    const srcFile = path.join(idiomSrc, fileName);
+    const destFile = path.join(projectIdiomDir, fileName);
 
-    if (file.endsWith('.md') || file.endsWith('.xml')) {
+    if (fileName.endsWith('.md') || fileName.endsWith('.xml')) {
       let content = fs.readFileSync(srcFile, 'utf8');
       if (content.includes('version=')) {
         content = filterContentByVersion(content, targetVersion);

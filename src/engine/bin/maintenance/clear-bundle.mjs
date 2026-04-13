@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { confirm } from '@inquirer/prompts';
-import { ResultUtils } from '../lib/result-utils.mjs';
-import { FsUtils } from '../lib/fs-utils.mjs';
+import { ResultUtils } from '../../lib/core/result-utils.mjs';
+import { FsUtils } from '../../lib/core/fs-utils.mjs';
 
 const { success } = ResultUtils;
 const { runIfDirect } = FsUtils;
@@ -11,45 +11,49 @@ const { runIfDirect } = FsUtils;
  * Spec Driven Guide — Reset/Clear Utility
  * Deletes all generated SDG files and the .ia directory.
  */
-async function run(targetDir = process.cwd(), options = {}) {
+async function run(targetDirectory = process.cwd(), options = {}) {
+  return orchestrateCleanup(targetDirectory, options);
+}
+
+async function orchestrateCleanup(targetDirectory, options = {}) {
   const dryRun = options.dryRun || process.argv.includes('--dry-run');
 
   console.log('\n  Spec Driven Guide — Clear Generated Content');
   console.log('  ' + '─'.repeat(50));
 
   const itemsToRemove = ['.ia', '.ai', '.sdg-prompts'];
-  let existing = [];
+  let existingItems = [];
 
   // Check current directory
   for (const item of itemsToRemove) {
-    const fullPath = path.join(targetDir, item);
+    const fullPath = path.join(targetDirectory, item);
     if (fs.existsSync(fullPath)) {
-      existing.push({ name: item, fullPath });
+      existingItems.push({ name: item, fullPath });
     }
   }
 
   // Check packages/* if we are in a monorepo
-  const packagesDir = path.join(targetDir, 'packages');
+  const packagesDir = path.join(targetDirectory, 'packages');
   if (fs.existsSync(packagesDir)) {
     const subPackages = fs.readdirSync(packagesDir);
-    for (const pkg of subPackages) {
+    for (const packageFolderName of subPackages) {
       for (const item of itemsToRemove) {
-        const fullPath = path.join(packagesDir, pkg, item);
+        const fullPath = path.join(packagesDir, packageFolderName, item);
         if (fs.existsSync(fullPath)) {
-          existing.push({ name: `packages/${pkg}/${item}`, fullPath });
+          existingItems.push({ name: `packages/${packageFolderName}/${item}`, fullPath });
         }
       }
     }
   }
 
-  if (existing.length === 0) {
+  if (existingItems.length === 0) {
     console.log('\n  ✅ No Spec Driven Guide content found to clear.\n');
     return success();
   }
 
   if (dryRun) {
     console.log('\n  [DRY RUN] The following items would be removed:');
-    for (const item of existing) {
+    for (const item of existingItems) {
       console.log(`  - ${item.name}`);
     }
     console.log('\n  No files were deleted (dry-run mode).\n');
@@ -57,7 +61,7 @@ async function run(targetDir = process.cwd(), options = {}) {
   }
 
   printWarning();
-  printItemsToRemove(existing);
+  printItemsToRemove(existingItems);
 
   const userConfirmed = await confirm({
     message: '\n  Are you sure you want to proceed?',
@@ -69,7 +73,7 @@ async function run(targetDir = process.cwd(), options = {}) {
     return success();
   }
 
-  executeCleanup(existing);
+  executeCleanup(existingItems);
 
   console.log('\n  ✨ Project cleared successfully!\n');
   return success();

@@ -3,8 +3,8 @@ import path from 'node:path';
 import { exec } from 'node:child_process';
 import { select, checkbox, confirm, input } from '@inquirer/prompts';
 
-function isExitError(err) {
-  return err.name === 'ExitPromptError' || err.message?.includes('force closed');
+function isExitError(error) {
+  return error.name === 'ExitPromptError' || error.message?.includes('force closed');
 }
 
 async function safeSelect(options) {
@@ -41,10 +41,10 @@ async function safeConfirm(options) {
  * - Trims and limits length.
  * - Escapes Markdown breaking characters (\, `, *, _, {, }, [, ], (, ), #, +, -, ., !).
  */
-function sanitizeInput(val, maxLength = 200) {
-  if (!val) return '';
+function sanitizeInput(value, maxLength = 200) {
+  if (!value) return '';
 
-  let sanitized = String(val)
+  let sanitized = String(value)
     .normalize('NFKD') // Resovle acentos estranhos / Unicode Normalization
     .replace(/[\u0300-\u036f]/g, '') // Remove acentos remanescentes
     .replace(/<[^>]*>?/gm, '') // Strip HTML tags
@@ -84,11 +84,11 @@ const AI_DIR = path.join(PROJECT_ROOT, '.ai');
 const PROMPT_FILE = path.join(AI_DIR, 'last-prompt.md');
 
 function isMaintainerMode() {
-  const pkgPath = path.join(PROJECT_ROOT, 'package.json');
-  if (!fs.existsSync(pkgPath)) return false;
+  const packagePath = path.join(PROJECT_ROOT, 'package.json');
+  if (!fs.existsSync(packagePath)) return false;
   try {
-    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-    return pkg.name === 'sdg-agents';
+    const packageData = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+    return packageData.name === 'sdg-agents';
   } catch {
     return false;
   }

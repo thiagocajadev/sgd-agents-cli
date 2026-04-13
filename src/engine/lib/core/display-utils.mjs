@@ -1,4 +1,4 @@
-import { STACK_DISPLAY_NAMES } from '../config/stack-display.mjs';
+import { STACK_DISPLAY_NAMES } from '../../config/stack-display.mjs';
 
 /**
  * Returns a human-readable display name for a given stack key.
