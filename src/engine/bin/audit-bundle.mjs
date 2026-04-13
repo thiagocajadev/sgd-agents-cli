@@ -147,7 +147,7 @@ async function run() {
     try {
       const lint = spawnSync('npm', ['run', 'lint', '--silent'], {
         cwd: PROJECT_ROOT,
-        shell: true,
+        shell: false,
         encoding: 'utf8',
       });
       results.lint = lint.status === 0 ? 'PASS' : 'FAIL';
@@ -158,7 +158,7 @@ async function run() {
     try {
       const test = spawnSync('npm', ['test', '--silent'], {
         cwd: PROJECT_ROOT,
-        shell: true,
+        shell: false,
         encoding: 'utf8',
       });
       results.test = test.status === 0 ? 'PASS' : 'FAIL';

@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.3.1] - 2026-04-13
+
+### Added
+
+### Fixed
+
+- **Audit Runner Stability** — resolved `DeprecationWarning: [DEP0190]` in `audit-bundle.mjs` by refactoring `spawnSync` calls to avoid `shell: true` with argument arrays.
+
 ## [2.3.0] - 2026-04-13
 
 ### Added
