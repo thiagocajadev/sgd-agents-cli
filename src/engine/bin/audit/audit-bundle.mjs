@@ -9,10 +9,10 @@ const PROJECT_ROOT = process.cwd();
 const { runIfDirect } = FsUtils;
 
 async function run() {
-  await auditEngineGovernance();
+  await executeGovernanceAudit();
 }
 
-async function auditEngineGovernance() {
+async function executeGovernanceAudit() {
   const auditResults = orchestrateGovernanceAudit();
   reportSummary(auditResults);
 }
@@ -60,6 +60,7 @@ function checkChangelogHealth() {
     };
     return pendingNarrativeIssue;
   }
+
   const healthResult = { isFailure: false };
   return healthResult;
 }
@@ -81,10 +82,12 @@ function checkLaw3Compliance() {
       const emptyDirFiles = [];
       return emptyDirFiles;
     }
+
     const directoryFiles = fs
       .readdirSync(directory)
       .filter((file) => file.endsWith('.mjs') && !file.endsWith('.test.mjs'))
       .map((file) => path.join(directory, file));
+
     return directoryFiles;
   });
 
@@ -247,9 +250,9 @@ function printResult(label, success, reason) {
 
 export const AuditRunner = { run };
 
-runIfDirect(import.meta.url, () => {
-  run().catch((err) => {
-    console.error('Audit failed:', err);
-    process.exit(1);
-  });
-});
+runIfDirect(import.meta.url, () => run().catch(handleAuditError));
+
+function handleAuditError(error) {
+  console.error('Audit failed:', error);
+  process.exit(1);
+}

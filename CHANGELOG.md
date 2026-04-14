@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.5.2] - 2026-04-13
+
+### Added
+
+### Fixed
+
+- **Governance Engine Hardening (`audit/`)** — refactored the audit bundle and checkers to achieve 100% compliance with the One-Line Entry Point mandate (v2.4.3).
+- **Audit Tool Scansion** — hardened internal scansion logic and return narratives in `audit-bundle.mjs`, ensuring the governance engine satisfies its own strict scansion laws.
+
 ## [2.5.1] - 2026-04-13
 
 ### Added
