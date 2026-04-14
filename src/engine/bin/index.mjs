@@ -364,3 +364,4 @@ async function performUpdateInstructions(targetDirectory) {
 export const CLI = { run };
 
 runIfDirect(import.meta.url, run);
+// dummy change

@@ -58,12 +58,29 @@ function checkChangelogHealth() {
   );
   const narrative = unreleasedMatch ? unreleasedMatch[1].replace(/###.*?\n/g, '').trim() : '';
 
+  // 1. Block if narrative exists but wasn't promoted
   if (hasUnreleased && narrative.length > 5) {
     const pendingNarrativeIssue = {
       isFailure: true,
       reason: 'Pending narrative in [Unreleased]. Run npm run bump.',
     };
     return pendingNarrativeIssue;
+  }
+
+  // 2. Block if changes are staged but [Unreleased] is empty (The "Thiago" Gate)
+  const stagedChanges = spawnSync('git', ['diff', '--staged', '--name-only'], {
+    encoding: 'utf8',
+  }).stdout.trim();
+
+  const hasOtherStagedChanges =
+    stagedChanges.split('\n').filter((file) => file && file !== 'CHANGELOG.md').length > 0;
+
+  if (hasOtherStagedChanges && narrative.length <= 5) {
+    const missingNarrativeIssue = {
+      isFailure: true,
+      reason: 'Staged changes detected but [Unreleased] is empty. Document your work!',
+    };
+    return missingNarrativeIssue;
   }
 
   const healthResult = { isFailure: false };

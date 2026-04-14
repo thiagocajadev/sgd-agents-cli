@@ -11,22 +11,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.9.1] - 2026-04-14
+
+### Added
+
+- **Hardened Changelog Gate**: Updated the audit engine to detect and block commits when staged changes exist but the `[Unreleased]` section of the changelog is empty, ensuring all code changes are documented.
+
+### Fixed
+
+- **Auditor Naming Compliance**: Fixed Law 2 (No Abbreviations) violations in the audit engine's internal scansion logic.
+
 ## [2.9.0] - 2026-04-14
 
 ### Added
 
+- **Stricter Commit Approval Gate**: Implemented a mandatory `[LOCKED: COMMIT-GATE]` in `workflow.md` and `agent-roles.md` that explicitly forbids autonomous `git commit` actions and requires verbal human approval.
+
 ### Fixed
+
+- **Creative Toolkit Zero-Project Support**: Hardened the creative injection flow to provide core governance rules and backlog files even in empty project states.
+- **Resilient Instruction Assembly**: Fixed malformed tables and broken links in `AGENTS.md` for projects without a tech stack.
 
 ## [2.8.1] - 2026-04-14
 
 ### Added
 
-- **Hardened Creative Toolkit Injection**: Updated the creative flow to ensure core governance instructions (`core/`, `workflows/`, `commands/`) and backlog files are present, providing full context for AI agents in "zero-project" scenarios.
-- **Resilient Instruction Assembly**: Hardened `AGENTS.md` generation to gracefully handle projects without a technical stack or flavor, preventing broken links and malformed tables.
+- _Internal release synchronization._
 
 ### Fixed
 
-- **Creative Bundle Pure Entry Point**: Fixed a missing `return` in `Creatives.run` and refactored it to a one-line delegator to satisfy SLA governance and prevent CLI crashes in empty projects.
+- **Creative Bundle Pure Entry Point**: Fixed a missing `return` in `Creatives.run` and refactored it to a one-line delegator to satisfy SLA governance.
 
 ## [2.8.0] - 2026-04-14
 
