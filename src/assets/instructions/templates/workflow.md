@@ -162,11 +162,15 @@ On every request, classify intent before acting:
 >    ```
 >
 > 6. **Lint**: Runs the linter, fixes what's possible, and blocks the commit if errors remain.
-> 7. **Commit**: If `package.json` has a `bump` script, execute `npm run bump <feat|fix|docs|land>` matching the active cycle type. Then audit workspace with `git add .` and propose the release commit (Pattern: `<intent>: release v<version> - <description>`). Wait for approval.
+> 7. **Commit [LOCKED: COMMIT-GATE]**: If `package.json` has a `bump` script, execute `npm run bump <feat|fix|docs|land>` matching the active cycle type. Then audit workspace with `git add .` and propose the release commit (Pattern: `<intent>: release v<version> - <description>`).
+>
+>    [!CAUTION]
+>    **STOP IMMEDIATELY.** You are forbidden from running `git commit` autonomously. You must present the proposed commit message to the user and await explicit verbal approval before proceeding.
+>
 > 8. **Next step**: Suggests what comes next: push · deploy · or a new task.
 >
-> [!WARNING]
-> Do NOT perform `git commit` autonomously. Always **PROPOSE** and **WAIT**.
+> [!CAUTION]
+> **SOVEREIGN GATE**: Never bypass human verification for commits. Autonomous commits are a violation of Law 0.
 > </rule>
 
 ## Rule: Task Handoff (Cross-Session & Cross-Agent Continuity)

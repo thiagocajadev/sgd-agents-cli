@@ -23,6 +23,7 @@ Regardless of the environment, execution must respect these distinct mindsets:
 - Apply the **Fast** mindset during CODE and TEST (MODE: FAST, no strategic detours). Focus purely on implementing the contract.
 - The mode annotations in the workflow (`MODE: PLANNING`, `MODE: FAST`) serve as behavioral discipline markers, not execution boundaries. Do not deviate from the approved PLAN during CODE.
 - Proceed through the END phase normally.
+- **[LOCKED: COMMIT-GATE]**: You are strictly forbidden from executing `git commit` without an explicit, verbal approval from the developer for the specific commit message proposed. This is a non-negotiable governance barrier to prevent autonomous history mutation.
 
 ---
 
