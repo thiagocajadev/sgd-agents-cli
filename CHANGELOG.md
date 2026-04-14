@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.7.0] - 2026-04-14
+
+### Added
+
+- **Sovereign Protocol (Law 0)**: Hardened governance by introducing Law 0, establishing project instructions as the ultimate authority over general AI training bias.
+- **DNA-GATE [LOCKED]**: Implemented a mandatory 'Mental Reset' gateway at the start of Phase: CODE to ensure strict adherence to engineering laws.
+- **Contextual Efficiency (Law 7)**: Integrated project philosophies for token reduction, including Smart Truncation (60/40 Split) and Reference-Based Snapshots.
+- **Backlog Health Audit**: Added automated detection for context bloat in `.ai-backlog/` directories.
+
+### Fixed
+
+- **Explaining Returns (Law 3)**: Refactored engine utilities and audit runner to eliminate literal/bare returns and satisfy scansion laws.
+- **Named Expectations**: Hardened unit tests to eliminate magic values and enforce the `actual`/`expected` triad.
+
 ## [2.6.0] - 2026-04-13
 
 ### Added

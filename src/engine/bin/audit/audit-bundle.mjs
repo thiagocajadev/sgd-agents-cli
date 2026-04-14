@@ -4,6 +4,9 @@ import { spawnSync } from 'node:child_process';
 import { SyncChecker } from './check-sync.mjs';
 import { NARRATIVE_CHECKLIST } from '../../config/governance.mjs';
 import { FsUtils } from '../../lib/core/fs-utils.mjs';
+import { DisplayUtils } from '../../lib/core/display-utils.mjs';
+
+const { smartTruncate } = DisplayUtils;
 
 const PROJECT_ROOT = process.cwd();
 const { runIfDirect } = FsUtils;
@@ -27,6 +30,8 @@ function orchestrateGovernanceAudit() {
     tests: checkTestNamedExpectations(),
     soul: checkSoulPulse(),
     hygiene: checkHygienePulse(),
+    backlog: checkBacklogHealth(),
+    sovereign: checkSovereignCompliance(),
   };
 
   const auditResults = results;
@@ -171,6 +176,66 @@ function checkTestNamedExpectations() {
   return finalExpectationsResult;
 }
 
+function checkSovereignCompliance() {
+  const staffDnaPath = path.join(PROJECT_ROOT, '.ai', 'instructions', 'core', 'staff-dna.md');
+  const agentsPath = path.join(PROJECT_ROOT, '.ai', 'skill', 'AGENTS.md');
+
+  const violations = [];
+
+  if (fs.existsSync(staffDnaPath)) {
+    const dnaContent = fs.readFileSync(staffDnaPath, 'utf8');
+    if (!dnaContent.includes('Law 0: The Law of Protocol')) {
+      violations.push('staff-dna.md: Missing Law 0 (Sovereignty Gate)');
+    }
+    if (!dnaContent.includes('Law 7: The Law of Contextual Efficiency')) {
+      violations.push('staff-dna.md: Missing Law 7 (Token Discipline)');
+    }
+  } else {
+    violations.push('staff-dna.md: File missing from .ai/');
+  }
+
+  if (fs.existsSync(agentsPath)) {
+    const agentsContent = fs.readFileSync(agentsPath, 'utf8');
+    if (!agentsContent.includes('DNA-GATE & MENTAL RESET [LOCKED]')) {
+      violations.push('AGENTS.md: Missing DNA-GATE [LOCKED] mandatory protocol');
+    }
+  } else {
+    violations.push('AGENTS.md: File missing from .ai/');
+  }
+
+  const sovereignComplianceResult = {
+    isFailure: violations.length > 0,
+    violations,
+    message: violations.length > 0 ? violations.join(' | ') : 'Sovereign Protocol active.',
+  };
+  return sovereignComplianceResult;
+}
+
+function checkBacklogHealth() {
+  const backlogDir = path.join(PROJECT_ROOT, '.ai-backlog');
+  if (!fs.existsSync(backlogDir)) {
+    const missingBacklogResult = { isFailure: false, message: 'Backlog not initialized' };
+    return missingBacklogResult;
+  }
+
+  const files = fs.readdirSync(backlogDir);
+  const largeFiles = files.filter((file) => {
+    const stats = fs.statSync(path.join(backlogDir, file));
+    const isLarge = stats.size > 1024 * 50; // > 50KB
+    return isLarge;
+  });
+
+  const isFailure = largeFiles.length > 0;
+  const backlogHealthResult = {
+    isFailure,
+    largeFiles,
+    message: isFailure
+      ? `Detected context bloat in: ${largeFiles.join(', ')}. Run 'context-reset'.`
+      : 'Healthy (no bloat)',
+  };
+  return backlogHealthResult;
+}
+
 function checkSoulPulse() {
   const files = ['README.md', 'docs/README.pt-BR.md', 'docs/ROADMAP.md'];
   const missing = files.filter((file) => !fs.existsSync(path.join(PROJECT_ROOT, file)));
@@ -233,14 +298,18 @@ function reportSummary(results) {
     !results.hygiene.isFailure,
     `Lint: ${results.hygiene.lint} | Tests: ${results.hygiene.test}`
   );
+  printResult('Backlog Health', !results.backlog.isFailure, results.backlog.message);
+  printResult('Sovereign Protocol', !results.sovereign.isFailure, results.sovereign.message);
 
   const totalFailures = [
     results.drift,
     results.narrative,
-    results.law3,
+    results.laws,
     results.soul,
     results.tests,
     results.hygiene,
+    results.sovereign,
+    results.backlog,
   ].filter((result) => result && result.isFailure).length;
 
   if (totalFailures === 0) {
@@ -252,7 +321,8 @@ function reportSummary(results) {
 
 function printResult(label, success, reason) {
   const icon = success ? '✅' : '❌';
-  console.log(`  ${icon} ${label.padEnd(25)} ${reason ? `— ${reason}` : ''}`);
+  const truncatedReason = smartTruncate(reason, 10, 5); // Conservative truncation for UI
+  console.log(`  ${icon} ${label.padEnd(25)} ${reason ? `— ${truncatedReason}` : ''}`);
 }
 
 export const AuditRunner = { run };

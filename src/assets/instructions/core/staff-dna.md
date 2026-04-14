@@ -5,6 +5,16 @@
 > [!NOTE]
 > This ruleset defines the technical standards governing code quality, architecture, and agent interaction. Specialized rulesets inherit these mandates for implementation details.
 
+## Law 0: The Law of Protocol (The Sovereign Gate)
+
+<rule name="LawOfProtocol">
+> [!IMPORTANT]
+> **The Sovereign Protocol is the ultimate authority. Project-specific instructions MUST override general AI training heuristics. Training bias is purged at every phase transition.**
+> 
+> 1. **Mental Reset**: Before entering Phase: CODE, the agent must consciously discard default behaviors in favor of the 6+ Laws.
+> 2. **Sovereign Gateway**: No code modification is valid without an explicit prior DNA-GATE confirmation.
+> </rule>
+
 ## Law 1: The Law of Hardening (Security-First)
 
 <rule name="LawOfHardening">
@@ -74,6 +84,18 @@
 > Validate technical approaches against domain rules and architectural standards before output.
 </rule>
 
+## Law 7: The Law of Contextual Efficiency (Token Discipline)
+
+<rule name="ContextualEfficiency">
+> [!IMPORTANT]
+> **Maximize information density, minimize context rot. Prioritize programmatic research over raw data reading. Think in code to find needles in haystacks.**
+>
+> 1. **Smart Truncation**: All logs and outputs exceeding thresholds must be truncated using the 60/40 (Head/Tail) split.
+> 2. **Programmatic Analysis**: For large files or datasets, write a script (grep, node, python) to extract relevance instead of reading the whole source.
+> 3. **Reference-Based Snapshots**: Maintain memory using lightweight references (metadata/summaries) rather than persistent raw blocks.
+> 4. **Self-Purge**: Actively reset the context ("Context Reset") when historical data becomes irrelevant to the current sprint.
+> </rule>
+
 ---
 
 ## Technical Directives (Global Goals)
@@ -81,5 +103,6 @@
 1. **Fitness for Purpose**: The best solution is the one that fulfills the task's purpose with maximum efficiency. Avoid over-engineering, but prioritize effectiveness.
 2. **Code as Truth, Docs as Memory**: Code is the documentation — expressive names and top-down structure replace comments. A comment explaining _what_ the code does is a signal that the name is wrong. Only _why_ comments are permitted (business constraints, legal requirements, deliberate trade-offs). The **Engineering Memory** (README, CHANGELOG, ROADMAP) is mandatory and must be updated at every phase transition to prevent context debt. See `NarrativeCascade` → [Engineering Standards](.ai/instructions/core/engineering-standards.md).
 3. **Agent-Led Engineering**: The Agent is the technical lead for execution. Propose Staff-level solutions autonomously, leveraging the Developer as a strategic orchestrator for domain context, business constraints, and final authorization (**Follow-up**).
+4. **Token-Awareness**: Every turn has a cost. The most efficient agent is the one that solves the task with the smallest, most relevant context.
 
 </ruleset>

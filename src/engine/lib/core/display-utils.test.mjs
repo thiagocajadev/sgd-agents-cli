@@ -61,4 +61,53 @@ describe('DisplayUtils', () => {
       assert.equal(actual, expected);
     });
   });
+
+  describe('smartTruncate()', () => {
+    it('should return original content if below threshold', () => {
+      const content = 'line 1\nline 2\nline 3';
+      const actual = DisplayUtils.smartTruncate(content, 10, 10);
+      assert.equal(actual, content);
+    });
+
+    it('should truncate and show head/tail for long content', () => {
+      const lines = Array.from({ length: 200 }, (_, i) => `line ${i + 1}`);
+      const content = lines.join('\n');
+      const headLimit = 10;
+      const tailLimit = 5;
+
+      const actual = DisplayUtils.smartTruncate(content, headLimit, tailLimit);
+
+      const expectedHeadStart = 'line 1\nline 2';
+      const expectedTailEnd = 'line 199\nline 200';
+      const expectedTruncationMarker = '[TRUNCATED 185 LINES]';
+      const expectedLineCount = headLimit + tailLimit + 1; // head + message line + tail
+
+      assert.ok(actual.startsWith(expectedHeadStart));
+      assert.ok(actual.endsWith(expectedTailEnd));
+      assert.ok(actual.includes(expectedTruncationMarker));
+      assert.equal(actual.split('\n').length, expectedLineCount);
+    });
+
+    it('should return empty string for empty input', () => {
+      const expected = '';
+      assert.equal(DisplayUtils.smartTruncate(null), expected);
+      assert.equal(DisplayUtils.smartTruncate(''), expected);
+    });
+  });
+
+  describe('createReference()', () => {
+    it('should return a formatted reference string', () => {
+      const targetFile = 'large-file.log';
+      const summary = 'Summary of the logs';
+      const actual = DisplayUtils.createReference(targetFile, summary);
+
+      const expectedPrefix = `REF: ${targetFile}`;
+      const expectedReason = `REASON: ${summary}`;
+      const expectedStatus = 'Contextual Snapshot';
+
+      assert.ok(actual.includes(expectedPrefix));
+      assert.ok(actual.includes(expectedReason));
+      assert.ok(actual.includes(expectedStatus));
+    });
+  });
 });
