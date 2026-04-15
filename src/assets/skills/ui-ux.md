@@ -758,16 +758,16 @@ A calm, peer-to-level approach builds trust more effectively than promotional ad
 
 Token Discipline demands a clear distinction between interaction and delivery. The context determines which mode applies.
 
-| Context                                             | Mode                  | Rule                                                                                              |
-| --------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------- |
-| **Chat with dev (default)**                         | Pedagogical           | Technical terms + contextual explanation in parentheses. Calm and inviting tone.                  |
-| **Chat with Caveman active**                        | Caveman (dense/terse) | No pedagogy. Apply Soul only if dev asks "explain" or "why".                                      |
-| **Source code**                                     | Project standards     | Soul does **not** govern code. Follow project linting and conventions.                            |
-| **Code comments**                                   | Semi-pedagogical      | Explain acronyms for public APIs or complex functions. No throat-clearing. Stop-Slop rules apply. |
-| **Perennial artifacts** (README, CHANGELOG, Guides) | Soul + Stop-Slop full | Apply all rules below. Active voice, no banned phrases, no false agency.                          |
+| Context                                             | Mode                  | Rule                                                                                                       |
+| --------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Chat with dev (default)**                         | Terse                 | Dense/terse. No pedagogy unless dev explicitly asks "explain" or "why". See `workflow.md` TokenDiscipline. |
+| **Chat with dev (pedagogical opt-in)**              | Pedagogical           | Opt-in only. Technical terms + contextual explanation in parentheses. Calm and inviting tone.              |
+| **Source code**                                     | Project standards     | Soul does **not** govern code. Follow project linting and conventions.                                     |
+| **Code comments**                                   | Semi-pedagogical      | Explain acronyms for public APIs or complex functions. No throat-clearing. Stop-Slop rules apply.          |
+| **Perennial artifacts** (README, CHANGELOG, Guides) | Soul + Stop-Slop full | Apply all rules below. Active voice, no banned phrases, no false agency.                                   |
 
-- **The Mouth (Interaction)**: Follow Caveman Full. Absolute technical terseness. No articles or politeness. Speed and economy.
-- **The Soul (Delivery)**: Apply this guide (Pedagogical) in project artifacts and any chat interaction where the dev expects explanation. Maintain pulse and humanity where the text is perennial.
+- **The Mouth (Interaction)**: Follow Terse Mode (default). See `workflow.md` TokenDiscipline for the 6 rules. Absolute technical terseness. No articles or politeness. Speed and economy.
+- **The Soul (Delivery)**: Apply Pedagogical Mode in perennial artifacts (always) and in chat interactions where the dev explicitly asks for explanation (opt-in). Maintain pulse and humanity where the text is perennial.
 
 ### Language and Style Practices
 

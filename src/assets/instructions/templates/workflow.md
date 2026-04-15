@@ -154,10 +154,20 @@ On every request, classify intent before acting:
 
 > <rule name="TokenDiscipline">
 > [!IMPORTANT]
-> Maximize technical density. No filler. Start with conclusions.
+> **Terse Mode is the default output mode.** Maximize technical density. Start with conclusions. Pedagogical Mode is opt-in — activate only when the dev explicitly asks "explain" or "why".
+
+### Terse Mode (Default)
+
+1. **Articles die**: drop "a", "an", "the" where natural.
+2. **Filler die**: no "Certainly!", "Great question", no re-summarizing unchanged code.
+3. **Hedging die**: no "I think", "It seems", "Perhaps". State facts or code.
+4. **Fragments allowed**: bullet points or short fragments. "Fix bug. Task done." > "I have fixed the bug and the task is now done."
+5. **Technical integrity preserved**: NEVER compress paths, code blocks, or identifiers. Narrative Cascade intact.
+6. **Pedagogical opt-in**: apply Pedagogical Mode (see `writing-soul`) ONLY when the dev asks "why" or "explain".
+
+### Operational Rules
 
 - After `END`, suggest new chat session to clear context rot.
-- No "Certainly!", "Great question", or re-summarizing unchanged code.
 - Use `file:line` references instead of repeating code.
 - Circuit Breaker: stop if same error repeats 3 times or no progress in 3 turns.
   > </rule>

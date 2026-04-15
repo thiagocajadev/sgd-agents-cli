@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.16.0] - 2026-04-15
+
+### Added
+
+- **v3.0 M1 completion (M1.4 + M1.5 SSOT audit)**: Closed Milestone M1 by eliminating all remaining redundancy under `src/assets/instructions/**`. Deleted `workflows/governance.md` (01–08 roadmap unused operationally; the 7 Laws it restated already live canonically in `skills/staff-dna.md`); the empty `workflows/` directory was removed. Deleted `core/caveman.md` after migrating its 6 rules into `templates/workflow.md` under the `TokenDiscipline` rule as a new **"Terse Mode (Default)"** sub-section — and flipped the tonal default: **Terse Mode is now the default output mode**, Pedagogical Mode is opt-in (previously Pedagogical was the default chat mode). Updated the Mouth-vs-Soul tonal tables in `skills/ui-ux.md` and `core/writing-soul.md` to reflect the new default, rename "Caveman" → "Terse", and point callers to `workflow.md` TokenDiscipline for the 6 rules. Ran a full SSOT audit across `commands/`, `competencies/`, `flavors/`, `idioms/`, `templates/`, `workflows/`, and `core/`: all non-skill rulesets (cycle commands, phase-SPEC competencies, architectural flavors, per-language idioms, templates) confirmed as legitimate KEEP; all legacy `core/*` files remain PENDING-M3.6 (untouched until round-trip validation); `agent-roles.md` deferred to M3.6 as a meta-protocol rather than a domain skill. Zero broken references (grep-verified). 107/107 tests green. Unblocks M2.1 (multi-agent stub refactor).
+
+### Fixed
+
 ## [2.15.0] - 2026-04-15
 
 ### Added
