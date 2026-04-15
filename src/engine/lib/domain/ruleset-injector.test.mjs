@@ -19,11 +19,10 @@ function cleanup(dir) {
 
 describe('RulesetInjector', () => {
   describe('prepareProjectStructure()', () => {
-    it('should create .ai/instructions, .ai/workflows and .ai/commands directories', () => {
+    it('should create .ai/instructions and .ai/commands directories', () => {
       const tmpDir = makeTempDir();
       const expectedDirs = [
         path.join(tmpDir, '.ai', 'instructions'),
-        path.join(tmpDir, '.ai', 'workflows'),
         path.join(tmpDir, '.ai', 'commands'),
       ];
 
@@ -266,7 +265,6 @@ describe('RulesetInjector', () => {
         '.ai/instructions/flavor/',
         '.ai/instructions/idioms/typescript/',
         '.ai/instructions/idioms/go/',
-        '.ai/workflows/',
         '.ai/commands/',
       ];
 

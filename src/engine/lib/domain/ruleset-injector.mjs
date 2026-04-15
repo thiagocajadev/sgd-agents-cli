@@ -8,7 +8,6 @@ const { copyRecursiveSync, filterContentByVersion, getDirname } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
 const SOURCE_INSTRUCTIONS = path.join(__dirname, '../../..', 'assets', 'instructions');
-const SOURCE_WORKFLOWS = path.join(SOURCE_INSTRUCTIONS, 'workflows');
 const SOURCE_COMMANDS = path.join(SOURCE_INSTRUCTIONS, 'commands');
 const SOURCE_DEV_GUIDES = path.join(__dirname, '../../..', 'assets', 'dev-guides');
 const SOURCE_DEV_TRACKS = path.join(SOURCE_DEV_GUIDES, 'prompt-tracks');
@@ -16,15 +15,13 @@ const SOURCE_COMPETENCIES = path.join(SOURCE_INSTRUCTIONS, 'competencies');
 
 function prepareProjectStructure(targetDirectory) {
   const instructionsDir = path.join(targetDirectory, '.ai', 'instructions');
-  const workflowsDir = path.join(targetDirectory, '.ai', 'workflows');
   const commandsDir = path.join(targetDirectory, '.ai', 'commands');
 
   fs.mkdirSync(instructionsDir, { recursive: true });
-  fs.mkdirSync(workflowsDir, { recursive: true });
   fs.mkdirSync(commandsDir, { recursive: true });
 }
 
-function injectRulesets(targetDirectory, selections, { noDevGuides = false } = {}) {
+function injectRulesets(targetDirectory, selections, { noDevGuides = true } = {}) {
   const { flavor, idioms } = selections;
   const projectAiInstructions = path.join(targetDirectory, '.ai', 'instructions');
 
@@ -49,10 +46,6 @@ function injectRulesets(targetDirectory, selections, { noDevGuides = false } = {
     path.join(SOURCE_INSTRUCTIONS, 'templates'),
     path.join(projectAiInstructions, 'templates')
   );
-
-  if (fs.existsSync(SOURCE_WORKFLOWS)) {
-    copyRecursiveSync(SOURCE_WORKFLOWS, path.join(targetDirectory, '.ai', 'workflows'));
-  }
 
   if (fs.existsSync(SOURCE_COMMANDS)) {
     copyRecursiveSync(SOURCE_COMMANDS, path.join(targetDirectory, '.ai', 'commands'));
@@ -89,7 +82,7 @@ function injectPrompts(targetDirectory, track) {
 }
 
 function collectOutputSummary(selections) {
-  const { mode, flavor, idioms, track } = selections;
+  const { mode, flavor, idioms, track, devGuides = false } = selections;
   const directories = [];
 
   if (mode === 'agents') {
@@ -98,9 +91,8 @@ function collectOutputSummary(selections) {
     for (const idiom of idioms) directories.push(`.ai/instructions/idioms/${idiom}/`);
     directories.push('.ai/instructions/templates/');
     directories.push('.ai/instructions/competencies/');
-    directories.push('.ai/workflows/');
     directories.push('.ai/commands/');
-    directories.push('.ai/dev-guides/');
+    if (devGuides) directories.push('.ai/dev-guides/');
     directories.push('.ai/instructions/creative/');
     directories.push('.ai/instructions/creative/templates/');
     directories.push('.ai/instructions/creative/guides/');

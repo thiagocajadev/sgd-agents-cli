@@ -41,7 +41,8 @@ On every request, classify intent before acting:
 > 2. **Goal Definition**: Writes one sentence describing what will be built and why.
 > 3. **Domain & Contracts**: Defines the domain (Backend / Frontend / Fullstack) and the inputs and outputs.
 > 4. **Verification Checklist**: Creates up to 5 yes/no checkpoints to confirm the work is done right.
-> 5. **Approval Gate**: Stops and waits for your approval before writing any code.
+> 5. **Context Report**: Run `wc -c` on the command file and backlog files read (`context.md`, `tasks.md`). Sum bytes ÷ 4, add 4K for base instructions. Show inline: `📊 ~N tokens loaded`.
+> 6. **Approval Gate**: Stops and waits for your approval before writing any code.
 >    </rule>
 
 ## Phase: PLAN (The Strategy) — MODE: PLANNING
@@ -55,44 +56,10 @@ On every request, classify intent before acting:
 > 3. **Effort Tagging**: Tags each task by size: `[S]` small · `[M]` medium · `[L]` large (must be split).
 > 4. **Sub-task Split**: Breaks every `[L]` task into numbered steps: 1.1, 1.2...
 > 5. **Backlog Sync**: Saves all tasks to `.ai-backlog/tasks.md` and marks the first one as in progress.
-> 6. **Impact Map**: Build the blast-radius map for this cycle and write it to `.ai-backlog/impact-map.md`.
->
->    **Step 1 — Identify changed files** (in order of precedence):
->    - Run `git diff --name-only HEAD` — lists files modified since the last commit (staged or unstaged)
->    - If output is empty, run `git status --short` — catches new untracked files not yet committed
->    - If both return empty: this is a brand-new cycle with no changes yet — write the map with `## Changed: (no changes yet — map will be updated as files are modified)` and skip the remaining steps
->
->    **Step 2 — Scan blast radius**: For each changed file, scan its import/require statements to find which other files depend on it. List them under `## Blast Radius`.
->
->    **Step 3 — Identify tests at risk**: Find test files (_.test._, _.spec._) that cover any changed or blast-radius file. List them under `## Tests at Risk`.
->
->    **Step 4 — Write the map**:
->
->    ```md
->    # Impact Map — <cycle>: <description>
->
->    _Generated: <date> | Cycle: <type>_
->
->    ## Changed
->
->    - <file> (reason: <why it changed>)
->
->    ## Blast Radius
->
->    - <file> (imports or calls a changed file)
->
->    ## Tests at Risk
->
->    - <test file> (covers a changed or blast-radius file)
->
->    ## Safe
->
->    - <directory or glob> (no dependency on changed files — skip entirely)
->    ```
->
->    This map is the agent's read-list for Phase CODE — load only what it contains, ignore the rest of the codebase.
->
-> 7. **Approval Gate**: Stops and waits for your approval before writing any code.
+> 6. **Impact Map**: Write `.ai-backlog/impact-map.md`. Run `git diff --name-only HEAD` (fallback: `git status --short`) to list changed files. For each, trace imports to find dependents (Blast Radius) and test files at risk. Sections: `## Changed`, `## Blast Radius`, `## Tests at Risk`, `## Safe`. This map is the agent's read-list for Phase CODE — skip everything outside it.
+> 7. **Cost Estimate**: Run `wc -c` on all files in `## Changed` + `## Blast Radius`. Sum bytes ÷ 4, add context already loaded + 8K for conversation overhead. Show before approval:
+>    > 📊 Task estimate: ~N tokens
+> 8. **Approval Gate**: Stops and waits for your approval before writing any code.
 >    </rule>
 
 ## Phase: CODE (The Execution) — MODE: FAST
@@ -182,37 +149,10 @@ On every request, classify intent before acting:
 ### Session Start
 
 1. **Terminal Sanity Check**: Run `node -v` and `npm -v` (or the project's primary toolchain) to "wake up" the terminal and confirm execution capabilities in the current shell.
-2. Read `.ai-backlog/context.md` — understand the project brief.
-   - **Local Priority**: Always look for the `.ai-backlog/` folder in the current directory first to avoid redundancy.
-   - **If missing**: analyze the project (read `package.json`, `README.md`, `CHANGELOG.md`, entry points, folder structure) and generate `.ai-backlog/context.md` using the bootstrap template below. Announce: _"context.md created with initial analysis. Review and adjust as needed."_ Never overwrite an existing file.
+2. Read `.ai-backlog/context.md` — understand the project brief. If missing, analyze `package.json`, `README.md`, entry points and generate it (fields: name, stack, pattern, entry, Decisions, Now, Partner). Never overwrite existing.
 3. Read `.ai-backlog/tasks.md` — check for `[IN_PROGRESS]` tasks before accepting new work.
-4. **Impact Map Check**: Read `.ai-backlog/impact-map.md`.
-   - **If present and populated** (not idle): an active cycle is in progress. Load only the files listed under `## Changed` and `## Blast Radius` — skip the rest of the codebase.
-   - **If missing or idle** (`No active cycle`): no blast-radius context needed. Proceed normally.
-   - **If backlog was deleted**: recreate `impact-map.md` with the idle template (see Phase END · Map Reset). Run `git diff --name-only HEAD` — if an in-progress cycle is detected from `tasks.md`, rebuild the map from that diff.
+4. **Impact Map Check**: Read `.ai-backlog/impact-map.md`. If active (not idle): load only files under `## Changed` and `## Blast Radius`. If missing or idle: proceed normally. If backlog deleted: recreate idle map, then rebuild from `git diff --name-only HEAD` if a cycle is in progress.
 5. If an `[IN_PROGRESS]` task exists: resume it. Announce what was in progress and continue from the checkpoint.
-
-#### context.md Bootstrap Template
-
-```md
-# <project-name> — <one-line description>
-
-stack: <detected from package.json dependencies>
-pattern: <detected architectural pattern>
-entry: <main entry point file>
-
-## Decisions
-
-- <decision inferred from code or config>: <rationale>
-
-## Now
-
-- Ready for next instruction.
-
-## Partner
-
-- <description of the dev partner and preferred language>
-```
 
 ### Checkpoint (after each atomic task)
 
@@ -253,19 +193,16 @@ _Example: "Resuming Cycle Feat — Phase: SPEC — Step 3 (Domain & Contracts)."
 
 > </rule>
 
-## Rule: Token Discipline 2.0 (GSD + Caveman)
+## Rule: Token Discipline
 
 > <rule name="TokenDiscipline">
 > [!IMPORTANT]
-> **Maximize technical density. Minimal linguistic fluff.**
-> Follow `.ai/instructions/core/caveman.md` (Caveman Full) for all chat interactions.
+> Maximize technical density. No filler. Start with conclusions.
 
-- **GSD (Fresh Contexts)**: After atomic task `END`, suggest new chat session to purge context rot.
-- **Mouth Smaller**: No articles, fillers, or hedging. Start with conclusions.
-- **Pedagogical on Demand**: Use "Writing Soul" for project docs; use Caveman for chat.
-- **No Slop**: No "Certainly!", "Great question", or re-summarizing unchanged code.
-- **File:Line References**: Use `file:line` instead of code snippets where possible.
-- **Circuit Breaker**: Stop if same error repeats 3 times or no progress in 3 turns.
+- After `END`, suggest new chat session to clear context rot.
+- No "Certainly!", "Great question", or re-summarizing unchanged code.
+- Use `file:line` references instead of repeating code.
+- Circuit Breaker: stop if same error repeats 3 times or no progress in 3 turns.
   > </rule>
 
 </ruleset>

@@ -117,22 +117,24 @@ function buildMasterInstructions(selections) {
     }
 
     function buildCoreGovernanceRouting() {
-      const agentRolesRow = `\n| \`.ai/instructions/core/agent-roles.md\` | Multi-Agent Roles & Handoff Protocol |`;
-
       const governanceString = dedent`
-        **Universal Governance**
+        **Core Rules** — read before writing any code
 
         | File | Purpose |
         | :--- | :------ |
-        | \`.ai/instructions/core/staff-dna.md\` | Staff DNA / Core Principles |
-        | \`.ai/instructions/core/security.md\` | Security Strategy |
-        | \`.ai/instructions/core/security-pipeline.md\` | Security Pipeline |
-        | \`.ai/instructions/core/engineering-standards.md\` | Engineering Standards |
-        | \`.ai/instructions/core/naming.md\` | Naming Discipline |
+        | \`.ai/instructions/core/staff-dna.md\` | Engineering Laws — always apply |
+        | \`.ai/instructions/core/engineering-standards.md\` | Standards & Readability |
         | \`.ai/instructions/core/code-style.md\` | Code Style & Scannability |
-        | \`.ai/instructions/core/writing-soul.md\` | Writing Soul (Docs & UI) |
-        | \`.ai/instructions/core/testing-principles.md\` | Testing Principles |
-        | \`.ai/instructions/core/observability.md\` | Observability |${agentRolesRow}`;
+        | \`.ai/instructions/core/naming.md\` | Naming Discipline |
+
+        **On Demand** — load only when the task requires it
+
+        | File | When to read |
+        | :--- | :----------- |
+        | \`.ai/instructions/core/testing-principles.md\` | Writing or reviewing tests |
+        | \`.ai/instructions/core/security.md\` | Security-sensitive changes |
+        | \`.ai/instructions/core/writing-soul.md\` | Docs, UI copy, or user-facing text |
+        | \`.ai/instructions/core/agent-roles.md\` | Multi-agent coordination |`;
 
       const coreGovernanceRouting = governanceString;
       return coreGovernanceRouting;

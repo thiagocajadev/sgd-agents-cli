@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.11.0] - 2026-04-15
+
+### Added
+
+- **Context Load Optimization — Lean Default Install**: Dev-guides are now off by default (opt-in via `--dev-guides`), removing ~32K tokens from the standard install. Deprecated `--no-dev-guides` flag with a warning. Removed unused `workflows/` directory from consumer project install. Slimmed the Core Governance reference table in the assembled AGENTS.md from 10 files to 4 essentials (`staff-dna`, `engineering-standards`, `code-style`, `naming`) plus an explicit "On Demand" section for context-specific files.
+- **Token Visibility in Working Protocol**: Added Context Report step to Phase SPEC (shows tokens loaded at session start) and Cost Estimate step to Phase PLAN (shows estimated task token count before approval gate). Calculated via `wc -c ÷ 4` on read files plus conversation overhead.
+- **workflow.md Condensed**: Impact Map instructions, Session Start protocol, and Token Discipline rule condensed without loss of behavior. 3789 → 3303 tokens.
+
 ## [2.10.1] - 2026-04-15
 
 ### Fixed

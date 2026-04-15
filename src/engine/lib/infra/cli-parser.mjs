@@ -1,6 +1,13 @@
 function parseCliArgs(argv) {
   const subcommand = argv[0] && !argv[0].startsWith('-') ? argv[0] : null;
 
+  const isDeprecatedNoDevGuides = argv.includes('--no-dev-guides');
+  if (isDeprecatedNoDevGuides) {
+    console.log(
+      '  ⚠️  --no-dev-guides is now the default. Flag ignored. Use --dev-guides to include them.'
+    );
+  }
+
   const parsedArgs = {
     subcommand,
     // Note: targetDirectory resolution (path.resolve) should be handled by the caller
@@ -10,7 +17,7 @@ function parseCliArgs(argv) {
     version: argv.includes('--version') || argv.includes('-v'),
     quick: argv.includes('--quick'),
     dryRun: argv.includes('--dry-run'),
-    noDevGuides: argv.includes('--no-dev-guides'),
+    noDevGuides: !argv.includes('--dev-guides'),
     flavor: getArgValue(argv, '--flavor'),
     idioms: getArgValues(argv, '--idiom'),
     agents: getArgValues(argv, '--agents'),

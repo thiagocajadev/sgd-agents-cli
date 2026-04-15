@@ -64,7 +64,7 @@ async function orchestrateBuild(targetDirectory, options) {
 }
 
 async function runNonInteractive(targetDirectory, options) {
-  const { dryRun = false, noDevGuides = false, selections } = options;
+  const { dryRun = false, noDevGuides = true, selections } = options;
 
   const validationResult = validateSelections(selections);
   if (validationResult.isFailure) {
@@ -133,7 +133,7 @@ async function handleSelectionPhase(state, targetDirectory) {
 }
 
 async function handleFinalExecutionPhase(state, targetDirectory, options = {}) {
-  const { dryRun = false, noDevGuides = false, skipConfirm = false } = options;
+  const { dryRun = false, noDevGuides = true, skipConfirm = false } = options;
   const selections = state.userSelections;
 
   if (selections.mode === 'quick') {
@@ -167,7 +167,7 @@ async function handleFinalExecutionPhase(state, targetDirectory, options = {}) {
   return agentsModeResult;
 }
 
-async function runQuickMode(state, targetDirectory, { dryRun, noDevGuides = false }) {
+async function runQuickMode(state, targetDirectory, { dryRun, noDevGuides = true }) {
   if (dryRun) {
     const dryRunResult = abortForDryRun(state, targetDirectory, printQuickDryRun);
     return dryRunResult;
@@ -202,7 +202,7 @@ async function runAgentsMode(
   state,
   targetDirectory,
   selections,
-  { skipConfirm = false, noDevGuides = false } = {}
+  { skipConfirm = false, noDevGuides = true } = {}
 ) {
   const confirmed = skipConfirm || (await printBuildSummary(selections));
   if (!confirmed) {
@@ -240,11 +240,11 @@ function abortExecution(state) {
   return userAbortResult;
 }
 
-function executeQuickPipeline(targetDirectory, selections, { noDevGuides = false } = {}) {
+function executeQuickPipeline(targetDirectory, selections, { noDevGuides = true } = {}) {
   printStep(1, 5, 'Preparing .ai/ structure...');
   prepareProjectStructure(targetDirectory);
 
-  printStep(2, 5, 'Injecting rules and dev-guides...');
+  printStep(2, 5, 'Injecting rules...');
   injectRulesets(targetDirectory, selections, { noDevGuides });
 
   printStep(3, 5, 'Assembling AGENTS.md...');
@@ -274,11 +274,11 @@ function executePromptsPipeline(targetDirectory, selections) {
   writeGitignore(targetDirectory);
 }
 
-function executeAgentsPipeline(targetDirectory, selections, { noDevGuides = false } = {}) {
+function executeAgentsPipeline(targetDirectory, selections, { noDevGuides = true } = {}) {
   printStep(1, 5, 'Preparing .ai/ structure...');
   prepareProjectStructure(targetDirectory);
 
-  printStep(2, 5, 'Injecting rules and dev-guides...');
+  printStep(2, 5, 'Injecting rules...');
   injectRulesets(targetDirectory, selections, { noDevGuides });
 
   printStep(3, 5, 'Assembling AGENTS.md...');

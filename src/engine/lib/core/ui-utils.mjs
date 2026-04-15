@@ -67,7 +67,7 @@ function printQuickDryRun(targetDir) {
   console.log('  ' + '─'.repeat(55));
   console.log(`  Project: ${targetDir}\n`);
   console.log(`  [1/5] Would prepare .ai/ structure`);
-  console.log(`  [2/5] Would inject rules and dev-guides → .ai/`);
+  console.log(`  [2/5] Would inject rules → .ai/`);
   console.log(`  [3/5] Would assemble AGENTS.md`);
   console.log(`  [4/5] Would write agent config and backlog`);
   console.log(`  [5/5] Would inject spec templates → .ai/prompts/dev-tracks/`);
@@ -228,7 +228,7 @@ function printHelp(version) {
     --quick              Install with defaults (lite + JS/TS) — no prompts
     --flavor <name>      Architecture (vertical-slice, mvc, lite, legacy)
     --idiom <name>       Language idiom — repeatable or comma-separated
-    --no-dev-guides      Skip reference files and spec templates
+    --dev-guides         Include dev guides and spec templates (off by default)
     --dry-run            Preview without writing files
 
   Examples:
@@ -236,7 +236,7 @@ function printHelp(version) {
     npx sdg-agents init --quick
     npx sdg-agents init --flavor vertical-slice --idiom typescript
     npx sdg-agents init --flavor mvc --idiom typescript,python
-    npx sdg-agents init --flavor lite --idiom go --no-dev-guides
+    npx sdg-agents init --flavor lite --idiom go --dev-guides
     npx sdg-agents add
     npx sdg-agents clear
 `);
