@@ -34,7 +34,7 @@ function printProjectRoot(targetDir) {
 function printActivationGuide() {
   console.log('\n  Your agent is ready. Start with a task.');
   console.log('  If it does not auto-load the rules, paste this once:');
-  console.log('\n    Read .ai/skill/AGENTS.md\n');
+  console.log('\n    Read .ai/skills/AGENTS.md\n');
 }
 
 function printSuccessAgents(targetDir) {
@@ -92,7 +92,7 @@ function renderPreviewDirectories(directories) {
 }
 
 function renderPreviewInstructionSet() {
-  console.log(`    📄 .ai/skill/AGENTS.md`);
+  console.log(`    📄 .ai/skills/AGENTS.md`);
 }
 
 function renderPreviewIdeTargets(selections) {

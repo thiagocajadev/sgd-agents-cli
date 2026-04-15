@@ -620,7 +620,7 @@ const ui = {
 ## Part 4 — UX Quality Standards (Constitution of the Browser)
 
 > [!IMPORTANT]
-> The interface is governed by the **4th Law: Visual Excellence** defined in `.ai/skill/staff-dna.md`. This part makes it enforceable for browser and mobile environments.
+> The interface is governed by the **4th Law: Visual Excellence** defined in `.ai/skills/staff-dna.md`. This part makes it enforceable for browser and mobile environments.
 
 ### Rule: Mobile-First Absolute
 

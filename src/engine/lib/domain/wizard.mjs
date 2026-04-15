@@ -365,7 +365,7 @@ async function promptIdeSelection() {
     message: 'Primary IDE / AI agent for auto-load?',
     choices: [
       { name: '1. Claude Code (CLAUDE.md)', value: 'claude' },
-      { name: '2. Antigravity / Raw (.ai/skill/AGENTS.md only)', value: 'none' },
+      { name: '2. Antigravity / Raw (.ai/skills/AGENTS.md only)', value: 'none' },
       { name: '3. GitHub Copilot (.github/copilot-instructions.md)', value: 'vscode' },
       { name: '4. Cursor (.cursorrules)', value: 'cursor' },
       { name: '5. Windsurf (.windsurfrules)', value: 'windsurf' },

@@ -18,10 +18,10 @@ function cleanup(dir) {
 
 describe('InstructionAssembler', () => {
   describe('writeAgentConfig()', () => {
-    it('should write .ai/skill/AGENTS.md', () => {
+    it('should write .ai/skills/AGENTS.md', () => {
       const tmpDir = makeTempDir();
       const inputContent = 'content';
-      const expectedPath = path.join(tmpDir, '.ai', 'skill', 'AGENTS.md');
+      const expectedPath = path.join(tmpDir, '.ai', 'skills', 'AGENTS.md');
       const expectedContent = inputContent;
 
       try {
@@ -37,9 +37,9 @@ describe('InstructionAssembler', () => {
       }
     });
 
-    it('should create .ai/skill/ directory if it does not exist', () => {
+    it('should create .ai/skills/ directory if it does not exist', () => {
       const tmpDir = makeTempDir();
-      const expectedDir = path.join(tmpDir, '.ai', 'skill');
+      const expectedDir = path.join(tmpDir, '.ai', 'skills');
 
       try {
         writeAgentConfig(tmpDir, 'content');

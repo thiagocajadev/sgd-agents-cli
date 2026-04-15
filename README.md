@@ -16,7 +16,7 @@
 
 `sdg-agents` installs a set of markdown instruction files into your project. AI agents (Claude Code, Cursor, Windsurf, Copilot, Codex, and others) read these files and follow the defined protocol for every task.
 
-> **Note:** If your agent does not pick up the rules automatically, reference `.ai/skill/AGENTS.md` at the start of the session.
+> **Note:** If your agent does not pick up the rules automatically, reference `.ai/skills/AGENTS.md` at the start of the session.
 
 The instruction set covers:
 

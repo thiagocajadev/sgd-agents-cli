@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.15.0] - 2026-04-15
+
+### Added
+
+- **v3.0 M1.3 — Skills directory + SSOT clarification**: Renamed `src/assets/skill/` → `src/assets/skills/` (plural) via `git mv` to preserve history. Propagated the new path across the engine (`instruction-assembler.mjs`, `instruction-assembler.test.mjs`, `ui-utils.mjs`, `wizard.mjs`, `audit-bundle.mjs`), the skill cross-references (`.ai/skill/*` → `.ai/skills/*` across all 11 skill files), and `README.md`. Explicit SSOT rule added to M1.3 backlog entry: `src/assets/skills/*` is canonical; `src/assets/instructions/core/*` is deprecated-pending-M3.6 and preserved only for round-trip validation. Aligns the project with its router-oriented identity — a minimal `AGENTS.md` registry + on-demand skill loading per cycle phase. 107/107 tests green.
+
+### Fixed
+
 ## [2.14.0] - 2026-04-15
 
 ### Added

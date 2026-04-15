@@ -5,7 +5,7 @@
 > [!NOTE]
 > Universal rules for database interaction focusing on infrastructure, performance, and result orchestration.
 > Load in **Phase CODE** when touching repositories, DB connections, queries, or transactions.
-> For SQL scansion, indentation, and aesthetic standards, refer to `.ai/skill/sql-style.md`.
+> For SQL scansion, indentation, and aesthetic standards, refer to `.ai/skills/sql-style.md`.
 
 ## Rule: Result-Driven Repositories
 
@@ -55,7 +55,7 @@
 <rule name="VerticalDensitySQL">
 
 > [!NOTE]
-> Database interactions must follow the **SDG Linear Flow Style** as defined in `.ai/skill/sql-style.md`.
+> Database interactions must follow the **SDG Linear Flow Style** as defined in `.ai/skills/sql-style.md`.
 
 #### Instructions
 

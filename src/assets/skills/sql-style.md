@@ -5,7 +5,7 @@
 > [!NOTE]
 > SQL is a narrative. Every query must be scannable top-to-bottom, with no horizontal scrolling.
 > Load in **Phase CODE** when writing, reviewing, or refactoring SQL queries.
-> For structural data access rules (pooling, transactions, indexes, repositories), refer to the [Data Access skill](.ai/skill/data-access.md).
+> For structural data access rules (pooling, transactions, indexes, repositories), refer to the [Data Access skill](.ai/skills/data-access.md).
 
 ## Rule: SDG Linear Flow (Keyword Alignment)
 

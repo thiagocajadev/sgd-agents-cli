@@ -22,7 +22,7 @@
 <rule name="LawOfHardening">
 > [!IMPORTANT]
 > **Total configuration isolation. Zero runtime surprises. Fail fast if the environment is incomplete. Default to deny at every boundary.**
-> [Security Skill](.ai/skill/security.md)
+> [Security Skill](.ai/skills/security.md)
 </rule>
 
 ## Law 2: The Law of Resilience (Stability)
@@ -30,7 +30,7 @@
 <rule name="LawOfResilience">
 > [!IMPORTANT]
 > **Defensive dominance. Software must withstand both failure and repetition. Idempotency and graceful degradation are non-negotiable.**
-> [Code Style Skill](.ai/skill/code-style.md)
+> [Code Style Skill](.ai/skills/code-style.md)
 </rule>
 
 ## Law 3: The Law of the Cascade (Narrative)
@@ -52,7 +52,7 @@
 >
 > *Comments explain "why", never "what". If naming is right, comments disappear.*
 >
-> See `NarrativeCascade` rule → [Code Style Skill](.ai/skill/code-style.md)
+> See `NarrativeCascade` rule → [Code Style Skill](.ai/skills/code-style.md)
 </rule>
 
 ## Law 4: The Law of Visual Excellence (Aesthetics)
@@ -60,7 +60,7 @@
 <rule name="LawOfVisualExcellence">
 > [!IMPORTANT]
 > **Premium aesthetics by default. High contrast, modern typography, and meaningful micro-interactions. Maintain the chosen design language with absolute rigor.**
-> [UI/UX Skill](.ai/skill/ui-ux.md)
+> [UI/UX Skill](.ai/skills/ui-ux.md)
 </rule>
 
 ## Law 5: The Law of Boundaries (Scope Integrity)
@@ -103,7 +103,7 @@
 ## Technical Directives (Global Goals)
 
 1. **Fitness for Purpose**: The best solution is the one that fulfills the task's purpose with maximum efficiency. Avoid over-engineering, but prioritize effectiveness.
-2. **Code as Truth, Docs as Memory**: Code is the documentation — expressive names and top-down structure replace comments. A comment explaining _what_ the code does is a signal that the name is wrong. Only _why_ comments are permitted (business constraints, legal requirements, deliberate trade-offs). The **Engineering Memory** (README, CHANGELOG, ROADMAP) is mandatory and must be updated at every phase transition to prevent context debt. See `NarrativeCascade` → [Code Style Skill](.ai/skill/code-style.md).
+2. **Code as Truth, Docs as Memory**: Code is the documentation — expressive names and top-down structure replace comments. A comment explaining _what_ the code does is a signal that the name is wrong. Only _why_ comments are permitted (business constraints, legal requirements, deliberate trade-offs). The **Engineering Memory** (README, CHANGELOG, ROADMAP) is mandatory and must be updated at every phase transition to prevent context debt. See `NarrativeCascade` → [Code Style Skill](.ai/skills/code-style.md).
 3. **Agent-Led Engineering**: The Agent is the technical lead for execution. Propose Staff-level solutions autonomously, leveraging the Developer as a strategic orchestrator for domain context, business constraints, and final authorization (**Follow-up**).
 4. **Token-Awareness**: Every turn has a cost. The most efficient agent is the one that solves the task with the smallest, most relevant context.
 

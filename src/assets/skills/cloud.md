@@ -56,7 +56,7 @@
 
 > [!NOTE]
 > Every cloud service must be observable. If you can't see it, you can't operate it.
-> For structured logging and tracing implementation, see `.ai/skill/observability.md`.
+> For structured logging and tracing implementation, see `.ai/skills/observability.md`.
 
 #### Instructions
 

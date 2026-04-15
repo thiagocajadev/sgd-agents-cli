@@ -181,7 +181,7 @@ fi
 
 > [!IMPORTANT]
 > Validating actual system behavior under realistic conditions (DAST).
-> Apply the Testing skill rules — TestDoubles, FlakyTestManagement, and Arrange-Act-Assert structure — to all security test implementations. See `.ai/skill/testing.md`.
+> Apply the Testing skill rules — TestDoubles, FlakyTestManagement, and Arrange-Act-Assert structure — to all security test implementations. See `.ai/skills/testing.md`.
 
 #### Mandatory Functional Checks
 

@@ -5,7 +5,7 @@
 > [!NOTE]
 > Universal observability principles and stack-specific implementation guidance.
 > Load in **Phase CODE** when adding logging, tracing, metrics, or health checks.
-> Related skills: `.ai/skill/staff-dna.md`, `.ai/skill/code-style.md`, `.ai/skill/security.md`.
+> Related skills: `.ai/skills/staff-dna.md`, `.ai/skills/code-style.md`, `.ai/skills/security.md`.
 
 ## Rule: Universal Observability Principles
 

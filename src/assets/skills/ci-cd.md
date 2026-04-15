@@ -20,7 +20,7 @@ Lint → Security → Test → Build → Deploy (Staging) → Smoke Test → Dep
 ```
 
 1. **Lint & Format**: Reject code that doesn't follow the project's style. Zero warnings policy.
-2. **Security Gates**: Every build MUST pass the DevSecOps pipeline defined in `.ai/skill/security.md` (Part 2).
+2. **Security Gates**: Every build MUST pass the DevSecOps pipeline defined in `.ai/skills/security.md` (Part 2).
    - **Secrets Scan**: Prevent hardcoded credentials (e.g., Gitleaks, TruffleHog).
    - **SAST**: Static analysis for injection, XSS, SSRF (e.g., Semgrep, CodeQL, SonarQube).
    - **SCA**: Dependency vulnerability check and SBOM generation (e.g., Snyk, npm audit, Trivy).

@@ -37,7 +37,7 @@ function computeStackMetrics(idioms) {
 
 /**
  * Assembles the minimal master instruction content — session start + cycle protocol + skill registry.
- * Skills are referenced by short path (`.ai/skill/<name>.md`) and loaded on demand by command files.
+ * Skills are referenced by short path (`.ai/skills/<name>.md`) and loaded on demand by command files.
  */
 function buildMasterInstructions(selections) {
   const manifesto = buildStaffManifesto();
@@ -139,27 +139,27 @@ function buildMasterInstructions(selections) {
     const flavor = currentSelections.flavor;
 
     const coreSkills = [
-      '- `.ai/skill/staff-dna.md` — Engineering Laws (load in Phase CODE only)',
-      '- `.ai/skill/code-style.md` — Code Style, Naming, Engineering Standards',
-      '- `.ai/skill/testing.md` — Test Principles',
-      '- `.ai/skill/security.md` — Security-sensitive changes',
-      '- `.ai/skill/observability.md` — Logging, metrics, tracing',
+      '- `.ai/skills/staff-dna.md` — Engineering Laws (load in Phase CODE only)',
+      '- `.ai/skills/code-style.md` — Code Style, Naming, Engineering Standards',
+      '- `.ai/skills/testing.md` — Test Principles',
+      '- `.ai/skills/security.md` — Security-sensitive changes',
+      '- `.ai/skills/observability.md` — Logging, metrics, tracing',
     ];
 
     const backendSkills = hasBackend
       ? [
-          '- `.ai/skill/api-design.md` — API Design',
-          '- `.ai/skill/data-access.md` — DB layer',
-          '- `.ai/skill/sql-style.md` — SQL queries',
-          '- `.ai/skill/ci-cd.md` — Pipelines & deploy',
-          '- `.ai/skill/cloud.md` — Cloud & Containers',
+          '- `.ai/skills/api-design.md` — API Design',
+          '- `.ai/skills/data-access.md` — DB layer',
+          '- `.ai/skills/sql-style.md` — SQL queries',
+          '- `.ai/skills/ci-cd.md` — Pipelines & deploy',
+          '- `.ai/skills/cloud.md` — Cloud & Containers',
           '- `.ai/instructions/competencies/backend.md` — BFF + API Strategy',
         ]
       : [];
 
     const frontendSkills = hasFrontend
       ? [
-          '- `.ai/skill/ui-ux.md` — UI/UX design system & writing voice',
+          '- `.ai/skills/ui-ux.md` — UI/UX design system & writing voice',
           '- `.ai/instructions/competencies/frontend.md` — Contract-Based UI System',
         ]
       : [];
@@ -341,7 +341,7 @@ function buildClaudeContent() {
 
     ## Auto-Load: Governance Context
 
-    @.ai/skill/AGENTS.md
+    @.ai/skills/AGENTS.md
   `;
 
   const instructionSet = claudeContent;
@@ -349,14 +349,14 @@ function buildClaudeContent() {
 }
 
 /**
- * Writes the universal agent config file inside .ai/skill/.
+ * Writes the universal agent config file inside .ai/skills/.
  * A single AGENTS.md serves as the entry point for all AI Agents —
  * it references only the rules relevant to the project's stack.
  * If agents/ides are selected, it will also dump the rules to the native target.
  */
 function writeAgentConfig(targetDirectory, content, requestedAgents = []) {
   // Always create the generic fallback AGENTS.md and CAVEMAN.md
-  const skillDir = path.join(targetDirectory, '.ai', 'skill');
+  const skillDir = path.join(targetDirectory, '.ai', 'skills');
   fs.mkdirSync(skillDir, { recursive: true });
   fs.writeFileSync(path.join(skillDir, 'AGENTS.md'), content);
 
