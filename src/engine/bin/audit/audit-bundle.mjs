@@ -170,7 +170,7 @@ function checkTestNamedExpectations() {
 }
 
 function checkSovereignCompliance() {
-  const staffDnaPath = path.join(PROJECT_ROOT, '.ai', 'instructions', 'core', 'staff-dna.md');
+  const staffDnaPath = path.join(PROJECT_ROOT, '.ai', 'skills', 'staff-dna.md');
   const agentsPath = path.join(PROJECT_ROOT, '.ai', 'skills', 'AGENTS.md');
 
   const violations = [];

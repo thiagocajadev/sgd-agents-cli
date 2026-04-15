@@ -146,7 +146,7 @@ describe('InstructionAssembler', () => {
     it('should include pointer to Universal Engineering Manifesto', () => {
       const input = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
       const expectedSubstring1 = 'Universal Engineering Manifesto';
-      const expectedSubstring2 = '.ai/instructions/core/staff-dna.md';
+      const expectedSubstring2 = '.ai/skills/staff-dna.md';
 
       const actual = buildMasterInstructions(input);
 

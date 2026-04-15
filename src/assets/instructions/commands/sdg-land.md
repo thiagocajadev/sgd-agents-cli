@@ -126,4 +126,4 @@ Then stop completely. Do not begin any `feat:` — do not write any code. Wait f
 
 ---
 
-> Read `.ai/instructions/core/agent-roles.md` for the multi-agent handoff protocol (Planning + Fast roles).
+> Read `.ai/instructions/templates/agent-roles.md` for the multi-agent handoff protocol (Planning + Fast roles).

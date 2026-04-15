@@ -6,7 +6,9 @@ import { FsUtils } from '../core/fs-utils.mjs';
 const { getDirname } = FsUtils;
 
 const __dirname = getDirname(import.meta.url);
-const INSTRUCTIONS_DIR = path.join(__dirname, '../../..', 'assets', 'instructions');
+const ASSETS_DIR = path.join(__dirname, '../../..', 'assets');
+const INSTRUCTIONS_DIR = path.join(ASSETS_DIR, 'instructions');
+const SKILLS_DIR = path.join(ASSETS_DIR, 'skills');
 
 function hashFile(filePath) {
   if (!fs.existsSync(filePath)) {
@@ -19,13 +21,12 @@ function hashFile(filePath) {
   return hash;
 }
 
-function computeHashes(selections, instructionsDir = INSTRUCTIONS_DIR) {
+function computeHashes(selections, instructionsDir = INSTRUCTIONS_DIR, skillsDir = SKILLS_DIR) {
   const { flavor, idioms } = selections;
   const hashes = {};
 
-  const coreDir = path.join(instructionsDir, 'core');
-  if (fs.existsSync(coreDir)) {
-    scanDir(coreDir, 'core', hashes);
+  if (fs.existsSync(skillsDir)) {
+    scanDir(skillsDir, 'skills', hashes);
   }
 
   if (flavor) {

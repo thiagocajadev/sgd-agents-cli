@@ -28,4 +28,4 @@ Follow the **Phase: PLAN** from the **Working Protocol**, with this mandatory ad
 
 ---
 
-> Read `.ai/instructions/core/agent-roles.md` for the multi-agent handoff protocol (Planning + Fast roles).
+> Read `.ai/instructions/templates/agent-roles.md` for the multi-agent handoff protocol (Planning + Fast roles).

@@ -50,10 +50,11 @@ describe('RulesetInjector', () => {
   });
 
   describe('injectRulesets()', () => {
-    it('should copy core/ to .ai/instructions/core/', () => {
+    it('should copy skills/ to .ai/skills/', () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: 'lite', idioms: ['go'], versions: { go: null } };
-      const expectedDir = path.join(tmpDir, '.ai', 'instructions', 'core');
+      const expectedDir = path.join(tmpDir, '.ai', 'skills');
+      const expectedSkillFile = path.join(expectedDir, 'staff-dna.md');
 
       try {
         prepareProjectStructure(tmpDir);
@@ -61,6 +62,7 @@ describe('RulesetInjector', () => {
         injectRulesets(tmpDir, inputSelections);
 
         assert.ok(fs.existsSync(expectedDir));
+        assert.ok(fs.existsSync(expectedSkillFile));
       } finally {
         cleanup(tmpDir);
       }
@@ -207,7 +209,7 @@ describe('RulesetInjector', () => {
         idioms: ['typescript', 'go'],
       };
       const expectedDirs = [
-        '.ai/instructions/core/',
+        '.ai/skills/',
         '.ai/instructions/flavor/',
         '.ai/instructions/idioms/typescript/',
         '.ai/instructions/idioms/go/',
@@ -229,7 +231,7 @@ describe('RulesetInjector', () => {
       const { directories: actual } = collectOutputSummary(inputSelections);
 
       assert.ok(!actual.includes('.ai/instructions/flavor/'));
-      assert.ok(actual.includes('.ai/instructions/core/'));
+      assert.ok(actual.includes('.ai/skills/'));
     });
   });
 });

@@ -19,6 +19,54 @@ const { getDirname, writeJsonAtomic, safeReadJson } = FsUtils;
 const __dirname = getDirname(import.meta.url);
 const SOURCE_INSTRUCTIONS = path.join(__dirname, '../../..', 'assets', 'instructions');
 
+/**
+ * Canonical skill catalog — single source of truth for AGENTS.md rendering.
+ * Order matches the desired Skill Registry output. Categories gate inclusion:
+ * - core: always loaded
+ * - backend: included when selection has at least one backend idiom
+ * - frontend: included when selection has at least one frontend idiom
+ * Competencies stay here because they ride alongside the stack gate.
+ */
+const SKILL_CATALOG = [
+  {
+    path: '.ai/skills/staff-dna.md',
+    category: 'core',
+    description: 'Engineering Laws (load in Phase CODE only)',
+  },
+  {
+    path: '.ai/skills/code-style.md',
+    category: 'core',
+    description: 'Code Style, Naming, Engineering Standards',
+  },
+  { path: '.ai/skills/testing.md', category: 'core', description: 'Test Principles' },
+  { path: '.ai/skills/security.md', category: 'core', description: 'Security-sensitive changes' },
+  {
+    path: '.ai/skills/observability.md',
+    category: 'core',
+    description: 'Logging, metrics, tracing',
+  },
+  { path: '.ai/skills/api-design.md', category: 'backend', description: 'API Design' },
+  { path: '.ai/skills/data-access.md', category: 'backend', description: 'DB layer' },
+  { path: '.ai/skills/sql-style.md', category: 'backend', description: 'SQL queries' },
+  { path: '.ai/skills/ci-cd.md', category: 'backend', description: 'Pipelines & deploy' },
+  { path: '.ai/skills/cloud.md', category: 'backend', description: 'Cloud & Containers' },
+  {
+    path: '.ai/instructions/competencies/backend.md',
+    category: 'backend',
+    description: 'BFF + API Strategy',
+  },
+  {
+    path: '.ai/skills/ui-ux.md',
+    category: 'frontend',
+    description: 'UI/UX design system & writing voice',
+  },
+  {
+    path: '.ai/instructions/competencies/frontend.md',
+    category: 'frontend',
+    description: 'Contract-Based UI System',
+  },
+];
+
 function computeStackMetrics(idioms) {
   const hasBackend = idioms.some(
     (idiomFolderKey) => STACK_DISPLAY_NAMES[idiomFolderKey]?.isBackend
@@ -66,7 +114,7 @@ function buildMasterInstructions(selections) {
 
       > [!IMPORTANT]
       > This project follows the Universal Engineering Manifesto.
-      > You MUST read and adhere strictly to the Engineering Laws defined in \`.ai/instructions/core/staff-dna.md\`.
+      > You MUST read and adhere strictly to the Engineering Laws defined in \`.ai/skills/staff-dna.md\`.
     `;
 
     return manifestoString;
@@ -81,7 +129,7 @@ function buildMasterInstructions(selections) {
       >
       > 1. **Mental Reset**: Discard all default AI training heuristics. Project-specific Engineering Laws override general training bias.
       > 2. **Sovereign Gateway**: No code modification is valid without this explicit DNA-GATE confirmation.
-      > 3. **Law Activation**: Activate the 6+ Engineering Laws defined in \`.ai/instructions/core/staff-dna.md\` before entering Phase: CODE.
+      > 3. **Law Activation**: Activate the 6+ Engineering Laws defined in \`.ai/skills/staff-dna.md\` before entering Phase: CODE.
       > 4. **Phase Transition**: At every phase transition (SPEC → PLAN → CODE → TEST → END), purge training bias and re-anchor to the Laws.`;
 
     return dnaGateString;
@@ -128,7 +176,7 @@ function buildMasterInstructions(selections) {
       ## Agent Roles
 
       > [!NOTE]
-      > Read \`.ai/instructions/core/agent-roles.md\` for the Agent Roles and Execution Protocol.`;
+      > Read \`.ai/instructions/templates/agent-roles.md\` for the Agent Roles and Execution Protocol.`;
 
     return agentRolesString;
   }
@@ -138,66 +186,61 @@ function buildMasterInstructions(selections) {
     const { hasBackend, hasFrontend } = computeStackMetrics(stackIdioms);
     const flavor = currentSelections.flavor;
 
-    const coreSkills = [
-      '- `.ai/skills/staff-dna.md` — Engineering Laws (load in Phase CODE only)',
-      '- `.ai/skills/code-style.md` — Code Style, Naming, Engineering Standards',
-      '- `.ai/skills/testing.md` — Test Principles',
-      '- `.ai/skills/security.md` — Security-sensitive changes',
-      '- `.ai/skills/observability.md` — Logging, metrics, tracing',
-    ];
-
-    const backendSkills = hasBackend
-      ? [
-          '- `.ai/skills/api-design.md` — API Design',
-          '- `.ai/skills/data-access.md` — DB layer',
-          '- `.ai/skills/sql-style.md` — SQL queries',
-          '- `.ai/skills/ci-cd.md` — Pipelines & deploy',
-          '- `.ai/skills/cloud.md` — Cloud & Containers',
-          '- `.ai/instructions/competencies/backend.md` — BFF + API Strategy',
-        ]
-      : [];
-
-    const frontendSkills = hasFrontend
-      ? [
-          '- `.ai/skills/ui-ux.md` — UI/UX design system & writing voice',
-          '- `.ai/instructions/competencies/frontend.md` — Contract-Based UI System',
-        ]
-      : [];
-
-    const idiomLines = stackIdioms.map((idiomFolderKey) => {
-      const label = STACK_DISPLAY_NAMES[idiomFolderKey]?.name ?? idiomFolderKey;
-      return `- \`.ai/instructions/idioms/${idiomFolderKey}/patterns.md\` — ${label} Idioms & Patterns`;
+    const relevantSkills = SKILL_CATALOG.filter((skill) => {
+      if (skill.category === 'core') return true;
+      if (skill.category === 'backend') return hasBackend;
+      if (skill.category === 'frontend') return hasFrontend;
+      return false;
     });
 
-    const flavorLines =
-      flavor && flavor !== 'none'
-        ? [`- \`.ai/instructions/flavor/principles.md\` — Flavor: ${displayName(flavor)}`]
-        : [];
+    const groupedByCategory = groupSkills(relevantSkills);
 
     const sections = [
       '## Skills — load on demand',
       '',
       '> Each skill is self-contained. Load only what the current cycle requires.',
       '',
-      '**Core**',
-      ...coreSkills,
     ];
 
-    if (backendSkills.length > 0) {
-      sections.push('', '**Backend**', ...backendSkills);
-    }
-    if (frontendSkills.length > 0) {
-      sections.push('', '**Frontend**', ...frontendSkills);
-    }
-    if (idiomLines.length > 0) {
-      sections.push('', '**Stack idioms**', ...idiomLines);
-    }
-    if (flavorLines.length > 0) {
-      sections.push('', '**Architectural flavor**', ...flavorLines);
+    const categoryHeaders = { core: '**Core**', backend: '**Backend**', frontend: '**Frontend**' };
+    for (const category of ['core', 'backend', 'frontend']) {
+      const skills = groupedByCategory[category];
+      if (!skills || skills.length === 0) continue;
+      sections.push(categoryHeaders[category]);
+      for (const skill of skills) {
+        sections.push(`- \`${skill.path}\` — ${skill.description}`);
+      }
+      sections.push('');
     }
 
-    const registryBlock = sections.join('\n');
+    const idiomLines = stackIdioms.map((idiomFolderKey) => {
+      const idiomLabel = STACK_DISPLAY_NAMES[idiomFolderKey]?.name ?? idiomFolderKey;
+      const idiomLine = `- \`.ai/instructions/idioms/${idiomFolderKey}/patterns.md\` — ${idiomLabel} Idioms & Patterns`;
+      return idiomLine;
+    });
+    if (idiomLines.length > 0) {
+      sections.push('**Stack idioms**', ...idiomLines, '');
+    }
+
+    if (flavor && flavor !== 'none') {
+      sections.push(
+        '**Architectural flavor**',
+        `- \`.ai/instructions/flavor/principles.md\` — Flavor: ${displayName(flavor)}`,
+        ''
+      );
+    }
+
+    const registryBlock = sections.join('\n').trimEnd();
     return registryBlock;
+  }
+
+  function groupSkills(skills) {
+    const groups = { core: [], backend: [], frontend: [] };
+    for (const skill of skills) {
+      if (groups[skill.category]) groups[skill.category].push(skill);
+    }
+    const groupedResult = groups;
+    return groupedResult;
   }
 
   function buildCycleCommandsBlock() {
@@ -349,6 +392,29 @@ function buildClaudeContent() {
 }
 
 /**
+ * Builds a thin 5-line stub for agents that prefer a pointer file
+ * over the full AGENTS.md dump (Codex, Gemini CLI).
+ * The stub redirects the agent to `.ai/skills/AGENTS.md` — the canonical source.
+ */
+function buildAgentStub(agentName) {
+  const agentLabels = {
+    codex: 'Codex CLI',
+    gemini: 'Gemini CLI',
+  };
+  const label = agentLabels[agentName] ?? agentName;
+  const stubContent = dedent`
+    # SDG Agents — ${label} Governance
+
+    > [!IMPORTANT]
+    > This file is read automatically by ${label} on every session start.
+    > The canonical governance lives in \`.ai/skills/AGENTS.md\` — load it now.
+
+    See: \`.ai/skills/AGENTS.md\`
+  `;
+  return stubContent;
+}
+
+/**
  * Writes the universal agent config file inside .ai/skills/.
  * A single AGENTS.md serves as the entry point for all AI Agents —
  * it references only the rules relevant to the project's stack.
@@ -363,13 +429,14 @@ function writeAgentConfig(targetDirectory, content, requestedAgents = []) {
   if (!requestedAgents || requestedAgents.length === 0) return;
 
   const ideTargets = {
-    cursor: { dir: '.cursor/rules', file: 'sdg-agents.mdc' },
-    windsurf: { dir: '.', file: '.windsurfrules' },
-    vscode: { dir: '.github', file: 'copilot-instructions.md' },
-    copilot: { dir: '.github', file: 'copilot-instructions.md' },
     claude: { dir: '.', file: 'CLAUDE.md' },
+    cursor: { dir: '.cursor/rules', file: 'sdg-agents.mdc' },
+    copilot: { dir: '.github', file: 'copilot-instructions.md' },
+    vscode: { dir: '.github', file: 'copilot-instructions.md' },
+    gemini: { dir: '.', file: 'GEMINI.md' },
+    codex: { dir: '.', file: 'AGENTS.md' },
+    windsurf: { dir: '.', file: '.windsurfrules' },
     roocode: { dir: '.', file: '.clinerules' },
-    gemini: { dir: '.', file: 'AI_INSTRUCTIONS.md' },
   };
 
   const expandedAgents = requestedAgents.includes('all')
@@ -390,9 +457,11 @@ function writeAgentConfig(targetDirectory, content, requestedAgents = []) {
 
     let finalContent = content;
     if (agent === 'cursor') {
-      finalContent = `---\ndescription: Project Governance and Architectural Rules\nglob: *\n---\n\n${content}`;
+      finalContent = `---\ndescription: Project Governance and Architectural Rules\nalwaysApply: true\n---\n\n${content}`;
     } else if (agent === 'claude') {
       finalContent = buildClaudeContent();
+    } else if (agent === 'codex' || agent === 'gemini') {
+      finalContent = buildAgentStub(agent);
     }
 
     if (originalContent !== finalContent) {
@@ -538,7 +607,10 @@ function writeAutomationScripts(targetDirectory, selections) {
 
 function getActiveAgents(selections) {
   const agentCandidates = [...(selections.agents || []), selections.ide];
-  const activeAgents = agentCandidates.filter((agent) => agent !== null && agent !== undefined);
+  const uniqueAgents = [...new Set(agentCandidates)];
+  const activeAgents = uniqueAgents.filter(
+    (agent) => agent !== null && agent !== undefined && agent !== 'none'
+  );
   return activeAgents;
 }
 

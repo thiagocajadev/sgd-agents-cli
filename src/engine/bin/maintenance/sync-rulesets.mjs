@@ -132,8 +132,8 @@ For each file, return:
 ${
   maintainer
     ? `NOTE: You are in MAINTAINER MODE. Please return the updated rules for the core library paths:
-- src/instructions/idioms/<idiom>/patterns.md
-- src/instructions/core/ui/<file>.md`
+- src/assets/instructions/idioms/<idiom>/patterns.md
+- src/assets/skills/ui-ux.md`
     : ''
 }
 

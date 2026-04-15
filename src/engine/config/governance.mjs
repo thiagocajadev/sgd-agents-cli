@@ -9,10 +9,7 @@ import { fileURLToPath } from 'node:url';
  */
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const STANDARDS_PATH = path.resolve(
-  __dirname,
-  '../../assets/instructions/core/engineering-standards.md'
-);
+const STANDARDS_PATH = path.resolve(__dirname, '../../assets/skills/code-style.md');
 
 /**
  * Loads and parses the Master Checklist from engineering-standards.md.

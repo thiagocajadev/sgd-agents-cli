@@ -22,4 +22,4 @@ When this command is invoked explicitly (the user types `end:`), it serves two p
 
 ---
 
-> Read `.ai/instructions/core/agent-roles.md` for the multi-agent handoff protocol (Planning + Fast roles).
+> Read `.ai/instructions/templates/agent-roles.md` for the multi-agent handoff protocol (Planning + Fast roles).

@@ -21,4 +21,4 @@ Follow the **Phase: SPEC** from the **Working Protocol**. Apply these specific C
 
 ---
 
-> Read `.ai/instructions/core/agent-roles.md` for the multi-agent handoff protocol (Planning + Fast roles).
+> Read `.ai/instructions/templates/agent-roles.md` for the multi-agent handoff protocol (Planning + Fast roles).

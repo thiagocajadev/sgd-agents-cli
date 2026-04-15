@@ -9,7 +9,7 @@ import { PromptUtils } from '../infra/prompt-utils.mjs';
 const { displayName } = DisplayUtils;
 const { getDirectories, getDirname } = FsUtils;
 const { success, fail } = ResultUtils;
-const { safeSelect, safeInput } = PromptUtils;
+const { safeSelect, safeCheckbox, safeInput } = PromptUtils;
 
 const __dirname = getDirname(import.meta.url);
 const SOURCE_INSTRUCTIONS = path.join(__dirname, '../../..', 'assets', 'instructions');
@@ -49,6 +49,7 @@ async function gatherUserSelections(targetDirectory = process.cwd()) {
     versions: {},
     codeStyle: 'latest',
     ide: 'none',
+    agents: [],
   };
   let step = WIZARD_STEPS.INITIAL;
   let historyStack = [];
@@ -112,6 +113,7 @@ function applyStepResult(currentSelections, stepValue) {
   if (stepValue.designPreset) currentSelections.designPreset = stepValue.designPreset;
   if (stepValue.idiom) currentSelections.idioms.push(stepValue.idiom);
   if (stepValue.ide) currentSelections.ide = stepValue.ide;
+  if (stepValue.agents) currentSelections.agents = stepValue.agents;
   if (stepValue.partner) {
     currentSelections.partner = currentSelections.partner || {};
     Object.assign(currentSelections.partner, stepValue.partner);
@@ -361,27 +363,32 @@ async function promptDesignPreset(context) {
 }
 
 async function promptIdeSelection() {
-  const result = await safeSelect({
-    message: 'Primary IDE / AI agent for auto-load?',
+  const selectedAgents = await safeCheckbox({
+    message:
+      'Which AI agents should receive stub config files? (space to toggle, enter to confirm)',
     choices: [
-      { name: '1. Claude Code (CLAUDE.md)', value: 'claude' },
-      { name: '2. Antigravity / Raw (.ai/skills/AGENTS.md only)', value: 'none' },
-      { name: '3. GitHub Copilot (.github/copilot-instructions.md)', value: 'vscode' },
-      { name: '4. Cursor (.cursorrules)', value: 'cursor' },
-      { name: '5. Windsurf (.windsurfrules)', value: 'windsurf' },
-      { name: '6. Cline / Roo Code (.clinerules)', value: 'roocode' },
-      { name: '7. Multi-agent — write all IDE config files', value: 'all' },
-      { name: 'Back', value: 'back' },
+      { name: 'Claude Code (CLAUDE.md)', value: 'claude', checked: true },
+      { name: 'Cursor (.cursor/rules/sdg-agents.mdc)', value: 'cursor' },
+      { name: 'GitHub Copilot (.github/copilot-instructions.md)', value: 'copilot' },
+      { name: 'Gemini CLI (GEMINI.md)', value: 'gemini' },
+      { name: 'Codex CLI (AGENTS.md root stub)', value: 'codex' },
+      { name: 'Windsurf (.windsurfrules)', value: 'windsurf' },
+      { name: 'Cline / Roo Code (.clinerules)', value: 'roocode' },
     ],
   });
 
-  if (result === 'back') {
+  if (selectedAgents === 'back' || !Array.isArray(selectedAgents)) {
     const backResult = success({ nextStep: WIZARD_STEPS.DESIGN });
     return backResult;
   }
 
-  const ideResult = success({ nextStep: WIZARD_STEPS.PARTNER, ide: result });
-  return ideResult;
+  const primaryAgent = selectedAgents[0] ?? 'none';
+  const agentsResult = success({
+    nextStep: WIZARD_STEPS.PARTNER,
+    ide: primaryAgent,
+    agents: selectedAgents,
+  });
+  return agentsResult;
 }
 
 async function promptPartnerInfo() {

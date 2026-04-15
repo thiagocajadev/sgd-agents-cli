@@ -57,4 +57,4 @@ Follow the **Phase: END** from the **Working Protocol**. Documentation must be a
 >
 > Planning's strength here is accuracy and coherence: cross-referencing code state, CHANGELOG history, and ADR decisions before committing any documentation artifact.
 >
-> Read `.ai/instructions/core/agent-roles.md` for the full protocol.
+> Read `.ai/instructions/templates/agent-roles.md` for the full protocol.
