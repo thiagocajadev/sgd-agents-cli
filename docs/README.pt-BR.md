@@ -42,14 +42,17 @@ npx sdg-agents
 O assistente interativo guia você na escolha do flavor arquitetural e um ou mais idiomas. Para uso não-interativo:
 
 ```bash
+# Instalação sem prompts (padrão lite + JS/TS)
+npx sdg-agents init --quick
+
 # TypeScript + Vertical Slice
 npx sdg-agents init --flavor vertical-slice --idiom typescript
 
-# Suporte multi-idioma
+# Multi-idioma
 npx sdg-agents init --flavor mvc --idiom typescript,python
 
-# Toolkit de Design Criativo (Apenas Injeção)
-npx sdg-agents add --toolkit creative
+# Adicionar um idioma a um projeto existente
+npx sdg-agents add
 ```
 
 ---
@@ -152,6 +155,7 @@ npx sdg-agents clear     # Remover a pasta .ai/
 - [Estrutura do Projeto](PROJECT-STRUCTURE.md) — detalhamento de cada arquivo gerado
 - [Pipelines Arquiteturais](PIPELINES.md) — diagramas de fluxo por flavor
 - [Leis de Engenharia (CONSTITUTION)](CONSTITUTION.md) — os princípios por trás das regras
+- [Sistema UI/UX](UI-UX.md) — hierarquia de design, escala tonal de superfície, presets e mapa de fonte única de verdade
 - [Roadmap](ROADMAP.md) — trabalho planejado
 - [Changelog](../CHANGELOG.md) — histórico de versões
 

@@ -43,14 +43,17 @@ npx sdg-agents
 The interactive wizard guides you through selecting an architectural flavor and one or more language idioms. For non-interactive use:
 
 ```bash
+# Zero-prompt install (lite + JS/TS defaults)
+npx sdg-agents init --quick
+
 # TypeScript + Vertical Slice
 npx sdg-agents init --flavor vertical-slice --idiom typescript
 
-# Multi-idiom Support
+# Multi-idiom
 npx sdg-agents init --flavor mvc --idiom typescript,python
 
-# Creative Design Toolkit (Injection Only)
-npx sdg-agents add --toolkit creative
+# Add a language idiom to an existing project
+npx sdg-agents add
 ```
 
 ---
@@ -153,6 +156,7 @@ npx sdg-agents clear     # Remove the .ai/ folder
 - [Project Structure](docs/PROJECT-STRUCTURE.md) — detailed breakdown of every generated file
 - [Architectural Pipelines](docs/PIPELINES.md) — data flow diagrams for each flavor
 - [Engineering Laws (CONSTITUTION)](docs/CONSTITUTION.md) — the principles behind the rules
+- [UI/UX System](docs/UI-UX.md) — design hierarchy, surface tonal scale, presets, and single source of truth map
 - [Roadmap](docs/ROADMAP.md) — planned work
 - [Changelog](CHANGELOG.md) — release history
 - [Credits and Philosophies](docs/REFERENCES.md) — project influences and research credits

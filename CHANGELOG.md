@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [2.10.1] - 2026-04-15
+
+### Fixed
+
+- **UI/UX Tonal Scale Integration & Single Source of Truth**: Integrated the tonal hierarchy rule (S0–S3 nesting, +1 level per container, 4–8% OKLCH Lightness delta per level) into `design-thinking.md` Phase 0.2, including composition anti-patterns and a standard reference model. Eliminated documentation duplication: Spacing L1–L4 removed from `architecture.md` (owner: `standards.md`), States section collapsed in `presets.md` to a reference link (owner: `standards.md`). Declared single source of truth per domain across all four UI files. Created `docs/UI-UX.md` with the design hierarchy, tonal scale explanation, preset table, and ownership map. Updated `README.md` and `docs/README.pt-BR.md` with links to `UI-UX.md` and corrected Quick Start: added `--quick` flag, removed obsolete `--toolkit creative`.
+
 ## [2.10.0] - 2026-04-15
 
 ### Added
