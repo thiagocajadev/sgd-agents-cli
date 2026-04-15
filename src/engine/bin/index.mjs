@@ -153,11 +153,6 @@ async function executeSubcommand(args) {
       const updateResult = await Versioning.run();
       return updateResult;
     }
-    case 'add': {
-      const { Idiomatic } = await import('./init/add-idiom.mjs');
-      const addResult = await Idiomatic.run();
-      return addResult;
-    }
     case 'clear': {
       const { Cleaner } = await import('./maintenance/clear-bundle.mjs');
       const clearResult = await Cleaner.run(args.targetDirectory);

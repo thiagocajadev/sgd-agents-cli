@@ -15,7 +15,6 @@
     "build": "node src/engine/bin/build-bundle.mjs",
     "review": "node src/engine/bin/review-bundle.mjs",
     "bump": "node scripts/bump.mjs",
-    "add-idiom": "node src/engine/bin/add-idiom.mjs",
     "clear": "node src/engine/bin/clear-bundle.mjs",
     "test": "node --test src/engine/lib/**/*.test.mjs",
     "test:watch": "node --test --watch src/engine/lib/*.test.mjs",

@@ -50,9 +50,6 @@ npx sdg-agents init --flavor vertical-slice --idiom typescript
 
 # Multi-idioma
 npx sdg-agents init --flavor mvc --idiom typescript,python
-
-# Adicionar um idioma a um projeto existente
-npx sdg-agents add
 ```
 
 ---
@@ -131,10 +128,7 @@ Instale padrões específicos da linguagem junto com o protocolo:
 
 `typescript` · `javascript` · `python` · `csharp` · `java` · `kotlin` · `go` · `rust` · `swift` · `flutter` · `sql` · `vbnet`
 
-```bash
-# Adicionar um idioma a um projeto existente
-npx sdg-agents add
-```
+Para adicionar ou estender suporte a uma linguagem, cole o skill do idioma no seu agente via prompt — sem precisar de subcomando CLI.
 
 ---
 

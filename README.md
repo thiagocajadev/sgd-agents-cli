@@ -51,9 +51,6 @@ npx sdg-agents init --flavor vertical-slice --idiom typescript
 
 # Multi-idiom
 npx sdg-agents init --flavor mvc --idiom typescript,python
-
-# Add a language idiom to an existing project
-npx sdg-agents add
 ```
 
 ---
@@ -132,10 +129,7 @@ Install language-specific patterns alongside the protocol:
 
 `typescript` · `javascript` · `python` · `csharp` · `java` · `kotlin` · `go` · `rust` · `swift` · `flutter` · `sql` · `vbnet`
 
-```bash
-# Add an idiom to an existing project
-npx sdg-agents add
-```
+To add or extend support for a language, paste the idiom skill file into your agent via prompt — no CLI subcommand needed.
 
 ---
 

@@ -203,7 +203,6 @@ function printHelp(version) {
 
   Commands:
     init         Install the instruction set (interactive or via flags)
-    add          Add a language idiom to an existing project
     clear        Remove the .ai/ folder
     audit        Detect drift and law violations
     review       Compare local rules vs source
@@ -223,7 +222,6 @@ function printHelp(version) {
     npx sdg-agents init --quick
     npx sdg-agents init --flavor vertical-slice --idiom typescript
     npx sdg-agents init --flavor mvc --idiom typescript,python
-    npx sdg-agents add
     npx sdg-agents clear
 `);
 }

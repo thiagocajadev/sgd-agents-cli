@@ -68,9 +68,6 @@ npx sdg-agents init --flavor vertical-slice --idiom go
 # Multiple idioms — comma-separated or repeated flag
 npx sdg-agents init --flavor mvc --idiom typescript,python
 npx sdg-agents init --flavor mvc --idiom typescript --idiom python
-
-# Add an idiom to an existing project (interactive prompt)
-npx sdg-agents add
 ```
 
 ---
@@ -81,7 +78,6 @@ npx sdg-agents add
 npx sdg-agents review    # Detect drift between local rules and source engine
 npx sdg-agents sync      # Update rulesets from the source (web-assisted)
 npx sdg-agents update    # Refresh the LTS version registry
-npx sdg-agents add       # Inject a new language idiom into an existing project
 npx sdg-agents clear     # Remove the entire .ai/ governance layer
 ```
 
