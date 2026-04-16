@@ -269,22 +269,22 @@ describe('InstructionAssembler', () => {
       assert.ok(!actual.includes('## Working Protocol'));
     });
 
-    it('should be significantly smaller than 3KB', () => {
+    it('should be significantly smaller than 2.7KB', () => {
       const input = { flavor: 'lite', idioms: ['typescript', 'python'], versions: {} };
 
       const actual = buildMasterInstructions(input);
       const actualBytes = Buffer.byteLength(actual, 'utf8');
 
-      assert.ok(actualBytes < 3000, `Output is ${actualBytes} bytes, expected < 3000`);
+      assert.ok(actualBytes < 2700, `Output is ${actualBytes} bytes, expected < 2700`);
     });
   });
 
   describe('Token Budget Guard', () => {
     // Worst-case: fullstack (typescript) + second idiom + flavor = maximum possible output
     const WORST_CASE_INPUT = { flavor: 'lite', idioms: ['typescript', 'python'], versions: {} };
-    // Ceiling: 2800 bytes (~700 tokens). Current baseline: ~2700 bytes.
+    // Ceiling: 2600 bytes (~650 tokens). Current baseline: ~2537 bytes.
     // If this breaks, you added verbose content to AGENTS.md. Compress or move to on-demand file.
-    const TOKEN_BUDGET_BYTES = 2800;
+    const TOKEN_BUDGET_BYTES = 2600;
 
     it(`should stay under ${TOKEN_BUDGET_BYTES} bytes (worst-case fullstack output)`, () => {
       const actual = buildMasterInstructions(WORST_CASE_INPUT);
