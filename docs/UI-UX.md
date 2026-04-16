@@ -1,43 +1,39 @@
-# UI/UX System — Architecture & Design Decisions
+# UI/UX System — Reader Overview
 
-This document explains the structure and reasoning behind the UI/UX instruction set installed by `sdg-agents`. It is intended for developers who want to understand why the system is organized the way it is, and how to navigate it.
+This page is a high-level tour of how `sdg-agents` handles UI/UX. It is for readers who want to understand **what the system does and where it comes from**, not for agents executing tasks.
 
-UI/UX work is governed by a single consolidated skill at [`.ai/skills/ui-ux.md`](../src/assets/skills/ui-ux.md) — loaded on-demand in Phase CODE when the current task touches a visual surface. The four concerns below (design thinking, standards, presets, architecture) are now top-down sections within that skill, not separate files.
-
----
-
-## The Hierarchy
-
-```
-design-thinking.md   ← entry point — the aesthetic contract
-      ↓
-standards.md         ← quality rules (a11y, motion, states, spacing)
-presets.md           ← visual contracts per design language
-architecture.md      ← component structure and code conventions
-```
-
-No UI work begins without `design-thinking.md`. It is the only file that **blocks**: an agent cannot generate UI code without first declaring a Palette, Preset, Tone, and Typography. The other three files are specializations that execute the contract in their respective domains.
+The enforceable rules live in a single file — [`.ai/skills/ui-ux.md`](../src/assets/skills/ui-ux.md). Agents load it on demand in Phase CODE when a task touches a visual surface. Everything below is a narrated map of that file, plus the external research that shaped it.
 
 ---
 
-## Single Source of Truth (by domain)
+## Why a single UI/UX skill
 
-| Domain                                                 | Owner                | What it governs                                                                       |
-| :----------------------------------------------------- | :------------------- | :------------------------------------------------------------------------------------ |
-| Palette, surface tonal scale, nesting rule, typography | `design-thinking.md` | The aesthetic foundation — OKLCH tokens, S0–S3 elevation, luminance delta, font pairs |
-| Mobile-first, motion, states, a11y, spacing (L1–L4)    | `standards.md`       | Browser quality rules — universal, preset-independent                                 |
-| Design presets, composition rules, token contracts     | `presets.md`         | How each visual language (BENTO, GLASS, CLEAN, MONO…) maps the contract to markup     |
-| ViewModel pattern, state management, agent checklist   | `architecture.md`    | How components are built — code structure, not visual decisions                       |
+The most common failure mode in AI-generated UI is aesthetic incoherence: markup that compiles and renders, but produces flat, noisy, or inconsistent interfaces. The agent knows how to emit components; without constraints it makes arbitrary choices about color, elevation, typography, and spacing.
 
-No rule lives in two places. When a file references another domain, it links — it does not restate.
+`ui-ux.md` exists to remove that ambiguity. It defines a small number of non-negotiable contracts — a palette, a preset, a tone, a typography pair, an elevation stack — and makes the agent declare them **before** writing any code. If the contract cannot be filled, the agent asks instead of guessing.
 
 ---
 
-## Why design-thinking.md is the Entry Point
+## What the skill covers
 
-The most common failure mode in AI-generated UI is aesthetic incoherence: technically correct markup that produces visually inconsistent, unreadable, or flat interfaces. The agent knows how to write components, but without constraints it makes arbitrary color, surface, and typography choices.
+The skill is organized top-down, from principle to execution:
 
-`design-thinking.md` solves this by requiring an explicit contract before any code is written:
+| Section                             | Scope                                                                                                  |
+| :---------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| **Part 0 — Visual Architecture**    | The WHY. Foundational stance, interface structure, theme/depth philosophy, accessibility as default.   |
+| **Part 1 — Design Thinking**        | Phase 0 contract: palette setup (OKLCH), elevation stack (S0–S3), 60-30-10 distribution, typography.   |
+| **Part 2 — Component Architecture** | ViewModel pattern, state management strategy, spacing hierarchy (L1–L4), code conventions.             |
+| **Part 3 — Presets**                | Complete visual contracts: BENTO, GLASS, CLEAN, MONO, NEOBRUTALISM, PAPER. One per project, no mixing. |
+| **Part 4 — UX Quality Standards**   | Mobile-first, motion, visual resilience (loading/empty/error/disabled), accessibility, performance.    |
+| **Part 5 — Writing Soul**           | Voice and tone for UI copy, READMEs, changelogs, commit messages.                                      |
+
+---
+
+## Core ideas worth knowing
+
+### The Design Contract
+
+Before any UI code is written, the agent declares:
 
 ```
 🎨 Design Contract
@@ -50,13 +46,11 @@ Typography:     [Display font] + [Body font]
 ─────────────────────────────────
 ```
 
-If the agent cannot fill these fields, it must ask before proceeding.
+This single block is the aesthetic equivalent of the SPEC phase — no code without it.
 
----
+### The Elevation Stack (S0–S3)
 
-## The Surface Tonal Scale (S0–S3)
-
-The elevation system is based on a single principle: **luminance reflects hierarchy, not arbitrary color**.
+Surface depth reflects physical elevation, not arbitrary color. Closer-to-user surfaces get lighter in dark mode and stronger shadows in light mode. Levels are never skipped, and interactive states always elevate by one step.
 
 ```
 S0 → page background
@@ -65,41 +59,71 @@ S2 → cards, floating elements
 S3 → modals, tooltips, hover states
 ```
 
-Direction differs by theme:
+The rule prevents "floating darkness" — the dark-mode failure mode where inverted values produce a flat, unreadable surface.
 
-- Dark theme: rising level = lighter surface
-- Light theme: rising level = darker surface
+### Presets as full design languages
 
-Each level transition must differ by **4–8% L** in OKLCH Lightness. Less than 4% collapses the hierarchy visually. More than 8% creates visual aggression between adjacent surfaces.
+A preset is not a theme. It is a complete visual contract: typography, surface tones, borders, radius, density, state styles, and elevation rules. Mixing presets is prohibited because each one encodes a different answer to the same questions.
 
-The nesting rule is absolute: an element inside a container is always at a level ≥ its parent. Levels are never skipped. Interactive states always add +1 visual level.
+| Preset           | Personality                   | Default palette                 |
+| :--------------- | :---------------------------- | :------------------------------ |
+| **BENTO**        | Modular dashboard             | Zinc + Blue H=250               |
+| **GLASS**        | Layered, depth-driven         | Zinc + Violet H=290             |
+| **CLEAN**        | Professional, high whitespace | Zinc + Blue H=250 or Teal H=200 |
+| **MONO**         | Developer-centric             | Zinc only (monochromatic)       |
+| **NEOBRUTALISM** | Bold, high-contrast           | Any high-chroma primary         |
+| **PAPER**        | Warm, editorial               | Zinc + Amber H=80               |
 
-Full specification and anti-patterns: see the **Design Thinking** section of [`ui-ux.md`](../src/assets/skills/ui-ux.md) (Phase 0.2).
+### ViewModel pattern
 
----
-
-## The Design Presets
-
-Each preset is a complete visual contract — typography, surface, borders, radius, states, elevation, and density. Presets are not themes; they are full design languages. Mixing two presets is prohibited.
-
-| Preset       | Personality                   | Default palette                 |
-| :----------- | :---------------------------- | :------------------------------ |
-| BENTO        | Modular dashboard             | Zinc + Blue H=250               |
-| GLASS        | Layered, depth-driven         | Zinc + Violet H=290             |
-| CLEAN        | Professional, high whitespace | Zinc + Blue H=250 or Teal H=200 |
-| MONO         | Developer-centric             | Zinc only (monochromatic)       |
-| NEOBRUTALISM | Bold, high-contrast           | Any high-chroma primary C≥0.18  |
-| PAPER        | Warm, editorial               | Zinc + Amber H=80               |
-
-Safe combinations and nesting rules: see the **Presets** section of [`ui-ux.md`](../src/assets/skills/ui-ux.md).
+Components render; ViewModels decide. UI state, derived values, and mapping live in a hook; business rules live in the domain layer; formatting lives in utils. Components stay declarative and testable.
 
 ---
 
-## Reference
+## Customizing the system
 
-All four sections live in the consolidated [`.ai/skills/ui-ux.md`](../src/assets/skills/ui-ux.md) skill file:
+`sdg-agents` does not ship a CLI subcommand for custom presets or voices. The single-source-of-truth governance model is intentional: one canonical `ui-ux.md` that teams extend by **pasting skill content directly into their agent as a prompt** — the same pattern [`docs/REFERENCES.md`](REFERENCES.md) uses to document external influences.
 
-- **Design Thinking** — Palette, tonal scale, typography, aesthetic direction
-- **Standards** — Browser quality rules, spacing, states, accessibility
-- **Presets** — Visual presets, composition system, token contracts
-- **Architecture** — ViewModel pattern, state management, agent checklist
+If you want a different preset, tone, or typographic voice, author a skill fragment and feed it to the agent at session start. No fork, no flag, no subcommand.
+
+---
+
+## External research and influences
+
+The UI/UX skill is built on public research and open-source work. The items below shaped specific parts of the system and are worth reading if you want the full context.
+
+### Design systems and tokens
+
+- **[Shadcn/UI](https://ui.shadcn.com)** — component architecture, token naming, and the distinction between design tokens and component styles. The backbone of how we structure surfaces and states.
+- **[Tailwind CSS v4](https://tailwindcss.com)** — utility-first styling and the `@theme` directive that lets us express tokens in pure CSS without a JS config layer.
+- **[Radix UI](https://www.radix-ui.com)** — primitive component patterns, accessibility baselines, and compound component APIs.
+- **[Tweak.cn](https://tweak.cn)** — perceptual color scaling, OKLCH progression, and visual tuning for shadcn-based interfaces.
+
+### Color and perception
+
+- **[OKLCH and the CIE Lab space](https://oklch.com)** — perceptually uniform color. The palette generator and contrast checks use OKLCH Lightness deltas instead of HSL because equal numeric steps produce equal perceived steps.
+- **[Refactoring UI](https://www.refactoringui.com)** by Adam Wathan and Steve Schoger — the foundation for the 60-30-10 distribution, elevation logic, and the "don't use pure black" principle.
+
+### Layout, density, and typography
+
+- **[Bento Grid patterns](https://bentogrids.com)** — modular dashboard layouts that inspired the BENTO preset.
+- **[Modern Font Stacks](https://modernfontstacks.com)** and Google Fonts — the typographic pairings in Part 1 are drawn from tested combinations in shipped products.
+- **[Inter](https://rsms.me/inter/)**, **[Geist](https://vercel.com/font)**, **[Bricolage Grotesque](https://fonts.google.com/specimen/Bricolage+Grotesque)**, **[JetBrains Mono](https://www.jetbrains.com/lp/mono/)** — the default font families referenced in the pairing table.
+
+### Accessibility
+
+- **[WCAG 2.2](https://www.w3.org/TR/WCAG22/)** — the AA baseline for contrast, keyboard navigation, and focus state requirements.
+- **[WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)** — the tool referenced for verifying contrast ratios on legacy color spaces.
+
+### AI agent ecosystem
+
+- **[UI/UX Pro Max Skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** — advanced design tokens and aesthetics research for AI coding agents. Shaped the premium look of the GLASS and BENTO presets.
+- **[TypeUI](https://typeui.sh)** — a CLI-first approach to managing design systems for AI agents; influenced how we structure visual skills.
+
+---
+
+## Related docs
+
+- [Engineering Laws (CONSTITUTION)](CONSTITUTION.md) — Law 4 (Visual Excellence) is what `ui-ux.md` operationalizes.
+- [Spec-Driven Development Guide](SPEC-DRIVEN-DEV-GUIDE.md) — how the UI/UX skill plugs into the 5-phase cycle.
+- [Credits and Philosophies](REFERENCES.md) — the broader influences behind the whole project, not just UI/UX.

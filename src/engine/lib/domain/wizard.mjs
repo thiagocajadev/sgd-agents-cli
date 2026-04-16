@@ -9,7 +9,7 @@ import { PromptUtils } from '../infra/prompt-utils.mjs';
 const { displayName } = DisplayUtils;
 const { getDirectories, getDirname } = FsUtils;
 const { success, fail } = ResultUtils;
-const { safeSelect, safeCheckbox, safeInput } = PromptUtils;
+const { safeSelect, safeInput } = PromptUtils;
 
 const __dirname = getDirname(import.meta.url);
 const SOURCE_INSTRUCTIONS = path.join(__dirname, '../../..', 'assets', 'instructions');
@@ -20,8 +20,6 @@ const WIZARD_STEPS = {
   BACKEND: 'backend',
   FRONTEND: 'frontend',
   CODE_STYLE: 'codeStyle',
-  DESIGN: 'design',
-  IDE: 'ide',
   PARTNER: 'partner',
   DONE: 'done',
 };
@@ -32,8 +30,6 @@ const STEP_ORDER = [
   WIZARD_STEPS.BACKEND,
   WIZARD_STEPS.FRONTEND,
   WIZARD_STEPS.CODE_STYLE,
-  WIZARD_STEPS.DESIGN,
-  WIZARD_STEPS.IDE,
   WIZARD_STEPS.PARTNER,
   WIZARD_STEPS.DONE,
 ];
@@ -48,8 +44,6 @@ async function gatherUserSelections(targetDirectory = process.cwd()) {
     idioms: [],
     versions: {},
     codeStyle: 'latest',
-    ide: 'none',
-    agents: [],
   };
   let step = WIZARD_STEPS.INITIAL;
   let historyStack = [];
@@ -110,10 +104,7 @@ function applyStepResult(currentSelections, stepValue) {
   if (stepValue.mode) currentSelections.mode = stepValue.mode;
   if (stepValue.flavor) currentSelections.flavor = stepValue.flavor;
   if (stepValue.codeStyle) currentSelections.codeStyle = stepValue.codeStyle;
-  if (stepValue.designPreset) currentSelections.designPreset = stepValue.designPreset;
   if (stepValue.idiom) currentSelections.idioms.push(stepValue.idiom);
-  if (stepValue.ide) currentSelections.ide = stepValue.ide;
-  if (stepValue.agents) currentSelections.agents = stepValue.agents;
   if (stepValue.partner) {
     currentSelections.partner = currentSelections.partner || {};
     Object.assign(currentSelections.partner, stepValue.partner);
@@ -127,8 +118,6 @@ async function executeWizardStep(step, context) {
     [WIZARD_STEPS.BACKEND]: () => promptBackendIdiom(context),
     [WIZARD_STEPS.FRONTEND]: () => promptFrontendIdiom(context),
     [WIZARD_STEPS.CODE_STYLE]: () => promptCodeStyle(context),
-    [WIZARD_STEPS.DESIGN]: () => promptDesignPreset(context),
-    [WIZARD_STEPS.IDE]: () => promptIdeSelection(),
     [WIZARD_STEPS.PARTNER]: () => promptPartnerInfo(),
   };
 
@@ -143,7 +132,7 @@ async function promptInitialChoice() {
     message: 'What would you like to do?',
     choices: [
       {
-        name: '1. Full Setup — configure architecture, language and AI agent',
+        name: '1. Full Setup — configure architecture and language',
         value: 'agents',
       },
       {
@@ -169,8 +158,6 @@ function handleQuickSetup() {
     flavor: 'lite',
     idioms: ['javascript', 'typescript'],
     codeStyle: 'latest',
-    designPreset: 'clean',
-    ide: 'none',
     versions: {
       javascript: 'js@2025',
       typescript: 'ts@6.0',
@@ -305,7 +292,7 @@ async function promptCodeStyle(context) {
   const { selections } = context;
   const hasNoIdioms = selections.idioms.length === 0;
   if (hasNoIdioms) {
-    const skipResult = success({ nextStep: WIZARD_STEPS.DESIGN, codeStyle: 'latest' });
+    const skipResult = success({ nextStep: WIZARD_STEPS.PARTNER, codeStyle: 'latest' });
     return skipResult;
   }
 
@@ -323,72 +310,8 @@ async function promptCodeStyle(context) {
     return backResult;
   }
 
-  const codeStyleResult = success({ nextStep: WIZARD_STEPS.DESIGN, codeStyle: result });
+  const codeStyleResult = success({ nextStep: WIZARD_STEPS.PARTNER, codeStyle: result });
   return codeStyleResult;
-}
-
-async function promptDesignPreset(context) {
-  const { selections } = context;
-
-  const hasFrontend = selections.idioms.some(
-    (idiomFolderKey) => STACK_DISPLAY_NAMES[idiomFolderKey]?.isFrontend
-  );
-  if (!hasFrontend) {
-    const skipResult = success({ nextStep: WIZARD_STEPS.IDE });
-    return skipResult;
-  }
-
-  const result = await safeSelect({
-    message: 'Design preset?',
-    choices: [
-      { name: '1. Clean       — Minimalist, flat, functional', value: 'clean' },
-      { name: '2. Bold        — High-contrast, expressive (Neobrutalism)', value: 'bold' },
-      { name: '3. Atmospheric — Depth and texture (Glass / Organic)', value: 'atmospheric' },
-      { name: '4. None        — No preset', value: 'none' },
-      { name: 'Back', value: 'back' },
-    ],
-  });
-
-  if (result === 'back') {
-    const backResult = success({ nextStep: WIZARD_STEPS.CODE_STYLE });
-    return backResult;
-  }
-
-  const isNone = result === 'none';
-  const presetResult = success({
-    nextStep: WIZARD_STEPS.IDE,
-    designPreset: isNone ? null : result,
-  });
-  return presetResult;
-}
-
-async function promptIdeSelection() {
-  const selectedAgents = await safeCheckbox({
-    message:
-      'Which AI agents should receive stub config files? (space to toggle, enter to confirm)',
-    choices: [
-      { name: 'Claude Code (CLAUDE.md)', value: 'claude', checked: true },
-      { name: 'Cursor (.cursor/rules/sdg-agents.mdc)', value: 'cursor' },
-      { name: 'GitHub Copilot (.github/copilot-instructions.md)', value: 'copilot' },
-      { name: 'Gemini CLI (GEMINI.md)', value: 'gemini' },
-      { name: 'Codex CLI (AGENTS.md root stub)', value: 'codex' },
-      { name: 'Windsurf (.windsurfrules)', value: 'windsurf' },
-      { name: 'Cline / Roo Code (.clinerules)', value: 'roocode' },
-    ],
-  });
-
-  if (selectedAgents === 'back' || !Array.isArray(selectedAgents)) {
-    const backResult = success({ nextStep: WIZARD_STEPS.DESIGN });
-    return backResult;
-  }
-
-  const primaryAgent = selectedAgents[0] ?? 'none';
-  const agentsResult = success({
-    nextStep: WIZARD_STEPS.PARTNER,
-    ide: primaryAgent,
-    agents: selectedAgents,
-  });
-  return agentsResult;
 }
 
 async function promptPartnerInfo() {
@@ -398,7 +321,7 @@ async function promptPartnerInfo() {
   });
 
   if (input === 'back') {
-    const backResult = success({ nextStep: WIZARD_STEPS.IDE });
+    const backResult = success({ nextStep: WIZARD_STEPS.CODE_STYLE });
     return backResult;
   }
 
@@ -433,8 +356,6 @@ function validateSelections(selections) {
       ? selections.idioms
       : ['javascript', 'typescript'];
     selections.codeStyle = selections.codeStyle || 'latest';
-    selections.designPreset = selections.designPreset || 'clean';
-    selections.ide = selections.ide || 'none';
     const quickValidResult = success(selections);
     return quickValidResult;
   }

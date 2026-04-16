@@ -193,8 +193,6 @@ async function handleInitSubcommand(args) {
         mode: isQuickMode ? 'quick' : args.mode || 'agents',
         flavor: args.flavor,
         idioms: args.idioms || [],
-        agents: args.agents || [],
-        ide: args.ide || 'none',
         track: args.track,
         codeStyle: 'latest',
         versions: {},

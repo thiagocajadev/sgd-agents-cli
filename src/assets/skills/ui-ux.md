@@ -3,8 +3,90 @@
 <ruleset name="UI/UX">
 
 > [!NOTE]
-> Unified UI/UX skill: Phase 0 design contract, component architecture, preset catalog, quality standards, and writing voice.
+> Unified UI/UX skill: visual architecture principles, Phase 0 design contract, component architecture, preset catalog, quality standards, and writing voice.
 > Load in **Phase CODE** when building UI surfaces, choosing design presets, writing UI copy, or producing perennial artifacts (README, docs, changelogs).
+
+---
+
+## Part 0 — Visual Architecture Principles
+
+> [!IMPORTANT]
+> These principles frame the WHY behind every tactical rule that follows. Parts 1–4 encode HOW to execute them. Read Part 0 first; it is short on purpose.
+
+### 0.1 — Foundational Stance
+
+<rule name="FoundationalStance">
+
+- **Solution-first**: Every visual decision serves a concrete user problem. If a style choice cannot be traced to a user outcome, remove it.
+- **Technical empathy**: Design speaks to humans and to engineers. Surfaces must be buildable with the current stack and readable by someone maintaining the code six months later.
+- **Design thinking as a method**: Observe → frame → prototype → validate. Do not jump from a request to pixels without naming the user, the goal, and the constraint.
+
+</rule>
+
+### 0.2 — Interface Structure
+
+<rule name="InterfaceStructure">
+
+- **Visual hierarchy is non-negotiable**: Every screen has exactly one primary focus, one secondary zone, and a tertiary supporting layer. Weight, scale, and contrast carry the hierarchy — not color alone.
+- **Foundations before features**: Tokens (color, spacing, radius, typography) must exist and be named before any component is styled. No magic values in component files.
+- **Component system, not one-off widgets**: Every visual element is either a primitive (button, input, card) or a composition of primitives. If it is neither, promote it or inline it — never leave a half-componentized region.
+- **Managed assets**: Icons, illustrations, and images live in a single catalog with a predictable import path. No inline SVGs copy-pasted across files; no externally hotlinked assets in production paths.
+- **Flow-driven layout**: Layout follows the user's task sequence. Read order, tab order, and DOM order must agree. If the grid breaks the flow, the grid is wrong — not the flow.
+
+</rule>
+
+### 0.3 — Themes and Depth
+
+<rule name="ThemesAndDepth">
+
+- **Light and dark are peers**: Both modes ship from day one. Dark mode is not an afterthought skin; it is a parallel contract with the same components and the same token names.
+- **Depth reflects physical elevation**: Closer-to-user surfaces are lighter in dark mode and carry stronger shadows in light mode. See Phase 0.2 (Elevation Stack) for the enforceable mapping.
+- **Surface and luminance govern hierarchy**: Use surface tone (S0–S3) and lightness delta to separate regions. Avoid using hue shifts to fake depth — that produces the "floating darkness" failure mode.
+
+</rule>
+
+### 0.4 — Styling and Implementation
+
+<rule name="StylingAndImplementation">
+
+- **Design system consistency**: Same intent → same token → same output. Never hand-tune a value to match a token you could have used.
+- **Visual density is a decision**: Each surface commits to one density level (compact, comfortable, spacious) and applies it through the L1–L4 spacing scale. Mixed densities on the same screen read as bugs.
+- **Grid is the skeleton**: Every layout starts from a grid. Freeform positioning is allowed only for hero moments that are explicitly named as differentiators in the Design Contract.
+- **Structured components**: Components expose state (loading, empty, error, disabled) as first-class props, not as afterthought branches. A component without its four states is incomplete.
+
+</rule>
+
+### 0.5 — Interaction and Experience
+
+<rule name="InteractionAndExperience">
+
+- **Immediate feedback**: Every user action produces a visible response within 100ms. If the real work takes longer, acknowledge the action first and show progress second.
+- **Explicit states**: Loading, empty, error, success, and disabled states are designed, not improvised. "We will handle it later" means it was never handled.
+- **Clear progression**: Multi-step flows show where the user is, where they came from, and where they are going. No dead-ends; every terminal screen offers a next step.
+- **Error prevention over error messages**: Disable impossible actions, validate at the edge of input, and surface constraints before the user hits them. An error message is the last line of defense, not the first.
+
+</rule>
+
+### 0.6 — Accessibility as Default
+
+<rule name="AccessibilityAsDefault">
+
+- **A11y is a baseline, not a feature**: WCAG AA is the floor. Shipping without it is shipping broken.
+- **Readability first**: Line length 45–75 characters for body text, minimum 16px body size on web, comfortable line-height (1.5–1.7 for paragraphs).
+- **No color dependency**: Information conveyed through color must also be conveyed through text, icon, position, or pattern. Remove the color — the interface must still work.
+
+</rule>
+
+### 0.7 — Part 0 Anti-Patterns (Always Wrong)
+
+- **Aesthetics before problem**: Picking a preset before naming the user and the task.
+- **Tokens added after the fact**: Hardcoding values first and extracting tokens "when there is time".
+- **Dark mode as a color flip**: Inverting light-mode values instead of designing the elevation stack.
+- **Hover-only affordances**: Critical actions that only appear on hover — invisible on touch and to keyboard users.
+- **State-less components**: Shipping happy-path-only; treating loading/empty/error as edge cases.
+- **Color as the only signal**: Red text as the sole error indicator; green dot as the only success state.
+- **Grid-breaking without intent**: Breaking the grid because a component "did not fit", instead of as a named design choice.
+- **Asset sprawl**: Icons imported from three different libraries in the same screen.
 
 ---
 

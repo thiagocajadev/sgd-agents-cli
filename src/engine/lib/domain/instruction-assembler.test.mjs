@@ -144,7 +144,7 @@ describe('InstructionAssembler', () => {
 
   describe('buildMasterInstructions()', () => {
     it('should include pointer to Universal Engineering Manifesto', () => {
-      const input = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
+      const input = { flavor: 'lite', idioms: ['go'], versions: {} };
       const expectedSubstring1 = 'Universal Engineering Manifesto';
       const expectedSubstring2 = '.ai/skills/staff-dna.md';
 
@@ -155,7 +155,7 @@ describe('InstructionAssembler', () => {
     });
 
     it('should include land: in the intent routing table', () => {
-      const input = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
+      const input = { flavor: 'lite', idioms: ['go'], versions: {} };
       const expectedSubstring1 = 'land:';
       const expectedSubstring2 = 'feat:';
 
@@ -166,7 +166,7 @@ describe('InstructionAssembler', () => {
     });
 
     it('should include the Working Protocol workflow content', () => {
-      const input = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
+      const input = { flavor: 'lite', idioms: ['go'], versions: {} };
       const expectedSubstring = 'Working Protocol';
 
       const actual = buildMasterInstructions(input);
@@ -175,7 +175,7 @@ describe('InstructionAssembler', () => {
     });
 
     it('should include intent prefix guide (land/feat/fix/docs)', () => {
-      const input = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
+      const input = { flavor: 'lite', idioms: ['go'], versions: {} };
       const expectedSubstrings = ['land:', 'feat:', 'fix:', 'docs:'];
 
       const actual = buildMasterInstructions(input);
@@ -186,7 +186,7 @@ describe('InstructionAssembler', () => {
     });
 
     it('should include backend competency link for backend-only idiom (go)', () => {
-      const input = { flavor: 'lite', idioms: ['go'], versions: {}, designPreset: null };
+      const input = { flavor: 'lite', idioms: ['go'], versions: {} };
       const expectedSubstring = '.ai/instructions/competencies/backend.md';
       const forbiddenSubstring = '.ai/instructions/competencies/frontend.md';
 
@@ -201,7 +201,6 @@ describe('InstructionAssembler', () => {
         flavor: 'lite',
         idioms: ['typescript'],
         versions: {},
-        designPreset: 'glass',
       };
       const expectedSubstring1 = '.ai/instructions/competencies/backend.md';
       const expectedSubstring2 = '.ai/instructions/competencies/frontend.md';
@@ -217,7 +216,6 @@ describe('InstructionAssembler', () => {
         flavor: 'lite',
         idioms: ['typescript', 'python'],
         versions: {},
-        designPreset: null,
       };
       const expectedSubstring1 = 'idioms/typescript/patterns.md';
       const expectedSubstring2 = 'idioms/python/patterns.md';
@@ -233,7 +231,6 @@ describe('InstructionAssembler', () => {
         flavor: 'lite',
         idioms: ['go'],
         versions: {},
-        designPreset: null,
       };
       const expectedSubstring1 = '## Agent Roles';
       const expectedSubstring2 = 'agent-roles.md';

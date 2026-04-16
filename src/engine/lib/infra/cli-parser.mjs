@@ -12,8 +12,6 @@ function parseCliArgs(argv) {
     dryRun: argv.includes('--dry-run'),
     flavor: getArgValue(argv, '--flavor'),
     idioms: getArgValues(argv, '--idioms').concat(getArgValues(argv, '--idiom')),
-    agents: argv.includes('--all-agents') ? ['all'] : getArgValues(argv, '--agents'),
-    ide: getArgValue(argv, '--ide') || 'none',
     mode: getArgValue(argv, '--mode'),
     track: getArgValue(argv, '--track'),
     bump: !argv.includes('--no-bump'),
@@ -26,15 +24,7 @@ function parseCliArgs(argv) {
 function isPositionalArg(arg, index, tokens) {
   if (arg.startsWith('-')) return false;
   const precedingToken = tokens[index - 1];
-  const flagsThatConsumeNextArg = [
-    '--flavor',
-    '--idiom',
-    '--idioms',
-    '--agents',
-    '--ide',
-    '--mode',
-    '--track',
-  ];
+  const flagsThatConsumeNextArg = ['--flavor', '--idiom', '--idioms', '--mode', '--track'];
   const isPositional = !precedingToken || !flagsThatConsumeNextArg.includes(precedingToken);
   return isPositional;
 }

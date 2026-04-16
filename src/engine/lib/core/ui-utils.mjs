@@ -41,9 +41,9 @@ function printSuccessAgents(targetDir) {
   console.log('\n  ✅ Done.');
   console.log('  ' + '─'.repeat(55));
   console.log(`  Project: ${targetDir}\n`);
-  console.log('  .ai/                     (governance + agent stubs by folder)');
+  console.log('  .ai/                     (governance — canonical AGENTS.md lives here)');
   console.log('  .ai-backlog/             (gitignored)');
-  console.log('  CLAUDE.md                (only stub at repo root — auto-loaded by Claude Code)');
+  console.log('  CLAUDE.md                (pointer at repo root — auto-loaded by Claude Code)');
   printActivationGuide();
 }
 
@@ -51,9 +51,9 @@ function printQuickSuccess(targetDir) {
   console.log('\n  ⚡ Done.');
   console.log('  ' + '─'.repeat(55));
   console.log(`  Project: ${targetDir}\n`);
-  console.log('  .ai/                     (governance + agent stubs by folder)');
+  console.log('  .ai/                     (governance — canonical AGENTS.md lives here)');
   console.log('  .ai-backlog/             (gitignored)');
-  console.log('  CLAUDE.md                (only stub at repo root — auto-loaded by Claude Code)');
+  console.log('  CLAUDE.md                (pointer at repo root — auto-loaded by Claude Code)');
   printActivationGuide();
 }
 
@@ -75,7 +75,6 @@ function printDryRunPreview(selections, targetDir) {
   renderPreviewHeader(targetDir);
   renderPreviewDirectories(summary.directories);
   renderPreviewInstructionSet();
-  renderPreviewIdeTargets(selections);
   renderPreviewManifest(selections.mode);
   renderPreviewFooter();
 }
@@ -95,31 +94,7 @@ function renderPreviewDirectories(directories) {
 
 function renderPreviewInstructionSet() {
   console.log(`    📄 .ai/skills/AGENTS.md`);
-}
-
-function renderPreviewIdeTargets(selections) {
-  const ideTargets = {
-    claude: 'CLAUDE.md',
-    cursor: '.ai/cursor/rules/sdg-agents.mdc',
-    copilot: '.ai/copilot/copilot-instructions.md',
-    vscode: '.ai/copilot/copilot-instructions.md',
-    gemini: '.ai/gemini/GEMINI.md',
-    codex: '.ai/codex/AGENTS.md',
-    windsurf: '.ai/windsurf/.windsurfrules',
-    roocode: '.ai/roocode/.clinerules',
-  };
-
-  const activeAgents = [...(selections.agents || []), selections.ide].filter(Boolean);
-
-  for (const agentKey of activeAgents) {
-    const isSpecialAgent = agentKey === 'none' || agentKey === 'antigravity' || agentKey === 'all';
-    if (isSpecialAgent) continue;
-
-    const targetPath = ideTargets[agentKey];
-    if (targetPath) {
-      console.log(`    📄 ${targetPath}`);
-    }
-  }
+  console.log(`    📄 CLAUDE.md                (root pointer — auto-loaded by Claude Code)`);
 }
 
 function renderPreviewManifest(mode) {
@@ -147,17 +122,13 @@ function renderSummaryHeader() {
 }
 
 function renderSummaryRows(selections) {
-  const { flavor, idioms, versions, designPreset } = selections;
+  const { flavor, idioms, versions } = selections;
 
   const flavorLabel = STACK_DISPLAY_NAMES[flavor]?.name ?? flavor;
   const idiomsLabel = formatIdiomsLabel(idioms, versions);
 
   console.log(`  │  Flavor:  ${flavorLabel.padEnd(43)}│`);
   console.log(`  │  Idioms:  ${idiomsLabel.padEnd(43)}│`);
-
-  if (designPreset) {
-    console.log(`  │  Preset:  ${designPreset.padEnd(43)}│`);
-  }
 }
 
 function formatIdiomsLabel(idioms, versions) {

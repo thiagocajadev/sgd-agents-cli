@@ -5,7 +5,7 @@ The **Spec-Driven Guide (SDG)** enforces a standardized lifecycle for every task
 The cycle follows five mandatory phases: **SPEC → PLAN → CODE → TEST → END**.
 
 > [!TIP]
-> **Deep Dive**: Want to see what happens "Under the Hood"? Read the [**Agent Deep-Flow Guide**](agent-deep-flow.md) for a visual breakdown of internal sub-steps and decision gates.
+> **Deep Dive**: Want to see what happens "Under the Hood"? Read the [**Agent Deep-Flow Guide**](AGENT-DEEP-FLOW.md) for a visual breakdown of internal sub-steps and decision gates.
 
 ---
 

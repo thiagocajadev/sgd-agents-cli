@@ -22,7 +22,6 @@ const {
   writeGitignore,
   writeManifest,
   writeAutomationScripts,
-  getActiveAgents,
 } = InstructionAssembler;
 const { success } = ResultUtils;
 const { runIfDirect } = FsUtils;
@@ -207,7 +206,7 @@ function executeQuickPipeline(targetDirectory, selections) {
   const content = buildMasterInstructions(selections);
 
   printStep(4, 5, 'Writing agent config and backlog...');
-  writeAgentConfig(targetDirectory, content, getActiveAgents(selections));
+  writeAgentConfig(targetDirectory, content);
   writeBacklogFiles(targetDirectory, selections);
   writeGitignore(targetDirectory);
 
@@ -227,7 +226,7 @@ function executeAgentsPipeline(targetDirectory, selections) {
   const content = buildMasterInstructions(selections);
 
   printStep(4, 5, 'Writing agent config and backlog...');
-  writeAgentConfig(targetDirectory, content, getActiveAgents(selections));
+  writeAgentConfig(targetDirectory, content);
   writeBacklogFiles(targetDirectory, selections);
   writeGitignore(targetDirectory);
 

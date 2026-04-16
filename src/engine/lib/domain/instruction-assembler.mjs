@@ -380,7 +380,7 @@ function buildClaudeContent() {
 
     > [!IMPORTANT]
     > This file is read automatically by Claude Code on every session start.
-    > Do not edit manually — regenerate with \`npx sdg-agents init --claude\`.
+    > Do not edit manually — regenerate with \`npx sdg-agents init\`.
 
     ## Auto-Load: Governance Context
 
@@ -392,84 +392,24 @@ function buildClaudeContent() {
 }
 
 /**
- * Builds a thin 5-line stub for agents that prefer a pointer file
- * over the full AGENTS.md dump (Codex, Gemini CLI).
- * The stub redirects the agent to `.ai/skills/AGENTS.md` — the canonical source.
+ * Writes the universal agent config:
+ *   - \`.ai/skills/AGENTS.md\` — canonical governance (consumed by any AI agent).
+ *   - \`CLAUDE.md\` at repo root — thin pointer auto-loaded by Claude Code.
+ *
+ * Other IDEs (Cursor, Windsurf, Copilot, Gemini, Codex, Cline/Roo) should be
+ * configured by the developer to read \`.ai/skills/AGENTS.md\` directly. See
+ * README "Using with other IDEs" for native pointers per tool.
  */
-function buildAgentStub(agentName) {
-  const agentLabels = {
-    codex: 'Codex CLI',
-    gemini: 'Gemini CLI',
-  };
-  const label = agentLabels[agentName] ?? agentName;
-  const stubContent = dedent`
-    # SDG Agents — ${label} Governance
-
-    > [!IMPORTANT]
-    > This file is read automatically by ${label} on every session start.
-    > The canonical governance lives in \`.ai/skills/AGENTS.md\` — load it now.
-
-    See: \`.ai/skills/AGENTS.md\`
-  `;
-  return stubContent;
-}
-
-/**
- * Writes the universal agent config file inside .ai/skills/.
- * A single AGENTS.md serves as the entry point for all AI Agents —
- * it references only the rules relevant to the project's stack.
- * If agents/ides are selected, it will also dump the rules to the native target.
- */
-function writeAgentConfig(targetDirectory, content, requestedAgents = []) {
-  // Always create the generic fallback AGENTS.md and CAVEMAN.md
+function writeAgentConfig(targetDirectory, content) {
   const skillDir = path.join(targetDirectory, '.ai', 'skills');
   fs.mkdirSync(skillDir, { recursive: true });
   fs.writeFileSync(path.join(skillDir, 'AGENTS.md'), content);
 
-  if (!requestedAgents || requestedAgents.length === 0) return;
-
-  // All agent stubs live under .ai/<agent>/ for reference and organization.
-  // CLAUDE.md is the sole exception: it stays at repo root because Claude Code
-  // auto-loads it from there and its @-import points to .ai/skills/AGENTS.md.
-  const ideTargets = {
-    claude: { dir: '.', file: 'CLAUDE.md' },
-    cursor: { dir: '.ai/cursor/rules', file: 'sdg-agents.mdc' },
-    copilot: { dir: '.ai/copilot', file: 'copilot-instructions.md' },
-    vscode: { dir: '.ai/copilot', file: 'copilot-instructions.md' },
-    gemini: { dir: '.ai/gemini', file: 'GEMINI.md' },
-    codex: { dir: '.ai/codex', file: 'AGENTS.md' },
-    windsurf: { dir: '.ai/windsurf', file: '.windsurfrules' },
-    roocode: { dir: '.ai/roocode', file: '.clinerules' },
-  };
-
-  const expandedAgents = requestedAgents.includes('all')
-    ? Object.keys(ideTargets)
-    : requestedAgents;
-
-  for (const agent of expandedAgents) {
-    if (agent === 'none' || agent === 'antigravity') continue;
-
-    const target = ideTargets[agent];
-    if (!target) continue;
-
-    const fullDir = path.join(targetDirectory, target.dir);
-    fs.mkdirSync(fullDir, { recursive: true });
-
-    const targetFile = path.join(fullDir, target.file);
-    const originalContent = fs.existsSync(targetFile) ? fs.readFileSync(targetFile, 'utf8') : null;
-
-    let finalContent = content;
-    if (agent === 'cursor') {
-      finalContent = `---\ndescription: Project Governance and Architectural Rules\nalwaysApply: true\n---\n\n${content}`;
-    } else if (agent === 'claude') {
-      finalContent = buildClaudeContent();
-    } else if (agent === 'codex' || agent === 'gemini') {
-      finalContent = buildAgentStub(agent);
-    }
-
-    if (originalContent !== finalContent) {
-      fs.writeFileSync(targetFile, finalContent);
-    }
+  const claudePath = path.join(targetDirectory, 'CLAUDE.md');
+  const claudeContent = buildClaudeContent();
+  const existingClaude = fs.existsSync(claudePath) ? fs.readFileSync(claudePath, 'utf8') : null;
+  if (existingClaude !== claudeContent) {
+    fs.writeFileSync(claudePath, claudeContent);
   }
 }
 
@@ -608,15 +548,6 @@ function writeAutomationScripts(targetDirectory, selections) {
   }
 }
 
-function getActiveAgents(selections) {
-  const agentCandidates = [...(selections.agents || []), selections.ide];
-  const uniqueAgents = [...new Set(agentCandidates)];
-  const activeAgents = uniqueAgents.filter(
-    (agent) => agent !== null && agent !== undefined && agent !== 'none'
-  );
-  return activeAgents;
-}
-
 export const InstructionAssembler = {
   buildMasterInstructions,
   buildClaudeContent,
@@ -625,5 +556,4 @@ export const InstructionAssembler = {
   writeGitignore,
   writeManifest,
   writeAutomationScripts,
-  getActiveAgents,
 };

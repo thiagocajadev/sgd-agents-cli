@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/thiagocajadev/sgd-agents-cli/main/src/assets/img/sdg-agents-icon-light.svg" alt="SDG Agents" width="480" height="480" style="border-radius: 1rem;">
+  <img src="https://raw.githubusercontent.com/thiagocajadev/sgd-agents-cli/main/docs/img/sdg-agents-icon-light.svg" alt="SDG Agents" width="480" height="480" style="border-radius: 1rem;">
   <h1 align="center">Spec-Driven Guide — Agents</h1>
   <p align="center">
     A CLI that installs a structured instruction set for AI agents into your project.<br>
@@ -25,7 +25,7 @@ The instruction set covers:
 - **Skills, on-demand**: code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX — each a self-contained skill unit loaded only when the current cycle needs it.
 - **Language idioms**: idiomatic conventions for your specific stack (JS, TS, Python, C#, Java, Kotlin, Go, Rust, Swift, Flutter, SQL, VB.NET).
 - **Architectural flavors**: rules for your project's structural pattern (vertical slice, MVC, lite, legacy).
-- **Multi-agent support**: generates entry files for Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini, and Roo Code in a single run.
+- **Any-agent compatible**: a single canonical `.ai/skills/AGENTS.md` that any AI agent (Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini, Cline/Roo) can reference. `CLAUDE.md` is auto-generated at the repo root for Claude Code; other tools are wired up by a one-line pointer (see "Using with other IDEs" below).
 - **Harness Engineering (Memory)**: a `.ai-backlog/` folder that persists context and task state across sessions.
 - **Impact Map**: a volatile blast-radius file (`.ai-backlog/impact-map.md`) created at Phase PLAN and cleared at Phase END — tells the agent exactly which files to load for the current cycle, keeping context lean and focused.
 
@@ -38,7 +38,7 @@ npx sdg-agents
 ```
 
 <p align="left">
-  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sgd-agents-cli/main/src/assets/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI in action" /></kbd>
+  <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sgd-agents-cli/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI in action" /></kbd>
 </p>
 
 The interactive wizard guides you through selecting an architectural flavor and one or more language idioms. For non-interactive use:
@@ -76,9 +76,9 @@ your-project/
     └── ...                      ← (See docs/PROJECT-STRUCTURE.md for details)
 ```
 
-`AGENTS.md` is a minimal router: it lists all available skills and loads them on demand. Only `workflow.md` (the 5-phase protocol) is always in context — everything else activates only when the current cycle needs it.
+`.ai/skills/AGENTS.md` is a minimal router: it lists all available skills and loads them on demand. Only `workflow.md` (the 5-phase protocol) is always in context — everything else activates only when the current cycle needs it.
 
-Agent-specific entry files (`CLAUDE.md`, `.cursorrules`, `.windsurfrules`, `GEMINI.md`, `AGENTS.md`, etc.) are also written to the project root for each selected agent.
+`CLAUDE.md` at the repo root is a thin pointer that `@`-imports `.ai/skills/AGENTS.md`, so Claude Code auto-loads the governance on every session. Other IDEs are wired up by pointing their native config file at the same canonical file — see "Using with other IDEs" below.
 
 > For a detailed breakdown of each file's role, see [Project Structure](docs/PROJECT-STRUCTURE.md).
 
@@ -108,8 +108,8 @@ SPEC  →  PLAN  →  CODE  →  TEST  →  END
 
 > Type `end:` to close the active cycle. The agent runs the full END checklist — changelog, backlog sync, commit proposal. If the agent loses track mid-conversation, `end:` also recovers the cycle.
 
-For a detailed walkthrough of each phase and its rules, see [Spec-Driven Development Guide](docs/spec-driven-dev-guide.md).
-For a visual breakdown of the internal decision gates and loops, see [Agent Deep-Flow](docs/agent-deep-flow.md).
+For a detailed walkthrough of each phase and its rules, see [Spec-Driven Development Guide](docs/SPEC-DRIVEN-DEV-GUIDE.md).
+For a visual breakdown of the internal decision gates and loops, see [Agent Deep-Flow](docs/AGENT-DEEP-FLOW.md).
 
 ---
 
@@ -146,30 +146,21 @@ To add or extend support for a language, paste the idiom skill file into your ag
 
 ---
 
-## Multi-Agent Support
+## Using with other IDEs
 
-`sdg-agents` writes entry files for every agent you select, in a single run:
+`sdg-agents` generates a single canonical governance file at `.ai/skills/AGENTS.md` and a `CLAUDE.md` pointer at the repo root. Claude Code auto-loads it with no extra step. For other tools, add a one-line pointer in your IDE's native rules file:
 
-| Agent          | Entry file                        |
-| :------------- | :-------------------------------- |
-| Claude Code    | `CLAUDE.md`                       |
-| Cursor         | `.cursor/rules/`                  |
-| Windsurf       | `.windsurfrules`                  |
-| GitHub Copilot | `.github/copilot-instructions.md` |
-| Codex          | `AGENTS.md`                       |
-| Gemini         | `GEMINI.md`                       |
-| Roo Code       | `.roo/rules/`                     |
+| Agent            | Native config file                 | How to wire it                                                                   |
+| :--------------- | :--------------------------------- | :------------------------------------------------------------------------------- |
+| Claude Code      | `CLAUDE.md` (root, auto-generated) | Auto-loaded. No action required.                                                 |
+| Cursor           | `.cursor/rules/sdg-agents.mdc`     | Create the file with a single line: `Read .ai/skills/AGENTS.md before any task.` |
+| Windsurf         | `.windsurfrules`                   | Same pointer line.                                                               |
+| GitHub Copilot   | `.github/copilot-instructions.md`  | Same pointer line.                                                               |
+| Codex CLI        | `AGENTS.md` (root)                 | Already at repo root via `.ai/skills/AGENTS.md`; or create a thin pointer file.  |
+| Gemini CLI       | `GEMINI.md`                        | Same pointer line.                                                               |
+| Cline / Roo Code | `.clinerules`                      | Same pointer line.                                                               |
 
-```bash
-# Interactive: multi-select during wizard
-npx sdg-agents
-
-# All agents at once
-npx sdg-agents init --all-agents
-
-# Subset via flag
-npx sdg-agents init --agents claude,cursor,copilot
-```
+> **Prefer a custom preset, voice, or skill?** Paste the skill content into your agent as a prompt — the same way `docs/REFERENCES.md` documents external influences. Custom skills do not require a CLI subcommand.
 
 ---
 
@@ -190,7 +181,7 @@ npx sdg-agents clear     # Remove the .ai/ folder
 - [Project Structure](docs/PROJECT-STRUCTURE.md) — detailed breakdown of every generated file
 - [Architectural Pipelines](docs/PIPELINES.md) — data flow diagrams for each flavor
 - [Engineering Laws (CONSTITUTION)](docs/CONSTITUTION.md) — the principles behind the rules
-- [UI/UX System](docs/UI-UX.md) — design hierarchy, surface tonal scale, presets, and single source of truth map
+- [UI/UX System](docs/UI-UX.md) — design philosophy, hierarchy, surface tonal scale, presets, and external research references
 - [Roadmap](docs/ROADMAP.md) — planned work
 - [Changelog](CHANGELOG.md) — release history
 - [Credits and Philosophies](docs/REFERENCES.md) — project influences and research credits
