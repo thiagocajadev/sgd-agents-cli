@@ -1,41 +1,32 @@
 # JavaScript — Project Conventions
 
-> Universal principles (naming, composition, DRY, performance, security) are in `../../core/staff-dna.md`.
-> This file contains only decisions specific to this language and stack.
+> Universal principles in `staff-dna.md`. This file: language-specific decisions only.
 
 <ruleset name="JavaScriptConventions">
 
 ## Error Handling
 
-- **Strategy**: Result Pattern in the domain (`Result<T>`); `throw` only for unexpected failures (runtime/infra)
-- **Propagation**: Result is explicitly returned in business flows; exceptions bubble up to the global handler (backend) or error boundary (frontend)
-- **Domain errors**: Standardized `Error` object (`code`, `message`); enum-like const objects when necessary
-- **Never**: `throw` for business rules; empty `catch`; leak internal details to the client
-- **Global Handling**: Backend → global middleware; Frontend → error boundaries + interceptors; structured logging
-
-### Result Pattern (Vanilla JS)
+- **Default**: Result Pattern in domain (`Result<T>`); `throw` only for unexpected failures
+- **Domain errors**: Standardized `Error` object (`code`, `message`); enum-like const objects when needed
+- **Never**: `throw` for business rules; empty `catch`; leak internal details
+- **Global**: Backend → middleware; Frontend → error boundaries + interceptors
 
 > <rule name="ResultPatternJS">
 
-Aligned with `ResultPatternAndEnvelope` in `engineering-standards.md`. JSDoc provides type hints; runtime shape is identical to the TypeScript version.
+JSDoc provides type hints; runtime shape identical to TypeScript version.
 
 ```javascript
-/**
- * @template T
- * @typedef {{ ok: true, data: T, error: null, isSuccess: true, isFailure: false }
- *          | { ok: false, data: null, error: string, isSuccess: false, isFailure: true }} Result
- */
+/** @template T @typedef {{ ok: true, data: T, error: null } | { ok: false, data: null, error: string }} Result */
 
 function ok(data) {
   return { ok: true, data, error: null, isSuccess: true, isFailure: false };
 }
-
 function fail(error) {
   return { ok: false, data: null, error, isSuccess: false, isFailure: true };
 }
 ```
 
-Usage: `fail` receives the error **code** string (e.g. `fail('ORDER_EMPTY')`). Never pass human-readable messages into `fail` — the HTTP adapter translates `error: string` → `{ code, message }` at the boundary.
+`fail` receives error **code** string (e.g. `fail('ORDER_EMPTY')`). HTTP adapter translates at boundary.
 
 > </rule>
 
@@ -43,23 +34,18 @@ Usage: `fail` receives the error **code** string (e.g. `fail('ORDER_EMPTY')`). N
 
 ## HTTP & API
 
-- **Framework**: Fastify (preferred) or Express when necessary
-- **Style**: API First + BFF — API shaped for the frontend consumer
-- **Route organization**: Vertical slice per feature; avoid a single giant central router
-- **Middleware/hooks**: Auth in hooks/middleware; validation at the boundary; logging and tracing in the pipeline
-- **DI**: Manual via factory functions; explicit dependencies; avoid heavy containers
+- **Framework**: Fastify (preferred) or Express
+- **Style**: API First + BFF — shaped for frontend consumer
+- **Routes**: Vertical slice per feature; auth in hooks/middleware; validation at boundary
+- **DI**: Manual via factory functions; explicit dependencies; no heavy containers
 
 ---
 
 ## Testing
 
-- **Framework**: Vitest (preferred) or Jest; `node:test` for scripts/utilities without build
-- **Style**: Flat, focused on behavior
-- **Naming**: `shouldDoXWhenY`
-- **Mocks**: Only external I/O (HTTP, DB, storage); never mock business rules
-- **What to test**: Behavior, error cases (Result), API contracts when relevant
-
-### Unit Testing
+- **Framework**: Vitest (preferred) or Jest; `node:test` for scripts without build
+- **Style**: Flat, behavior-focused; naming `shouldDoXWhenY`
+- **Mocks**: External I/O only; never mock business rules
 
 > <rule name="NodeTest">
 
@@ -79,22 +65,14 @@ test('sum adds two numbers', () => {
 
 ## Types & Contracts
 
-- **Strictness**: Prefer TypeScript whenever possible; `strict: true`; avoid `any`; explicit null
-- **DTOs**: Types for DTOs; interfaces for public contracts/extension; never expose internal structure
-- **Validation**: Zod (preferred) or Yup; always validate at the boundary
-
-### JSDoc Type Safety (Vanilla JS)
+- **Strictness**: Prefer TypeScript; `strict: true`; avoid `any`
+- **DTOs**: Types for DTOs; interfaces for public contracts; never expose internals
+- **Validation**: Zod (preferred) or Yup; always validate at boundary
 
 > <rule name="JSDocTypes">
 
 ```javascript
-/**
- * @typedef {Object} UserProfile
- * @property {string} id
- * @property {string} email
- * @property {boolean} [isAdmin]
- */
-
+/** @typedef {Object} UserProfile @property {string} id @property {string} email @property {boolean} [isAdmin] */
 /** @param {UserProfile} profile */
 function syncProfile(profile) { ... }
 ```
@@ -105,139 +83,60 @@ function syncProfile(profile) { ... }
 
 ## JavaScript-Specific Delta
 
-- `async/await` as standard — avoid chained `.then()`
+- `async/await` standard — avoid `.then()` chains
 - Never mix sync/async without clear necessity
 - Structure code by feature, not by technical type
 - Pure functions and functional composition; avoid classes when composition works
-- `map` is valid for pure 1-to-1 collection transforms; `reduce` should be avoided — use `for...of` with named intermediate variables for accumulation
-
-### Async/Await
-
-> <rule name="AsyncAwait">
-
-```javascript
-async function fetchData(id) {
-  try {
-    const response = await fetch(`/api/items/${id}`);
-    const body = await response.json();
-    const result = ok(body.data);
-    return result;
-  } catch {
-    const result = fail('FETCH_ERROR');
-    return result;
-  }
-}
-```
-
-> </rule>
-
-### Functional Collections
+- `map` for pure 1-to-1 transforms; avoid `reduce` — use `for...of` with named variables
 
 > <rule name="FunctionalCollections">
 
 ```javascript
-// ✅ map — valid for 1-to-1 transformation
-const activeUserViews = users
-  .filter((user) => user.isActive)
-  .map((user) => ({ id: user.id, name: user.fullName }));
+// map — 1-to-1 transformation
+const activeUsers = users.filter((u) => u.isActive).map((u) => ({ id: u.id, name: u.fullName }));
 
-// ✅ for...of — preferred for accumulation (sum, count, total)
-let orderTotal = 0;
+// for...of — accumulation
+let total = 0;
 for (const item of order.items) {
-  const lineAmount = item.qty * item.price;
-  orderTotal += lineAmount;
+  total += item.qty * item.price;
 }
-
-// ❌ reduce — avoid: accumulator obscures intent
-const total = items.reduce((acc, item) => acc + item.qty * item.price, 0);
 ```
 
 > </rule>
 
-### Modern Syntax (ES2020+)
-
-> <rule name="ModernSyntax">
-
-```javascript
-const userName = response?.data?.user?.name ?? 'Anonymous';
-```
-
-> </rule>
-
-### Destructuring & Spread
-
-> <rule name="DestructuringSpread">
-
-```javascript
-const updateProfile = (current, updates) => ({
-  ...current,
-  ...updates,
-  updatedAt: new Date(),
-});
-```
-
-> </rule>
-
-### Module Pattern
+## Module Pattern
 
 > <rule name="RevealingModule">
-> Define all logic first, then a single export object at the end. **Always named export — never `export default`.**
+> All logic first, then single named export object. **Never `export default`.**
 
 ```javascript
-// ✅ Correct — named export, explicit contract
 const saveUser = (user) => { ... };
 const deleteUser = (id) => { ... };
-const _buildAuditLog = (action) => { ... }; // private — does not enter the object
+const _buildAuditLog = (action) => { ... }; // private
 
 export const UserService = { saveUser, deleteUser };
-
-// ❌ Incorrect — default export silences rename errors and hinders tree-shaking
-export default UserService;
 ```
 
-**Why named export:**
-
-- IDE always resolves the correct name in autocomplete and "go to definition"
-- Bundlers (Vite, esbuild) perform tree-shaking by symbol — default export is treated as opaque
-- `import { UserService }` is a contract; `import anything` is silent
-
-### ESM Extension Mandate
+**Why named export:** IDE resolves correct name; bundlers tree-shake by symbol; `import { x }` is a contract.
 
 > <rule name="ESMExtensionMandate">
-> Always use explicit file extensions (`.js`, `.mjs`) for all local internal imports. Node.js with `"type": "module"` requires full specifiers. This prevents resolution ambiguity and aligns with modern browser/ESM standards.
->
-> ```javascript
-> // ✅ Correct — explicit extension
-> import { formatCurrency } from './utils/format.js';
->
-> // ❌ Incorrect — extensionless import (fails in ESM)
-> import { formatCurrency } from './utils/format';
-> ```
->
+> Always use explicit `.js`/`.mjs` extensions in local imports. Node.js ESM requires full specifiers.
 > </rule>
 
----
+> </rule>
 
 ## Operational Resilience
 
-### Node Discovery (Shell Resilience)
-
 > <rule name="NodeDiscovery">
-> When writing shell hooks (Husky, CI, git hooks) for a Node project, attempt to discover `node` and `npm` if they are missing from the current `$PATH`. This prevents failures in restricted environments (AI agents, GUI clients).
+> Shell hooks: discover `node`/`npm` if missing from `$PATH`. Prevents failures in restricted environments.
 
 ```bash
-# Node Discovery — Staff-grade Resilience
 if ! command -v node >/dev/null 2>&1; then
   export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin"
-  # Source common environment managers
   [ -f "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh" && nvm use --silent >/dev/null 2>&1
   [ -f "$HOME/.asdf/asdf.sh" ] && . "$HOME/.asdf/asdf.sh" >/dev/null 2>&1
 fi
-
-if ! command -v node >/dev/null 2>&1; then
-  echo "❌ Error: 'node' not found in PATH."
-  exit 1
-fi
+if ! command -v node >/dev/null 2>&1; then echo "Error: node not found"; exit 1; fi
 ```
 
 > </rule>
