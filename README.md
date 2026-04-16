@@ -21,12 +21,13 @@
 The instruction set covers:
 
 - **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) that structures how the agent handles any task. Includes **Quality Gate** (CODE), **Audit Gate** (TEST), and a 3-strike **Circuit Breaker** (STOP) to prevent regression loops.
-- **Engineering rules**: naming, code style, clean code standards, security boundaries
-- **Language patterns**: idiomatic conventions for your specific stack
-- **Architectural guidance**: rules for your project's structural pattern (vertical slice, MVC, etc.)
-- **Creative Design Toolkit**: specialized instructions for branding, social media strategy, and landing page blueprints
-- **Harness Engineering (Memory)**: a `.ai-backlog/` folder that persists context and task state across sessions
-- **Impact Map**: a volatile blast-radius file (`.ai-backlog/impact-map.md`) created at Phase PLAN and cleared at Phase END — tells the agent exactly which files to load for the current cycle, keeping context lean and focused
+- **Engineering Laws**: 8 universal laws (Protocol, Hardening, Resilience, Narrative Cascade, Visual Excellence, Boundaries, Reflection, Contextual Efficiency) loaded only in Phase CODE.
+- **Skills, on-demand**: code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX — each a self-contained skill unit loaded only when the current cycle needs it.
+- **Language idioms**: idiomatic conventions for your specific stack (JS, TS, Python, C#, Java, Kotlin, Go, Rust, Swift, Flutter, SQL, VB.NET).
+- **Architectural flavors**: rules for your project's structural pattern (vertical slice, MVC, lite, legacy).
+- **Multi-agent support**: generates entry files for Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini, and Roo Code in a single run.
+- **Harness Engineering (Memory)**: a `.ai-backlog/` folder that persists context and task state across sessions.
+- **Impact Map**: a volatile blast-radius file (`.ai-backlog/impact-map.md`) created at Phase PLAN and cleared at Phase END — tells the agent exactly which files to load for the current cycle, keeping context lean and focused.
 
 ---
 
@@ -62,18 +63,22 @@ After running `init`, your project receives:
 ```
 your-project/
 ├── .ai/                         ← Instruction set (committed)
-│   ├── skill/AGENTS.md          ← Main entry point
-│   ├── instructions/            ← Core logic, flavors, and idioms
-│   ├── commands/                ← Context for cycles (feat/fix/docs/audit/land)
-│   ├── workflows/               ← Process protocol
-│   └── dev-guides/              ← Spec templates and guides
+│   ├── skills/                  ← Engineering skills (loaded on-demand per cycle phase)
+│   │   ├── AGENTS.md            ← Main entry point + skill registry
+│   │   ├── staff-dna.md         ← 8 Engineering Laws (loaded in Phase CODE)
+│   │   ├── code-style.md
+│   │   ├── testing.md
+│   │   ├── security.md
+│   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)
+│   ├── instructions/            ← Flavors, idioms, competencies, templates
+│   └── commands/                ← Cycle commands (feat/fix/docs/audit/land/end)
 └── .ai-backlog/                 ← Harness Engineering (Memory) — gitignored
     └── ...                      ← (See docs/PROJECT-STRUCTURE.md for details)
 ```
 
-`dev-guides/` is always included. It contains the 5-phase cycle guide, the internal decision-gate flow, SDLC reference, UI prompt guide, and spec templates (`prompt-tracks/`) for authoring the SPEC phase of any task.
+`AGENTS.md` is a minimal router: it lists all available skills and loads them on demand. Only `workflow.md` (the 5-phase protocol) is always in context — everything else activates only when the current cycle needs it.
 
-Agent-specific entry files (`CLAUDE.md`, `.cursorrules`, `.windsurfrules`, etc.) are also written to the project root.
+Agent-specific entry files (`CLAUDE.md`, `.cursorrules`, `.windsurfrules`, `GEMINI.md`, `AGENTS.md`, etc.) are also written to the project root for each selected agent.
 
 > For a detailed breakdown of each file's role, see [Project Structure](docs/PROJECT-STRUCTURE.md).
 
@@ -103,8 +108,8 @@ SPEC  →  PLAN  →  CODE  →  TEST  →  END
 
 > Type `end:` to close the active cycle. The agent runs the full END checklist — changelog, backlog sync, commit proposal. If the agent loses track mid-conversation, `end:` also recovers the cycle.
 
-For a detailed walkthrough of each phase and its rules, see [Spec-Driven Development Guide](src/assets/dev-guides/spec-driven-dev-guide.md).
-For a visual breakdown of the internal decision gates and loops, see [Agent Deep-Flow](src/assets/dev-guides/agent-deep-flow.md).
+For a detailed walkthrough of each phase and its rules, see [Spec-Driven Development Guide](docs/spec-driven-dev-guide.md).
+For a visual breakdown of the internal decision gates and loops, see [Agent Deep-Flow](docs/agent-deep-flow.md).
 
 ---
 
@@ -129,7 +134,42 @@ Install language-specific patterns alongside the protocol:
 
 `typescript` · `javascript` · `python` · `csharp` · `java` · `kotlin` · `go` · `rust` · `swift` · `flutter` · `sql` · `vbnet`
 
+```bash
+# Single idiom
+npx sdg-agents init --idiom typescript
+
+# Multi-idiom (polyglot projects)
+npx sdg-agents init --idiom typescript,python,go
+```
+
 To add or extend support for a language, paste the idiom skill file into your agent via prompt — no CLI subcommand needed.
+
+---
+
+## Multi-Agent Support
+
+`sdg-agents` writes entry files for every agent you select, in a single run:
+
+| Agent          | Entry file                        |
+| :------------- | :-------------------------------- |
+| Claude Code    | `CLAUDE.md`                       |
+| Cursor         | `.cursor/rules/`                  |
+| Windsurf       | `.windsurfrules`                  |
+| GitHub Copilot | `.github/copilot-instructions.md` |
+| Codex          | `AGENTS.md`                       |
+| Gemini         | `GEMINI.md`                       |
+| Roo Code       | `.roo/rules/`                     |
+
+```bash
+# Interactive: multi-select during wizard
+npx sdg-agents
+
+# All agents at once
+npx sdg-agents init --all-agents
+
+# Subset via flag
+npx sdg-agents init --agents claude,cursor,copilot
+```
 
 ---
 

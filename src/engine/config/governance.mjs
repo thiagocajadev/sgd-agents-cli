@@ -275,19 +275,19 @@ function validateNoSectionBanners(content) {
 }
 
 export const GOVERNANCE_RULES = {
-  LAW_1_HARDENING: {
+  LAW_2_HARDENING: {
     id: 'hardening',
-    label: 'Law 1: Hardening',
+    label: 'Law 2: Hardening',
     checkpoint: 'Absolute boundary isolation.',
   },
-  LAW_2_RESILIENCE: {
+  LAW_3_RESILIENCE: {
     id: 'resilience',
-    label: 'Law 2: Resilience',
+    label: 'Law 3: Resilience',
     checkpoint: 'Defensive dominance.',
   },
-  LAW_3_NARRATIVE: {
+  LAW_4_NARRATIVE: {
     id: 'narrative',
-    label: 'Law 3: Narrative Cascade',
+    label: 'Law 4: Narrative Cascade',
     checkpoint: 'Stepdown Rule; SLA; Narrative Siblings.',
   },
 };

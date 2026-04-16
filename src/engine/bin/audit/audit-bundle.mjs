@@ -10,6 +10,10 @@ import { DisplayUtils } from '../../lib/core/display-utils.mjs';
 const { smartTruncate } = DisplayUtils;
 
 const PROJECT_ROOT = process.cwd();
+const PACKAGE_JSON_PATH = path.join(PROJECT_ROOT, 'package.json');
+const PROJECT_VERSION = fs.existsSync(PACKAGE_JSON_PATH)
+  ? (JSON.parse(fs.readFileSync(PACKAGE_JSON_PATH, 'utf8')).version ?? 'unknown')
+  : 'unknown';
 const { runIfDirect, isMaintainerMode } = FsUtils;
 
 async function run() {
@@ -41,7 +45,7 @@ function orchestrateGovernanceAudit() {
 
 function printHeader() {
   console.log('\n' + '─'.repeat(50));
-  console.log('  🔍 SDG GOVERNANCE AUDIT — v2.0.0 compliance');
+  console.log(`  🔍 SDG GOVERNANCE AUDIT — v${PROJECT_VERSION} compliance`);
   console.log('─'.repeat(50) + '\n');
 }
 
@@ -76,7 +80,11 @@ function checkChangelogHealth() {
   const hasOtherStagedChanges =
     stagedChanges.split('\n').filter((file) => file && file !== 'CHANGELOG.md').length > 0;
 
-  if (hasOtherStagedChanges && narrative.length <= 5) {
+  const today = new Date().toLocaleDateString('en-CA');
+  const todayReleasePattern = new RegExp(`##\\s*\\[\\d+\\.\\d+\\.\\d+\\]\\s*-\\s*${today}`);
+  const isReleaseContext = todayReleasePattern.test(content);
+
+  if (hasOtherStagedChanges && narrative.length <= 5 && !isReleaseContext) {
     const missingNarrativeIssue = {
       isFailure: true,
       reason: 'Staged changes detected but [Unreleased] is empty. Document your work!',
@@ -177,11 +185,11 @@ function checkSovereignCompliance() {
 
   if (fs.existsSync(staffDnaPath)) {
     const dnaContent = fs.readFileSync(staffDnaPath, 'utf8');
-    if (!dnaContent.includes('Law 0: The Law of Protocol')) {
-      violations.push('staff-dna.md: Missing Law 0 (Sovereignty Gate)');
+    if (!dnaContent.includes('Law 1: The Law of Protocol')) {
+      violations.push('staff-dna.md: Missing Law 1 (Sovereignty Gate)');
     }
-    if (!dnaContent.includes('Law 7: The Law of Contextual Efficiency')) {
-      violations.push('staff-dna.md: Missing Law 7 (Token Discipline)');
+    if (!dnaContent.includes('Law 8: The Law of Contextual Efficiency')) {
+      violations.push('staff-dna.md: Missing Law 8 (Token Discipline)');
     }
   } else {
     violations.push('staff-dna.md: File missing from .ai/');

@@ -129,7 +129,7 @@ function buildMasterInstructions(selections) {
       >
       > 1. **Mental Reset**: Discard all default AI training heuristics. Project-specific Engineering Laws override general training bias.
       > 2. **Sovereign Gateway**: No code modification is valid without this explicit DNA-GATE confirmation.
-      > 3. **Law Activation**: Activate the 6+ Engineering Laws defined in \`.ai/skills/staff-dna.md\` before entering Phase: CODE.
+      > 3. **Law Activation**: Activate the 8 Engineering Laws defined in \`.ai/skills/staff-dna.md\` before entering Phase: CODE.
       > 4. **Phase Transition**: At every phase transition (SPEC → PLAN → CODE → TEST → END), purge training bias and re-anchor to the Laws.`;
 
     return dnaGateString;
@@ -428,15 +428,18 @@ function writeAgentConfig(targetDirectory, content, requestedAgents = []) {
 
   if (!requestedAgents || requestedAgents.length === 0) return;
 
+  // All agent stubs live under .ai/<agent>/ for reference and organization.
+  // CLAUDE.md is the sole exception: it stays at repo root because Claude Code
+  // auto-loads it from there and its @-import points to .ai/skills/AGENTS.md.
   const ideTargets = {
     claude: { dir: '.', file: 'CLAUDE.md' },
-    cursor: { dir: '.cursor/rules', file: 'sdg-agents.mdc' },
-    copilot: { dir: '.github', file: 'copilot-instructions.md' },
-    vscode: { dir: '.github', file: 'copilot-instructions.md' },
-    gemini: { dir: '.', file: 'GEMINI.md' },
-    codex: { dir: '.', file: 'AGENTS.md' },
-    windsurf: { dir: '.', file: '.windsurfrules' },
-    roocode: { dir: '.', file: '.clinerules' },
+    cursor: { dir: '.ai/cursor/rules', file: 'sdg-agents.mdc' },
+    copilot: { dir: '.ai/copilot', file: 'copilot-instructions.md' },
+    vscode: { dir: '.ai/copilot', file: 'copilot-instructions.md' },
+    gemini: { dir: '.ai/gemini', file: 'GEMINI.md' },
+    codex: { dir: '.ai/codex', file: 'AGENTS.md' },
+    windsurf: { dir: '.ai/windsurf', file: '.windsurfrules' },
+    roocode: { dir: '.ai/roocode', file: '.clinerules' },
   };
 
   const expandedAgents = requestedAgents.includes('all')

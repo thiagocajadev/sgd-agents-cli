@@ -7,22 +7,25 @@ This document describes every directory and file installed by `sdg-agents init`.
 ```text
 your-project/
 ├── .ai/                         ← Instruction set (committed)
-│   ├── skill/
-│   │   └── AGENTS.md            ← Main entry point — auto-loaded by agents
+│   ├── skills/                  ← Engineering skills (loaded on-demand per cycle phase)
+│   │   ├── AGENTS.md            ← Main entry point + skill registry
+│   │   ├── staff-dna.md         ← 8 Engineering Laws (loaded in Phase CODE)
+│   │   ├── code-style.md        ← Narrative Cascade, naming, engineering standards
+│   │   ├── testing.md           ← Test principles (loaded in Phase CODE/TEST)
+│   │   ├── security.md          ← Security boundaries + pipeline rules
+│   │   ├── api-design.md        ← API contracts and envelopes
+│   │   ├── data-access.md       ← Repository layer and persistence boundaries
+│   │   ├── observability.md     ← Logging, metrics, tracing
+│   │   ├── ci-cd.md             ← Pipelines and deployment
+│   │   ├── cloud.md             ← Cloud & containers
+│   │   ├── sql-style.md         ← SQL query rules
+│   │   └── ui-ux.md             ← Design thinking, presets, standards, architecture
 │   ├── instructions/
-│   │   ├── core/                ← Base rules (security, style, naming, testing)
-│   │   │   ├── ui/              ← UI-specific rules (design tokens, component standards)
-│   │   │   ├── staff-dna.md     ← Engineering laws (the 7 principles)
-│   │   │   └── engineering-standards.md ← Tactical rules (clean code, resilience, DoD)
-│   │   ├── creative/            ← Creative Toolkit (Branding, Social Media, Landing Pages)
-│   │   ├── flavors/             ← Architectural patterns (vertical-slice, mvc, etc.)
+│   │   ├── templates/           ← Working protocol (workflow.md), agent roles, context templates
+│   │   ├── flavors/             ← Architectural patterns (vertical-slice, mvc, lite, legacy)
 │   │   ├── idioms/              ← Language conventions (typescript, python, go, etc.)
-│   │   ├── competencies/        ← Layer rules (frontend, backend)
-│   │   └── templates/           ← Context and backlog templates
-│   ├── commands/                ← Context files for feat/fix/docs cycles
-│   ├── workflows/               ← Workflow protocol
-│   └── dev-guides/              ← Reference files and guides
-│       └── prompt-tracks/       ← SPEC phase prompt templates
+│   │   └── competencies/        ← Layer rules (frontend, backend)
+│   └── commands/                ← Cycle command files (feat/fix/docs/audit/land/end)
 └── .ai-backlog/                 ← Harness Engineering (Memory) — gitignored
     ├── context.md               ← Project brief: stack, tech decisions, current state
     ├── tasks.md                 ← Task list (TODO / IN_PROGRESS / DONE)
@@ -31,52 +34,63 @@ your-project/
     └── impact-map.md            ← Blast-radius map: volatile, created at PLAN, cleared at END
 ```
 
-Agent-specific root files are also written (`CLAUDE.md`, `.cursorrules`, `.windsurfrules`, etc.) based on which agents are detected or selected during init.
+Agent-specific root files are also written based on which agents are selected during init: `CLAUDE.md` (Claude Code), `.cursor/rules/` (Cursor), `.windsurfrules` (Windsurf), `.github/copilot-instructions.md` (GitHub Copilot), `AGENTS.md` (Codex), `GEMINI.md` (Gemini), `.roo/rules/` (Roo Code).
 
 ---
 
-## .ai/ — Instruction Set
+## .ai/skills/ — Engineering Skills (on-demand)
 
-### skill/AGENTS.md
+The skill directory is the **canonical Single Source of Truth** for engineering rules. Each file is a self-contained skill unit with a defined load convention (most load in Phase CODE; `testing.md` also loads in Phase TEST).
 
-The main entry point. This file is referenced by `CLAUDE.md` (and equivalent files for other agents) so it loads automatically at session start. It contains the working protocol and links to all other instruction files.
+### skills/AGENTS.md
 
-### instructions/core/
+The main entry point. Referenced by `CLAUDE.md` (and equivalent files for other agents) so it loads automatically at session start. It is a **minimal router**: manifesto + DNA-GATE + session start checklist + skill registry + cycle commands. It does not contain knowledge — it tells the agent which skill to load for the current task.
 
-Non-negotiable rules that apply to every project, regardless of stack or flavor:
+### skills/staff-dna.md
 
-| File                       | Purpose                                                        |
-| :------------------------- | :------------------------------------------------------------- |
-| `staff-dna.md`             | The 7 engineering laws (security, resilience, cascade, etc.)   |
-| `engineering-standards.md` | Tactical clean code rules and definition of done               |
-| `code-style.md`            | Narrative Cascade and Vertical Scansion conventions            |
-| `naming.md`                | Naming rules (no abbreviations, banned verbs, etc.)            |
-| `writing-soul.md`          | Communication rules (no filler, no AI-isms, technical density) |
-| `security-pipeline.md`     | Prevents leaking PII and environment variable templates        |
-| `testing-principles.md`    | Test structure and regression requirements                     |
+The 8 Engineering Laws: Protocol, Hardening, Resilience, Narrative Cascade, Visual Excellence, Boundaries, Reflection, Contextual Efficiency. Loaded only in Phase CODE, when the agent crosses the DNA-GATE before writing any code.
 
-### instructions/creative/
+### skills/code-style.md
 
-Specialized rules for creative and branding workflows. These include:
+Consolidated naming, style, and engineering standards — Narrative Cascade, Stepdown Rule, SLA, Revealing Module Pattern, banned abbreviations, definition of done.
 
-- **Branding**: Brand DNA, visual identity, and logo technical specs.
-- **Social Media**: Platform-specific strategy (IG, TikTok, LinkedIn, YouTube) including safe zones and prompt logic.
-- **Landing Pages**: Conversion-focused blueprints and conversion structural patterns.
-- **Tactic Guides**: Pro-level creative prompting and platform engagement rules.
+### skills/testing.md
+
+Test principles: structure, regression requirements, red-green-refactor, integration vs. unit boundaries.
+
+### skills/security.md
+
+Security rules: configuration isolation, PII handling, secret management, and the security pipeline (pre-commit hooks, dependency scanning, static analysis).
+
+### skills/api-design.md · data-access.md · observability.md · ci-cd.md · cloud.md · sql-style.md · ui-ux.md
+
+Domain skills. Each covers its concern end-to-end — for example, `api-design.md` defines the response envelope, error code table, REST hierarchy, and standardization protocols. Loaded only when the current task touches the relevant domain.
+
+---
+
+## .ai/instructions/ — Non-skill rulesets
+
+### instructions/templates/
+
+- `workflow.md` — The 5-phase Working Protocol (SPEC → PLAN → CODE → TEST → END), Task Handoff rule, Token Discipline rule. This is the **only** file that is always in context beyond `AGENTS.md`.
+- `agent-roles.md` — Multi-agent handoff protocol (Planning + Fast roles).
+- `context.md`, `tasks.md`, `learned.md`, `troubleshoot.md` — Templates for the `.ai-backlog/` files.
 
 ### instructions/flavors/
 
-Rules for the project's architectural pattern. Defines where logic belongs — for example, whether business logic lives in UseCases, Services, or Controllers.
+Rules for the project's architectural pattern. Defines where logic belongs — for example, whether business logic lives in UseCases, Services, or Controllers. One flavor per project: `vertical-slice`, `mvc`, `lite`, `legacy`.
 
 ### instructions/idioms/
 
-Language-specific conventions. Each idiom file covers patterns, anti-patterns, and idiomatic usage for that stack (TypeScript, Python, Go, etc.).
+Language-specific conventions. Each idiom file covers patterns, anti-patterns, and idiomatic usage for that stack: `typescript`, `javascript`, `python`, `csharp`, `java`, `kotlin`, `go`, `rust`, `swift`, `flutter`, `sql`, `vbnet`. Multi-idiom projects install more than one.
 
 ### instructions/competencies/
 
-Layer-specific rules for frontend and backend work — data flow, component boundaries, API contract rules.
+Layer-specific rules for frontend and backend work — data flow, component boundaries, API contract rules. Loaded on demand by the SPEC phase of a `feat:` cycle when the cycle command requests it.
 
-### commands/
+---
+
+## .ai/commands/ — Cycle Command Files
 
 Context files loaded on demand when a specific cycle is triggered:
 
@@ -88,14 +102,6 @@ Context files loaded on demand when a specific cycle is triggered:
 - `sdg-end.md` — loaded when the agent enters the `end:` phase
 
 These files are not loaded on session start — only when the relevant cycle begins.
-
-### dev-guides/prompt-tracks/
-
-Prompt templates for authoring the SPEC phase (replaces the legacy `prompts/` directory):
-
-- `00-lite-mode` — single-file or isolated changes
-- `01-new-evolution` — multi-layer features
-- `02-legacy-modernization` — refactoring existing code
 
 ---
 
@@ -145,10 +151,10 @@ This design is inspired by the structural philosophy of [code-review-graph](http
 
 ## How the Files Are Used Per Phase
 
-| Phase | Files read                                                                                                          |
-| :---- | :------------------------------------------------------------------------------------------------------------------ |
-| SPEC  | `dev-guides/prompt-tracks/`, `commands/sdg-feat.md` (or fix/docs/audit/land)                                        |
-| PLAN  | `.ai-backlog/tasks.md`, `.ai-backlog/impact-map.md` (written here via `git diff`)                                   |
-| CODE  | `core/code-style.md`, `core/engineering-standards.md`, `learned.md`, `troubleshoot.md`, `.ai-backlog/impact-map.md` |
-| TEST  | `core/testing-principles.md` — Includes **Audit Gate** (drift detection) and **Circuit Breaker** (3-strike rule)    |
-| END   | `.ai-backlog/context.md`, `.ai-backlog/tasks.md`, `learned.md`, `troubleshoot.md`, `commands/sdg-end.md`            |
+| Phase | Files read                                                                                               |
+| :---- | :------------------------------------------------------------------------------------------------------- |
+| SPEC  | `commands/sdg-<cycle>.md`, `.ai-backlog/context.md`, `.ai-backlog/tasks.md`                              |
+| PLAN  | `.ai-backlog/tasks.md`, `.ai-backlog/impact-map.md` (written here via `git diff`)                        |
+| CODE  | `skills/staff-dna.md`, `skills/code-style.md` + domain skills on demand, `.ai-backlog/impact-map.md`     |
+| TEST  | `skills/testing.md` — Includes **Audit Gate** (drift detection) and **Circuit Breaker** (3-strike rule)  |
+| END   | `.ai-backlog/context.md`, `.ai-backlog/tasks.md`, `learned.md`, `troubleshoot.md`, `commands/sdg-end.md` |

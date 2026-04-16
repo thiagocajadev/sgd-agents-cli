@@ -126,7 +126,7 @@ On every request, classify intent before acting:
 > 8. **Session Gate [HARD STOP]**: Write one-line next objective to `.ai-backlog/context.md` under `## Now`. Then stop completely: _"Cycle complete. Context exhausted — **open a new session** to continue. Next: [objective]."_ Do not accept new work in this session.
 >
 > [!CAUTION]
-> **SOVEREIGN GATE**: Never bypass human verification for commits. Autonomous commits are a violation of Law 0.
+> **SOVEREIGN GATE**: Never bypass human verification for commits. Autonomous commits are a violation of Law 1.
 > </rule>
 
 ## Rule: Task Handoff (Cross-Session & Cross-Agent Continuity)

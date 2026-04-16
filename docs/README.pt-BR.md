@@ -16,16 +16,17 @@
 
 `sdg-agents` instala um conjunto de arquivos de instrução em markdown no seu projeto. Agentes de IA (Claude Code, Cursor, Windsurf, Copilot, Codex e outros) leem esses arquivos e seguem o protocolo definido em cada tarefa.
 
-> **Nota:** Se o seu agente não carregar as regras automaticamente, referencie `.ai/skill/AGENTS.md` no início da sessão.
+> **Nota:** Se o seu agente não carregar as regras automaticamente, referencie `.ai/skills/AGENTS.md` no início da sessão.
 
 O conjunto de instruções cobre:
 
 - **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END) que estrutura como o agente conduz qualquer tarefa. Inclui **Quality Gate** (CODE), **Audit Gate** (TEST) e um **Circuit Breaker** de 3 tentativas (STOP).
-- **Regras de engenharia**: nomenclatura, estilo de código, padrões de clean code, limites de segurança
-- **Padrões de linguagem**: convenções idiomáticas para o seu stack específico
-- **Guia arquitetural**: regras para o padrão estrutural do projeto (vertical slice, MVC, etc.)
-- **Toolkit de Design Criativo**: instruções especializadas para branding, estratégia de redes sociais e blueprints de landing pages
-- **Harness Engineering (Memory)**: uma pasta `.ai-backlog/` que persiste contexto e estado de tarefas entre sessões
+- **Leis de Engenharia**: 8 leis universais (Protocol, Hardening, Resilience, Narrative Cascade, Visual Excellence, Boundaries, Reflection, Contextual Efficiency) carregadas apenas na fase CODE.
+- **Skills sob demanda**: code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX — cada uma é uma unidade auto-contida carregada somente quando o ciclo atual precisa.
+- **Idiomas de linguagem**: convenções idiomáticas para o seu stack (JS, TS, Python, C#, Java, Kotlin, Go, Rust, Swift, Flutter, SQL, VB.NET).
+- **Flavors arquiteturais**: regras para o padrão estrutural do projeto (vertical slice, MVC, lite, legacy).
+- **Suporte multi-agente**: gera arquivos de entrada para Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini e Roo Code em uma única execução.
+- **Harness Engineering (Memory)**: uma pasta `.ai-backlog/` que persiste contexto e estado de tarefas entre sessões.
 
 ---
 
@@ -61,18 +62,22 @@ Após rodar `init`, seu projeto recebe:
 ```
 seu-projeto/
 ├── .ai/                         ← Conjuntos de instruções (commitado)
-│   ├── skill/AGENTS.md          ← Ponto de entrada
-│   ├── instructions/            ← Lógica core, flavors e idiomas
-│   ├── commands/                ← Contexto para os ciclos (feat/fix/docs/audit/land)
-│   ├── workflows/               ← Protocolo de processos
-│   └── dev-guides/              ← Templates de spec e guias
+│   ├── skills/                  ← Skills de engenharia (carregadas sob demanda por fase do ciclo)
+│   │   ├── AGENTS.md            ← Ponto de entrada + registro de skills
+│   │   ├── staff-dna.md         ← 8 Leis de Engenharia (carregada em Phase CODE)
+│   │   ├── code-style.md
+│   │   ├── testing.md
+│   │   ├── security.md
+│   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)
+│   ├── instructions/            ← Flavors, idiomas, competências, templates
+│   └── commands/                ← Comandos de ciclo (feat/fix/docs/audit/land/end)
 └── .ai-backlog/                 ← Harness Engineering (Memory) — gitignored
     └── ...                      ← (Veja docs/PROJECT-STRUCTURE.md para detalhes)
 ```
 
-`dev-guides/` é sempre incluído. Contém o guia do ciclo de 5 fases, o fluxo de decisão interno, referência de SDLC, guia de prompts de UI e templates de spec (`prompt-tracks/`) para autoria da fase SPEC de qualquer tarefa.
+`AGENTS.md` é um roteador mínimo: lista todas as skills disponíveis e as carrega sob demanda. Apenas `workflow.md` (o protocolo de 5 fases) fica sempre em contexto — tudo mais só é ativado quando o ciclo atual precisa.
 
-Arquivos de entrada por agente (`CLAUDE.md`, `.cursorrules`, `.windsurfrules`, etc.) também são escritos na raiz do projeto.
+Arquivos de entrada por agente (`CLAUDE.md`, `.cursorrules`, `.windsurfrules`, `GEMINI.md`, `AGENTS.md`, etc.) também são escritos na raiz do projeto para cada agente selecionado.
 
 > Para um detalhamento do papel de cada arquivo, veja [Estrutura do Projeto](PROJECT-STRUCTURE.md).
 
@@ -102,8 +107,8 @@ SPEC  →  PLAN  →  CODE  →  TEST  →  END
 
 > Digite `end:` para encerrar o ciclo ativo. O agente executa o checklist completo do END — changelog, sincronização do backlog, proposta de commit. Se o agente perder o fio numa conversa paralela, `end:` também recupera o ciclo.
 
-Para um guia detalhado de cada fase, veja [Guia Spec-Driven](../src/assets/dev-guides/spec-driven-dev-guide.md).
-Para um diagrama visual dos gates de decisão, veja [Agent Deep-Flow](../src/assets/dev-guides/agent-deep-flow.md).
+Para um guia detalhado de cada fase, veja [Guia Spec-Driven](spec-driven-dev-guide.md).
+Para um diagrama visual dos gates de decisão, veja [Agent Deep-Flow](agent-deep-flow.md).
 
 ---
 
@@ -128,7 +133,42 @@ Instale padrões específicos da linguagem junto com o protocolo:
 
 `typescript` · `javascript` · `python` · `csharp` · `java` · `kotlin` · `go` · `rust` · `swift` · `flutter` · `sql` · `vbnet`
 
+```bash
+# Idioma único
+npx sdg-agents init --idiom typescript
+
+# Multi-idioma (projetos poliglotas)
+npx sdg-agents init --idiom typescript,python,go
+```
+
 Para adicionar ou estender suporte a uma linguagem, cole o skill do idioma no seu agente via prompt — sem precisar de subcomando CLI.
+
+---
+
+## Suporte Multi-Agente
+
+`sdg-agents` escreve arquivos de entrada para cada agente que você selecionar, em uma única execução:
+
+| Agente         | Arquivo de entrada                |
+| :------------- | :-------------------------------- |
+| Claude Code    | `CLAUDE.md`                       |
+| Cursor         | `.cursor/rules/`                  |
+| Windsurf       | `.windsurfrules`                  |
+| GitHub Copilot | `.github/copilot-instructions.md` |
+| Codex          | `AGENTS.md`                       |
+| Gemini         | `GEMINI.md`                       |
+| Roo Code       | `.roo/rules/`                     |
+
+```bash
+# Interativo: multi-select no wizard
+npx sdg-agents
+
+# Todos os agentes de uma vez
+npx sdg-agents init --all-agents
+
+# Subconjunto via flag
+npx sdg-agents init --agents claude,cursor,copilot
+```
 
 ---
 

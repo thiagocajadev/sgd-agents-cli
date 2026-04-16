@@ -11,7 +11,7 @@
 <rule name="APIContractResilience">
 
 > [!IMPORTANT]
-> Business failures are first-class values in the API response. Applies **Law 2 (Resilience)** at the contract layer.
+> Business failures are first-class values in the API response. Applies **Law 3 (Resilience)** at the contract layer.
 
 #### Instructions
 
@@ -25,7 +25,7 @@
 <rule name="APIDataMasking">
 
 > [!CAUTION]
-> Never expose internal models. Strictly enforce ViewModels/DTOs. Applies **Law 1 (Hardening)** at the response layer.
+> Never expose internal models. Strictly enforce ViewModels/DTOs. Applies **Law 2 (Hardening)** at the response layer.
 
 #### Instructions
 

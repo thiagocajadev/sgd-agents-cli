@@ -2,7 +2,7 @@
 
 This document explains the structure and reasoning behind the UI/UX instruction set installed by `sdg-agents`. It is intended for developers who want to understand why the system is organized the way it is, and how to navigate it.
 
-The four files that govern UI/UX work are located at `.ai/instructions/core/ui/`.
+UI/UX work is governed by a single consolidated skill at [`.ai/skills/ui-ux.md`](../src/assets/skills/ui-ux.md) — loaded on-demand in Phase CODE when the current task touches a visual surface. The four concerns below (design thinking, standards, presets, architecture) are now top-down sections within that skill, not separate files.
 
 ---
 
@@ -74,7 +74,7 @@ Each level transition must differ by **4–8% L** in OKLCH Lightness. Less than 
 
 The nesting rule is absolute: an element inside a container is always at a level ≥ its parent. Levels are never skipped. Interactive states always add +1 visual level.
 
-Full specification and anti-patterns: [design-thinking.md](../.ai/instructions/core/ui/design-thinking.md) Phase 0.2.
+Full specification and anti-patterns: see the **Design Thinking** section of [`ui-ux.md`](../src/assets/skills/ui-ux.md) (Phase 0.2).
 
 ---
 
@@ -91,13 +91,15 @@ Each preset is a complete visual contract — typography, surface, borders, radi
 | NEOBRUTALISM | Bold, high-contrast           | Any high-chroma primary C≥0.18  |
 | PAPER        | Warm, editorial               | Zinc + Amber H=80               |
 
-Safe combinations and nesting rules: [presets.md](../.ai/instructions/core/ui/presets.md).
+Safe combinations and nesting rules: see the **Presets** section of [`ui-ux.md`](../src/assets/skills/ui-ux.md).
 
 ---
 
 ## Reference
 
-- [design-thinking.md](../.ai/instructions/core/ui/design-thinking.md) — Palette, tonal scale, typography, aesthetic direction
-- [standards.md](../.ai/instructions/core/ui/standards.md) — Browser quality rules, spacing, states, accessibility
-- [presets.md](../.ai/instructions/core/ui/presets.md) — Visual presets, composition system, token contracts
-- [architecture.md](../.ai/instructions/core/ui/architecture.md) — ViewModel pattern, state management, agent checklist
+All four sections live in the consolidated [`.ai/skills/ui-ux.md`](../src/assets/skills/ui-ux.md) skill file:
+
+- **Design Thinking** — Palette, tonal scale, typography, aesthetic direction
+- **Standards** — Browser quality rules, spacing, states, accessibility
+- **Presets** — Visual presets, composition system, token contracts
+- **Architecture** — ViewModel pattern, state management, agent checklist

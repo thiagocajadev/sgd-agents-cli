@@ -41,7 +41,7 @@
 <rule name="ConfigFailFast">
 
 > [!IMPORTANT]
-> Applies **Law 1 (Hardening)** to infrastructure. If the environment is incomplete, crash immediately with a clear error — never limp forward with missing config.
+> Applies **Law 2 (Hardening)** to infrastructure. If the environment is incomplete, crash immediately with a clear error — never limp forward with missing config.
 
 #### Instructions
 

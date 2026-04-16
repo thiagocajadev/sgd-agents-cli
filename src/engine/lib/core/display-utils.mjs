@@ -23,7 +23,7 @@ function displayName(stackKey) {
 
 /**
  * Implements the 60/40 Head/Tail split for long outputs.
- * Follows Law 7 (Contextual Efficiency).
+ * Follows Law 8 (Contextual Efficiency).
  */
 function smartTruncate(content, headLimit = 100, tailLimit = 50) {
   if (!content) return '';

@@ -41,8 +41,9 @@ function printSuccessAgents(targetDir) {
   console.log('\n  ✅ Done.');
   console.log('  ' + '─'.repeat(55));
   console.log(`  Project: ${targetDir}\n`);
-  console.log('  .ai/');
+  console.log('  .ai/                     (governance + agent stubs by folder)');
   console.log('  .ai-backlog/             (gitignored)');
+  console.log('  CLAUDE.md                (only stub at repo root — auto-loaded by Claude Code)');
   printActivationGuide();
 }
 
@@ -50,8 +51,9 @@ function printQuickSuccess(targetDir) {
   console.log('\n  ⚡ Done.');
   console.log('  ' + '─'.repeat(55));
   console.log(`  Project: ${targetDir}\n`);
-  console.log('  .ai/');
+  console.log('  .ai/                     (governance + agent stubs by folder)');
   console.log('  .ai-backlog/             (gitignored)');
+  console.log('  CLAUDE.md                (only stub at repo root — auto-loaded by Claude Code)');
   printActivationGuide();
 }
 
@@ -97,13 +99,14 @@ function renderPreviewInstructionSet() {
 
 function renderPreviewIdeTargets(selections) {
   const ideTargets = {
-    cursor: '.cursor/rules/sdg-agents.mdc',
-    windsurf: '.windsurfrules',
-    vscode: '.github/copilot-instructions.md',
-    copilot: '.github/copilot-instructions.md',
     claude: 'CLAUDE.md',
-    roocode: '.clinerules',
-    gemini: 'AI_INSTRUCTIONS.md',
+    cursor: '.ai/cursor/rules/sdg-agents.mdc',
+    copilot: '.ai/copilot/copilot-instructions.md',
+    vscode: '.ai/copilot/copilot-instructions.md',
+    gemini: '.ai/gemini/GEMINI.md',
+    codex: '.ai/codex/AGENTS.md',
+    windsurf: '.ai/windsurf/.windsurfrules',
+    roocode: '.ai/roocode/.clinerules',
   };
 
   const activeAgents = [...(selections.agents || []), selections.ide].filter(Boolean);

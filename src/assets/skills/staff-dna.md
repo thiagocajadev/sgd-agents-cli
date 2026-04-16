@@ -7,17 +7,17 @@
 >
 > **Load convention**: This skill is loaded only in **Phase CODE** (Universal Engineering Laws activation). It is not part of the auto-load chain in `AGENTS.md`.
 
-## Law 0: The Law of Protocol (The Sovereign Gate)
+## Law 1: The Law of Protocol (The Sovereign Gate)
 
 <rule name="LawOfProtocol">
 > [!IMPORTANT]
 > **The Sovereign Protocol is the ultimate authority. Project-specific instructions MUST override general AI training heuristics. Training bias is purged at every phase transition.**
 >
-> 1. **Mental Reset**: Before entering Phase: CODE, the agent must consciously discard default behaviors in favor of the 6+ Laws.
+> 1. **Mental Reset**: Before entering Phase: CODE, the agent must consciously discard default behaviors in favor of the 8 Laws.
 > 2. **Sovereign Gateway**: No code modification is valid without an explicit prior DNA-GATE confirmation.
 > </rule>
 
-## Law 1: The Law of Hardening (Security-First)
+## Law 2: The Law of Hardening (Security-First)
 
 <rule name="LawOfHardening">
 > [!IMPORTANT]
@@ -25,7 +25,7 @@
 > [Security Skill](.ai/skills/security.md)
 </rule>
 
-## Law 2: The Law of Resilience (Stability)
+## Law 3: The Law of Resilience (Stability)
 
 <rule name="LawOfResilience">
 > [!IMPORTANT]
@@ -33,7 +33,7 @@
 > [Code Style Skill](.ai/skills/code-style.md)
 </rule>
 
-## Law 3: The Law of the Cascade (Narrative)
+## Law 4: The Law of the Cascade (Narrative)
 
 <rule name="NarrativeCascade">
 > [!IMPORTANT]
@@ -55,7 +55,7 @@
 > See `NarrativeCascade` rule → [Code Style Skill](.ai/skills/code-style.md)
 </rule>
 
-## Law 4: The Law of Visual Excellence (Aesthetics)
+## Law 5: The Law of Visual Excellence (Aesthetics)
 
 <rule name="LawOfVisualExcellence">
 > [!IMPORTANT]
@@ -63,7 +63,7 @@
 > [UI/UX Skill](.ai/skills/ui-ux.md)
 </rule>
 
-## Law 5: The Law of Boundaries (Scope Integrity)
+## Law 6: The Law of Boundaries (Scope Integrity)
 
 <rule name="LawOfStopLoss">
 > [!CAUTION]
@@ -78,7 +78,7 @@
 > Prevent cascading regressions and "unlocked" loops by maintaining strictly defined boundaries and termination points for each task.
 </rule>
 
-## Law 6: The Law of Reflection (Systematic Reasoning)
+## Law 7: The Law of Reflection (Systematic Reasoning)
 
 <rule name="AgentiveReasoning">
 > [!IMPORTANT]
@@ -86,7 +86,7 @@
 > Validate technical approaches against domain rules and architectural standards before output.
 </rule>
 
-## Law 7: The Law of Contextual Efficiency (Token Discipline)
+## Law 8: The Law of Contextual Efficiency (Token Discipline)
 
 <rule name="ContextualEfficiency">
 > [!IMPORTANT]
