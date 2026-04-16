@@ -1,20 +1,14 @@
 # VB.NET — Project Conventions
 
-> Universal principles (naming, composition, DRY, performance, security) are in `../../core/staff-dna.md`.
-> This file contains only decisions specific to this language and stack.
+> Universal principles in `../../core/staff-dna.md`. This file: VB.NET (modern .NET) specific decisions only.
 
 <ruleset name="VbNetConventions">
 
 ## Error Handling
 
-- **Strategy**: Result Pattern (`Result(Of T)`) as standard; exceptions only for unexpected failures (infra/runtime)
-- **Propagation**: Result is explicitly returned in business flows; exceptions bubble up to the Global Handler
-- **Domain errors**: Standardized type (`Code`, `Message`); enum for categorization when necessary
-- **Never**: `Throw` for business rules; empty `Catch`; leak internal details
-
-### Result Pattern (VB.NET Style)
-
-> <rule name="ResultPatternVbNet">
+- Result Pattern (`Result(Of T)`) as standard; exceptions only for unexpected failures
+- Result explicitly returned; exceptions bubble to Global Handler
+- Never: `Throw` for business rules; empty `Catch`; leak internal details
 
 ```vb
 Public Class Result(Of T)
@@ -26,71 +20,41 @@ Public Class Result(Of T)
     Public Shared Function Success(data As T) As Result(Of T)
         Return New Result(Of T) With { .IsSuccess = True, .Data = data }
     End Function
-
     Public Shared Function Failure(message As String, code As String) As Result(Of T)
         Return New Result(Of T) With { .IsSuccess = False, .ErrorMessage = message, .ErrorCode = code }
     End Function
 End Class
 ```
 
-> </rule>
-
----
-
 ## HTTP & API
 
-- **Framework**: ASP.NET Core (modern .NET interoperability)
-- **Style**: API First + BFF
-- **Route organization**: Vertical slice per feature; MVC acceptable when necessary
-- **Middleware/hooks**: Auth in the pipeline; validation at the boundary; centralized logging/tracing
-- **DI**: Constructor injection; native ASP.NET Core container; never service locator
-
----
+- ASP.NET Core; vertical slice per feature; MVC acceptable when necessary
+- Constructor injection; native ASP.NET Core container; never service locator
 
 ## Testing
 
-- **Framework**: xUnit (preferred) or MSTest
-- **Style**: Flat, behavior-oriented
-- **Naming**: `Should_DoX_WhenY`
-- **Mocks**: Mock only external dependencies; never mock the domain
-- **What to test**: Business rules, error cases (Result), API contracts
-
----
+- xUnit (preferred) or MSTest; naming: `Should_DoX_WhenY`
+- Mock only external deps; never mock domain
 
 ## Types & Contracts
 
-- **Type vs interface**: `Interface` for contracts; `Class` for implementation; simple and clear DTOs
-- **Strictness**: `Option Strict On`; `Option Explicit On`; avoid `Nothing` — prefer Result/Option
-- **DTOs**: Separated from the domain; never expose entities directly
-- **Validation**: FluentValidation or manual validation at the boundary; never validate domain rules here
-
----
+- `Interface` for contracts; `Class` for implementation; simple DTOs
+- `Option Strict On`; `Option Explicit On`; avoid `Nothing` — prefer Result/Option
+- DTOs separated from domain; FluentValidation or manual at boundary
 
 ## VB.NET-Specific Delta
 
-- Avoid legacy syntax (`On Error Resume Next`, late binding)
-- Prefer modern .NET style — compatible and aligned with C#
-- `Async/Await` always applicable; never `.Result` / `.Wait()`
-- Logging via `ILogger`
-- Option Pattern for configuration
-- Explicit code > "shorthands" of the language
-- Naming: PascalCase for public members; `I` prefix for interfaces
-- `For Each` loops are preferred for all collection operations; mapping and transformations follow the imperative pattern
-
-### Collections & Loops
-
-> <rule name="VbNetCollections">
+- No legacy syntax (`On Error Resume Next`, late binding)
+- Modern .NET style aligned with C#; `Async/Await` always; never `.Result`/`.Wait()`
+- `ILogger` for logging; Option Pattern for config
+- PascalCase public; `I` prefix interfaces
+- `For Each` for all collection operations
 
 ```vb
-' ✅ Good: For Each for 1-to-1 transform or accumulation
 Dim activeEmails As New List(Of String)
 For Each u In users
-    If u.IsActive Then
-        activeEmails.Add(u.Email)
-    End If
+    If u.IsActive Then activeEmails.Add(u.Email)
 Next
 ```
-
-> </rule>
 
 </ruleset>

@@ -1,20 +1,14 @@
 # Swift — Project Conventions
 
-> Universal principles (naming, composition, DRY, performance, security) are in `../../core/staff-dna.md`.
-> This file contains only decisions specific to this language and stack.
+> Universal principles in `../../core/staff-dna.md`. This file: Swift-specific decisions only.
 
 <ruleset name="SwiftConventions">
 
 ## Error Handling
 
-- **Strategy**: `Result<T, Error>` in the domain; `throw` only for unexpected failures
-- **Propagation**: Explicit Result between layers; `throw` handled at the boundary (ViewModel/Coordinator)
-- **Domain errors**: Typed `enum` with `case` and context when necessary; avoid `NSError` in the domain
-- **Never**: `throw` for business rules; `try!`; ignore errors
-
-### Result Pattern (Enum + Generic)
-
-> <rule name="ResultPatternSwift">
+- `Result<T, Error>` in domain; `throw` only for unexpected failures
+- Typed `enum` with context; avoid `NSError` in domain
+- Never: `throw` for business rules; `try!`; ignore errors
 
 ```swift
 enum AppError: Error {
@@ -24,74 +18,39 @@ enum AppError: Error {
 }
 
 func fetchUser(id: String) async -> Result<User, AppError> {
-    do {
-        let user = try await db.queryUser(id: id)
-        return .success(user)
-    } catch {
-        return .failure(.databaseError(underlying: error))
-    }
+    do { return .success(try await db.queryUser(id: id)) }
+    catch { return .failure(.databaseError(underlying: error)) }
 }
 ```
-
-> </rule>
-
----
 
 ## HTTP & API
 
-- **Style**: API First + BFF
-- **Client**: `URLSession` or an abstracted layer; centralized and typed API client
-- **Serialization**: `Codable` as standard
-- **Never**: Call API directly from the View; spread request logic
-
----
+- `URLSession` or abstracted layer; centralized typed client; `Codable` standard
+- Never: call API from View; spread request logic
 
 ## Testing
 
-- **Framework**: XCTest
-- **Style**: Behavior-focused
-- **Naming**: `test_shouldDoX_whenY`
-- **Mocks**: Protocols for abstraction; mock only external I/O
-
----
+- XCTest; naming: `test_shouldDoX_whenY`
+- Protocols for abstraction; mock only external I/O
 
 ## Types & Contracts
 
-- **Type vs protocol**: `struct` for data; `protocol` for contracts
-- **Strictness**: Use `Optional` consciously; immutability by default (`let`)
-- **DTOs**: Separated from the domain; `Codable`
-- **Validation**: At the boundary (input/UI/API)
-
----
+- `struct` for data; `protocol` for contracts
+- `Optional` conscious; immutability default (`let`); `Codable` DTOs separated from domain
 
 ## Swift-Specific Delta
 
-- Prefer `struct` (value types) over classes when identity is not required
-- `async/await` standard for asynchronous I/O
-- Avoid excessive Combine — use only when a reactive flow is genuinely necessary
-- View only renders; ViewModel/Coordinator orchestrates
-- Organization by feature
-- Naming: `camelCase` for variables/functions; `PascalCase` for types; project prefixes in public frameworks
-- `map` is valid for pure 1-to-1 collection transforms; `for` loops are preferred for accumulation or complex logic
-
-### Collections & Higher-Order Functions
-
-> <rule name="SwiftCollections">
+- Prefer `struct` (value types) over classes when identity not required
+- `async/await` for async I/O; avoid excessive Combine
+- View renders only; ViewModel/Coordinator orchestrates; organize by feature
+- `camelCase` vars/functions; `PascalCase` types
+- `map` for pure 1-to-1 transforms; `for` loops for accumulation
 
 ```swift
-// ✅ map — valid for 1-to-1 transform
-let userIds = users
-    .filter { $0.isActive }
-    .map { $0.id }
+let userIds = users.filter { $0.isActive }.map { $0.id }
 
-// ✅ for loop — preferred for accumulation
 var total: Double = 0
-for item in order.items {
-    let lineAmount = Double(item.qty) * item.price
-    total += lineAmount
-}
+for item in order.items { total += Double(item.qty) * item.price }
 ```
-
-> </rule>
 
 </ruleset>

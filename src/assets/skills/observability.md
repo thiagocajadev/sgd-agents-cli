@@ -2,74 +2,43 @@
 
 <ruleset name="Observability Engineering">
 
-> [!NOTE]
-> Universal observability principles and stack-specific implementation guidance.
-> Load in **Phase CODE** when adding logging, tracing, metrics, or health checks.
-> Related skills: `.ai/skills/staff-dna.md`, `.ai/skills/code-style.md`, `.ai/skills/security.md`.
+> Load in Phase CODE when adding logging, tracing, metrics, or health checks.
 
-## Rule: Universal Observability Principles
+## Universal Principles
 
-<rule name="ObservabilityPrinciples">
+- **Structured Logging**: JSON with consistent fields: `timestamp`, `level`, `message`, `correlationId`, `service`
+- **Correlation IDs**: Every request carries a unique trace ID propagated across all boundaries
+- **Log Levels**: `DEBUG` dev, `INFO` business events, `WARN` degraded, `ERROR` failures requiring attention
+- **Never log secrets**: Redact passwords, tokens, PII, API keys; allowlists over denylists
+- **Health Checks**: Every service exposes `/health` with dependency status + uptime
+- **Metrics**: RED method (Rate, Errors, Duration) for every external-facing endpoint
 
-> [!IMPORTANT]
-> Observability is not optional. If you can't see it, you can't fix it.
+## Structured Logging per Stack
 
-#### Instructions
+| Stack   | Library       | Key Pattern                                                                                    |
+| ------- | ------------- | ---------------------------------------------------------------------------------------------- |
+| Node.js | Pino          | Global `redact` array; Fastify `request.log.info(...)` auto-injects Request ID                 |
+| .NET    | Serilog       | Enrich with `CorrelationId`, `MachineName`, `EnvironmentName`; `ILogger<T>` structural logging |
+| Python  | structlog     | `JSONRenderer` prod; bind context per request: `log.bind(request_id=...)`                      |
+| Go      | slog/zerolog  | Structured JSON; pass `context.Context` for trace ID propagation                               |
+| Java    | SLF4J+Logback | MDC for correlation IDs; `logstash-logback-encoder` for JSON                                   |
+| Rust    | tracing       | `tracing-subscriber` + `tracing-opentelemetry` for structured spans/JSON                       |
 
-- **Structured Logging**: Always use JSON-structured logs with consistent fields: `timestamp`, `level`, `message`, `correlationId`, `service`.
-- **Correlation IDs**: Every request must carry a unique trace ID propagated across all service boundaries.
-- **Log Levels**: Use semantic levels consistently — `DEBUG` for development, `INFO` for business events, `WARN` for degraded states, `ERROR` for failures requiring attention.
-- **Never Log Secrets**: Redact passwords, tokens, PII, and API keys. Use allowlists over denylists.
-- **Health Checks**: Every service must expose a `/health` endpoint returning dependency status and uptime.
-- **Metrics**: Track the RED method (Rate, Errors, Duration) for every external-facing endpoint.
-  </rule>
+## Distributed Tracing (OpenTelemetry)
 
-## Rule: Structured Logging per Stack
+| Stack   | Setup                                                                    |
+| ------- | ------------------------------------------------------------------------ |
+| Node.js | `@opentelemetry/sdk-node` as FIRST import in entrypoint                  |
+| .NET    | `AddOpenTelemetry().WithTracing(...)` + `AddAspNetCoreInstrumentation()` |
+| Python  | `opentelemetry-instrumentation-fastapi/django`; init before app creation |
+| Go      | `go.opentelemetry.io/otel` + `otlptrace`; propagate `context.Context`    |
+| Java    | `opentelemetry-javaagent` (auto) or `opentelemetry-api`+`sdk` (manual)   |
+| Rust    | `opentelemetry` + `opentelemetry-otlp` + `tracing-opentelemetry` bridge  |
 
-<rule name="StructuredLogging">
+## Error Tracking
 
-> [!IMPORTANT]
-> Choose the idiomatic logging library for your stack. Never use `console.log` or `print` in production.
-
-#### Instructions
-
-- **Node.js (Pino)**: Configure Pino with a global `redact` array masking `['*.password', '*.token', '*.secret']`. Use Fastify's native `request.log.info(...)` which automatically injects the Request ID.
-- **.NET (Serilog)**: Enrich logs with `CorrelationId`, `MachineName`, and `EnvironmentName`. Inject `ILogger<T>` and use structural logging: `_logger.LogInformation("Order created. {@OrderSummary}", new { orderId })`.
-- **Python (structlog)**: Use `structlog` with `JSONRenderer` for production. Bind context per request: `log = structlog.get_logger().bind(request_id=request_id)`.
-- **Go (slog / zerolog)**: Use `slog` (stdlib, Go 1.21+) or `zerolog` for structured JSON output. Pass `context.Context` to propagate trace IDs.
-- **Java (SLF4J + Logback)**: Use MDC (Mapped Diagnostic Context) for correlation IDs. Configure JSON encoder (`logstash-logback-encoder`) for structured output.
-- **Rust (tracing)**: Use the `tracing` crate with `tracing-subscriber` and `tracing-opentelemetry` for structured spans and JSON output.
-  </rule>
-
-## Rule: Distributed Tracing (OpenTelemetry)
-
-<rule name="OpenTelemetry">
-
-> [!NOTE]
-> OpenTelemetry is the industry standard for propagating traces across microservices.
-
-#### Instructions
-
-- **Node.js**: Load the OTEL SDK (`@opentelemetry/sdk-node`) as the VERY FIRST import in the main entrypoint: `import './infra/otel.js';`
-- **.NET**: Use `builder.Services.AddOpenTelemetry().WithTracing(...)` and `AddAspNetCoreInstrumentation()`.
-- **Python**: Use `opentelemetry-instrumentation-fastapi` or `opentelemetry-instrumentation-django`. Initialize before app creation.
-- **Go**: Use `go.opentelemetry.io/otel` with `otlptrace` exporter. Propagate `context.Context` through all function calls.
-- **Java**: Use `opentelemetry-javaagent` for auto-instrumentation or `opentelemetry-api` + `opentelemetry-sdk` for manual spans.
-- **Rust**: Use `opentelemetry` crate with `opentelemetry-otlp` exporter and `tracing-opentelemetry` bridge.
-  </rule>
-
-## Rule: Error Tracking
-
-<rule name="ErrorTracking">
-
-> [!IMPORTANT]
-> Capture unhandled exceptions while respecting privacy.
-
-#### Instructions
-
-- **PII Scrubbing**: Ensure PII is never sent to error tracking services. Hardcode `sendDefaultPii: false` (Sentry) or equivalent in configuration.
-- **Context Binding**: Attach the `correlationId`/`traceId` to every captured exception for cross-referencing with logs.
-- **Alerting**: Configure alerts for error rate spikes, not individual errors. Use thresholds (e.g., >1% error rate in 5 minutes).
-  </rule>
+- PII scrubbing: never send PII to error tracking; `sendDefaultPii: false` (Sentry) or equivalent
+- Attach `correlationId`/`traceId` to every captured exception
+- Alert on error rate spikes (e.g., >1% in 5min), not individual errors
 
 </ruleset>

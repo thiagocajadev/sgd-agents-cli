@@ -2,95 +2,47 @@
 
 <ruleset name="Cloud & Container Standards">
 
-> [!NOTE]
-> Universal rules for managed cloud services and containerized environments.
-> Load in **Phase CODE** when touching Dockerfile, compose/Kubernetes manifests, IAM, or cloud config.
+> Load in Phase CODE when touching Dockerfile, compose/K8s manifests, IAM, or cloud config.
 
----
+## Cloud Architecture
 
-## Part 1 — Cloud Architecture
+### Managed Services
 
-### Rule: Managed Services (PaaS/SaaS)
+- Prefer PaaS/SaaS (AWS RDS, Vercel, Azure SQL) over self-hosted VMs
+- Leverage platform auto-scaling; use serverless and managed DBs to reduce ops overhead
 
-<rule name="ManagedServices">
+### Least Privilege (IAM)
 
-> [!IMPORTANT]
-> Prefer managed solutions (AWS RDS, Vercel, Azure SQL) over self-hosting on raw VMs.
+- Restrict service accounts/roles to minimum required permissions
+- Separate accounts and IAM roles per environment (Prod/Staging/Dev); never share credentials across envs
+- Secrets via AWS Secrets Manager, GCP Secret Manager, or Vault; never plaintext env vars or committed to source
 
-#### Instructions
+### Config Fail-Fast
 
-- **Scalability:** Leverage auto-scaling provided by the platform.
-- **Maintenance:** Reduce operational overhead by using serverless functions and managed databases.
-  </rule>
+- Validate all required env vars on startup; exit with descriptive error if missing
+- No silent defaults for secrets (`DATABASE_URL`, `JWT_SECRET`, API keys)
+- Define and validate config schema at boot (Zod, Pydantic, envy)
 
-### Rule: Least Privilege (IAM)
+### Cloud Observability
 
-<rule name="LeastPrivilege">
+- Every service exposes `/health` returning dependency status + uptime
+- Track RED metrics (Rate, Errors, Duration) for every external-facing endpoint
+- Ship structured logs to central sink (CloudWatch, Datadog, GCP Logging); never rely on local disk in cloud
+- See `.ai/skills/observability.md` for logging/tracing implementation
 
-> [!IMPORTANT]
-> Restrict service accounts and roles to the absolute minimum required permission set.
+## Container Standards
 
-#### Instructions
+### Multi-Stage Builds
 
-- **Isolation:** Each environment (Production, Staging, Dev) must have separate accounts and IAM roles. Never share state or credentials across environments.
-- **Secrets Management:** Use AWS Secrets Manager, GCP Secret Manager, or Vault. Never pass secrets via plaintext environment variables or commit them to source control.
-  </rule>
-
-### Rule: Configuration Fail-Fast
-
-<rule name="ConfigFailFast">
-
-> [!IMPORTANT]
-> Applies **Law 2 (Hardening)** to infrastructure. If the environment is incomplete, crash immediately with a clear error — never limp forward with missing config.
-
-#### Instructions
-
-- **Validate on startup:** Check all required environment variables before the application serves any traffic. If any are missing, exit with a descriptive error listing the missing keys.
-- **No silent defaults for secrets:** Values like `DATABASE_URL`, `JWT_SECRET`, or API keys must never fall back to a default. An empty secret is a security incident waiting to happen.
-- **Config schema:** Define and validate the config shape at boot (e.g., Zod, Pydantic, envy) so misconfiguration is caught at deploy time, not at runtime under load.
-  </rule>
-
-### Rule: Cloud Observability
-
-<rule name="CloudObservability">
-
-> [!NOTE]
-> Every cloud service must be observable. If you can't see it, you can't operate it.
-> For structured logging and tracing implementation, see `.ai/skills/observability.md`.
-
-#### Instructions
-
-- **Health endpoint:** Every service exposes `/health` returning dependency status and uptime. Platform load balancers use this to route traffic — a missing health check means blind deployments.
-- **RED metrics:** Track Rate, Errors, and Duration for every external-facing endpoint.
-- **Centralized logs:** Ship structured logs to a central sink (CloudWatch, Datadog, GCP Logging). Never rely on local disk logs in a cloud environment — containers are ephemeral.
-  </rule>
-
----
-
-## Part 2 — Container Standards
-
-### Rule: Multi-Stage Builds
-
-<rule name="MultiStageBuilds">
-
-> [!IMPORTANT]
-> Keep your images small and fast by separating the build environment from the production runtime.
-
-#### Instructions
-
-- **Base Image:** Use slim versions (Alpine or Distroless) for the final runtime image.
-- **Optimization:** Run `npm install` or `dotnet build` in a separate stage to avoid bloating the final artifact.
-
-#### ✅ Good Example
+- Slim base images (Alpine/Distroless) for final runtime
+- `npm install`/`dotnet build` in separate build stage
 
 ```dockerfile
-# Stage 1: Build
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY . .
 RUN npm ci && npm run build
 
-# Stage 2: Runtime
 FROM node:22-alpine AS runner
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
@@ -98,82 +50,39 @@ USER node
 CMD ["node", "dist/index.js"]
 ```
 
-</rule>
+### Security & Privileges
 
-### Rule: Security & User Privileges
+- Never run containers as root; `USER node` (or `USER app`) before CMD
+- Mount volumes read-only when possible
 
-<rule name="SecurityPrivileges">
+### Health Checks
 
-> [!IMPORTANT]
-> Never run containers as 'root'. Use a dedicated user.
-
-#### Instructions
-
-- **USER Instruction:** Add `USER node` (or `USER app`) before the CMD.
-- **Read-Only:** Mount volumes as read-only whenever possible.
-  </rule>
-
-### Rule: Health Checks
-
-<rule name="ContainerHealthCheck">
-
-> [!IMPORTANT]
-> Every container must declare a `HEALTHCHECK`. Orchestrators (Docker Swarm, Kubernetes) use this to route traffic and restart unhealthy replicas.
-
-#### Instructions
-
-- **Dockerfile HEALTHCHECK:** Point to the `/health` endpoint of the service.
-- **Interval:** Check every 30s with a 10s timeout and 3 retries before marking unhealthy.
+- Every container declares a `HEALTHCHECK`; orchestrators use it for routing/restart
 
 ```dockerfile
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
   CMD wget -qO- http://localhost:3000/health || exit 1
 ```
 
-- **Start period:** Allow sufficient warm-up time (`--start-period`) for services that need to connect to the database before being ready.
-  </rule>
+### Env Var Injection
 
-### Rule: Environment Variable Injection
+- Never bake secrets into images; images must be env-agnostic
+- `ARG` for build-time; runtime env vars for config/secrets; never `ENV` for secrets
+- No defaults for secret values in Dockerfile; `.env` for local dev only
 
-<rule name="EnvVarInjection">
+### Resource Limits
 
-> [!NOTE]
-> Never bake secrets or environment-specific values into the image. Images must be environment-agnostic.
-
-#### Instructions
-
-- **`ENV` vs `ARG`:** Use `ARG` for build-time values (e.g., Node version, build number). Use runtime env vars (injected via `docker run -e` or orchestrator secrets) for config and secrets — never `ENV` for secrets.
-- **No defaults for secrets:** Do not set default values for `DATABASE_URL`, `JWT_SECRET`, or API keys in the Dockerfile. Fail fast if they are missing at startup (see `ConfigFailFast` rule above).
-- **`.env` files:** For local development only, loaded via `docker-compose`. Never ship `.env` files inside an image.
-  </rule>
-
-### Rule: Resource Limits
-
-<rule name="ResourceLimits">
-
-> [!CAUTION]
-> A container without resource limits can starve the host and take down all co-located services.
-
-#### Instructions
-
-- **Always set limits** for memory and CPU in production deployments (docker-compose, Kubernetes manifests, ECS task definitions).
-- **Start conservative:** Begin with limits below the observed peak and tune upward with data.
+- Always set memory/CPU limits in production (compose, K8s, ECS)
+- Start conservative; tune upward with data
+- OOMKilled = investigate, don't silently restart
 
 ```yaml
-# docker-compose example
 services:
   api:
     deploy:
       resources:
-        limits:
-          memory: 512m
-          cpus: '0.5'
-        reservations:
-          memory: 256m
-          cpus: '0.25'
+        limits: { memory: 512m, cpus: '0.5' }
+        reservations: { memory: 256m, cpus: '0.25' }
 ```
-
-- **OOMKilled is a signal:** If a container is killed for exceeding memory, increase the limit or investigate the memory leak — do not silently restart.
-  </rule>
 
 </ruleset>
