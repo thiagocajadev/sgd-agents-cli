@@ -213,7 +213,7 @@ function checkSovereignCompliance() {
 }
 
 function checkBacklogHealth() {
-  const backlogDir = path.join(PROJECT_ROOT, '.ai-backlog');
+  const backlogDir = path.join(PROJECT_ROOT, '.ai', 'backlog');
   if (!fs.existsSync(backlogDir)) {
     const missingBacklogResult = { isFailure: false, message: 'Backlog not initialized' };
     return missingBacklogResult;

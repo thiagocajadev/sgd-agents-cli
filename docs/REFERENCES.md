@@ -12,7 +12,7 @@ Caveman philosophy (by Julius Brussee) advocates for a high-density, low-token i
 ### [Context-mode](https://github.com/mksglu/context-mode)
 
 **Treat the context window as a finite resource.**
-The context-mode philosophy focuses on just-in-time loading and externalized memory. We implement this through our `.ai-backlog/` and `impact-map.md` mechanics, ensuring the agent only loads what is strictly necessary for the active cycle.
+The context-mode philosophy focuses on just-in-time loading and externalized memory. We implement this through our `.ai/backlog/` and `impact-map.md` mechanics, ensuring the agent only loads what is strictly necessary for the active cycle.
 
 ### [Writing Soul](https://github.com/hardikpandya/stop-slop)
 

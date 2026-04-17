@@ -7,7 +7,7 @@
 Two purposes:
 
 1. **Cycle Closure**: Closes active `feat:`, `fix:`, `docs:`, or `land:` cycle through standard END checklist.
-2. **Mid-Conversation Recovery**: If agent lost cycle state, re-read `.ai-backlog/tasks.md` and reconstruct before running checklist.
+2. **Mid-Conversation Recovery**: If agent lost cycle state, re-read `.ai/backlog/tasks.md` and reconstruct before running checklist.
 
 **NEVER BYPASS THE BUMP**: Semantic pipeline (`npm run bump`) is MANDATORY across all cycle types. Run before every release commit.
 

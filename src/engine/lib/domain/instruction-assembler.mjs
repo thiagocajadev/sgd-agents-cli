@@ -127,8 +127,8 @@ function buildMasterInstructions(selections) {
     const sessionStartString = dedent`
       ## Session Start
 
-      1. Read \`.ai-backlog/context.md\` — project brief. If missing, generate from \`package.json\` + \`README.md\`.
-      2. Read \`.ai-backlog/tasks.md\` — check for \`[IN_PROGRESS]\`. If found: load workflow.md and resume.`;
+      1. Read \`.ai/backlog/context.md\` — project brief. If missing, generate from \`package.json\` + \`README.md\`.
+      2. Read \`.ai/backlog/tasks.md\` — check for \`[IN_PROGRESS]\`. If found: load workflow.md and resume.`;
 
     return sessionStartString;
   }
@@ -231,11 +231,11 @@ function buildMasterInstructions(selections) {
 }
 
 /**
- * Writes .ai-backlog/context.md and .ai-backlog/tasks.md at the project root.
+ * Writes .ai/backlog/context.md and .ai/backlog/tasks.md at the project root.
  * Only writes each file if it does not already exist — never overwrites user content.
  */
 function writeBacklogFiles(targetDirectory, selections) {
-  const backlogDirectory = path.join(targetDirectory, '.ai-backlog');
+  const backlogDirectory = path.join(targetDirectory, '.ai', 'backlog');
   fs.mkdirSync(backlogDirectory, { recursive: true });
 
   writeContextFile(backlogDirectory, targetDirectory, selections);
@@ -397,7 +397,7 @@ function writeGitignore(targetDirectory) {
     },
     {
       header: '# AI artifacts — session state, not project logic',
-      entries: ['.ai-backlog/', 'tmp/', 'temp/'],
+      entries: ['.ai/backlog/', 'tmp/', 'temp/'],
     },
   ];
 

@@ -26,8 +26,8 @@ The instruction set covers:
 - **Language idioms**: idiomatic conventions for your specific stack (JS, TS, Python, C#, Java, Kotlin, Go, Rust, Swift, Flutter, SQL, VB.NET).
 - **Architectural flavors**: rules for your project's structural pattern (vertical slice, MVC, lite, legacy).
 - **Any-agent compatible**: a single canonical `.ai/skills/AGENTS.md` that any AI agent (Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini, Cline/Roo) can reference. `CLAUDE.md` is auto-generated at the repo root for Claude Code; other tools are wired up by a one-line pointer (see "Using with other IDEs" below).
-- **Harness Engineering (Memory)**: a `.ai-backlog/` folder that persists context and task state across sessions.
-- **Impact Map**: a volatile blast-radius file (`.ai-backlog/impact-map.md`) created at Phase PLAN and cleared at Phase END — tells the agent exactly which files to load for the current cycle, keeping context lean and focused.
+- **Harness Engineering (Memory)**: a `.ai/backlog/` folder that persists context and task state across sessions.
+- **Impact Map**: a volatile blast-radius file (`.ai/backlog/impact-map.md`) created at Phase PLAN and cleared at Phase END — tells the agent exactly which files to load for the current cycle, keeping context lean and focused.
 
 ---
 
@@ -71,9 +71,9 @@ your-project/
 │   │   ├── security.md
 │   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)
 │   ├── instructions/            ← Flavors, idioms, competencies, templates
-│   └── commands/                ← Cycle commands (feat/fix/docs/audit/land/end)
-└── .ai-backlog/                 ← Harness Engineering (Memory) — gitignored
-    └── ...                      ← (See docs/PROJECT-STRUCTURE.md for details)
+│   ├── commands/                ← Cycle commands (feat/fix/docs/audit/land/end)
+│   └── backlog/                 ← Harness Engineering (Memory) — gitignored, local working state
+│       └── ...                  ← (See docs/PROJECT-STRUCTURE.md for details)
 ```
 
 `.ai/skills/AGENTS.md` is a minimal router: it lists all available skills and loads them on demand. Only `workflow.md` (the 5-phase protocol) is always in context — everything else activates only when the current cycle needs it.

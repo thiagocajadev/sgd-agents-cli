@@ -42,7 +42,7 @@ function printSuccessAgents(targetDir) {
   console.log('  ' + '─'.repeat(55));
   console.log(`  Project: ${targetDir}\n`);
   console.log('  .ai/                     (governance — canonical AGENTS.md lives here)');
-  console.log('  .ai-backlog/             (gitignored)');
+  console.log('  .ai/backlog/             (gitignored — local working state)');
   console.log('  CLAUDE.md                (pointer at repo root — auto-loaded by Claude Code)');
   printActivationGuide();
 }
@@ -52,7 +52,7 @@ function printQuickSuccess(targetDir) {
   console.log('  ' + '─'.repeat(55));
   console.log(`  Project: ${targetDir}\n`);
   console.log('  .ai/                     (governance — canonical AGENTS.md lives here)');
-  console.log('  .ai-backlog/             (gitignored)');
+  console.log('  .ai/backlog/             (gitignored — local working state)');
   console.log('  CLAUDE.md                (pointer at repo root — auto-loaded by Claude Code)');
   printActivationGuide();
 }

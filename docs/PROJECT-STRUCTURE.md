@@ -25,13 +25,14 @@ your-project/
 │   │   ├── flavors/             ← Architectural patterns (vertical-slice, mvc, lite, legacy)
 │   │   ├── idioms/              ← Language conventions (typescript, python, go, etc.)
 │   │   └── competencies/        ← Layer rules (frontend, backend)
-│   └── commands/                ← Cycle command files (feat/fix/docs/audit/land/end)
-└── .ai-backlog/                 ← Harness Engineering (Memory) — gitignored
-    ├── context.md               ← Project brief: stack, tech decisions, current state
-    ├── tasks.md                 ← Task list (TODO / IN_PROGRESS / DONE)
-    ├── learned.md               ← Lessons learned: success patterns and research findings
-    ├── troubleshoot.md          ← Troubleshooting: RCA logs and critical failure records
-    └── impact-map.md            ← Blast-radius map: volatile, created at PLAN, cleared at END
+│   ├── commands/                ← Cycle command files (feat/fix/docs/audit/land/end)
+│   └── backlog/                 ← Harness Engineering (Memory) — gitignored, local working state
+│       ├── context.md           ← Project brief: stack, tech decisions, current state
+│       ├── tasks.md             ← Task list (TODO / IN_PROGRESS / DONE)
+│       ├── learned.md           ← Lessons learned: success patterns and research findings
+│       ├── troubleshoot.md      ← Troubleshooting: RCA logs and critical failure records
+│       └── impact-map.md        ← Blast-radius map: volatile, created at PLAN, cleared at END
+└── (agent-specific root files — see below)
 ```
 
 Agent-specific root files are also written based on which agents are selected during init: `CLAUDE.md` (Claude Code), `.cursor/rules/` (Cursor), `.windsurfrules` (Windsurf), `.github/copilot-instructions.md` (GitHub Copilot), `AGENTS.md` (Codex), `GEMINI.md` (Gemini), `.roo/rules/` (Roo Code).
@@ -74,7 +75,7 @@ Domain skills. Each covers its concern end-to-end — for example, `api-design.m
 
 - `workflow.md` — The 5-phase Working Protocol (SPEC → PLAN → CODE → TEST → END), Task Handoff rule, Token Discipline rule. This is the **only** file that is always in context beyond `AGENTS.md`.
 - `agent-roles.md` — Multi-agent handoff protocol (Planning + Fast roles).
-- `context.md`, `tasks.md`, `learned.md`, `troubleshoot.md` — Templates for the `.ai-backlog/` files.
+- `context.md`, `tasks.md`, `learned.md`, `troubleshoot.md` — Templates for the `.ai/backlog/` files.
 
 ### instructions/flavors/
 
@@ -105,7 +106,7 @@ These files are not loaded on session start — only when the relevant cycle beg
 
 ---
 
-## .ai-backlog/
+## .ai/backlog/
 
 Gitignored. Persists project state across sessions so any agent — in any session — can pick up where the last one stopped.
 
@@ -153,8 +154,8 @@ This design is inspired by the structural philosophy of [code-review-graph](http
 
 | Phase | Files read                                                                                               |
 | :---- | :------------------------------------------------------------------------------------------------------- |
-| SPEC  | `commands/sdg-<cycle>.md`, `.ai-backlog/context.md`, `.ai-backlog/tasks.md`                              |
-| PLAN  | `.ai-backlog/tasks.md`, `.ai-backlog/impact-map.md` (written here via `git diff`)                        |
-| CODE  | `skills/staff-dna.md`, `skills/code-style.md` + domain skills on demand, `.ai-backlog/impact-map.md`     |
+| SPEC  | `commands/sdg-<cycle>.md`, `.ai/backlog/context.md`, `.ai/backlog/tasks.md`                              |
+| PLAN  | `.ai/backlog/tasks.md`, `.ai/backlog/impact-map.md` (written here via `git diff`)                        |
+| CODE  | `skills/staff-dna.md`, `skills/code-style.md` + domain skills on demand, `.ai/backlog/impact-map.md`     |
 | TEST  | `skills/testing.md` — Includes **Audit Gate** (drift detection) and **Circuit Breaker** (3-strike rule)  |
-| END   | `.ai-backlog/context.md`, `.ai-backlog/tasks.md`, `learned.md`, `troubleshoot.md`, `commands/sdg-end.md` |
+| END   | `.ai/backlog/context.md`, `.ai/backlog/tasks.md`, `learned.md`, `troubleshoot.md`, `commands/sdg-end.md` |

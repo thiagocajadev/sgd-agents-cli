@@ -76,6 +76,13 @@ async function orchestrateCleanup(targetDirectory, options = {}) {
     return abortResult;
   }
 
+  const backlogConfirmed = await confirmBacklogDeletion(existingItems);
+  if (!backlogConfirmed) {
+    console.log('\n  Aborted. No files were deleted.\n');
+    const abortResult = success();
+    return abortResult;
+  }
+
   executeCleanup(existingItems);
 
   console.log('\n  ✨ Project cleared successfully!\n');
@@ -100,6 +107,27 @@ function printItemsToRemove(items) {
   }
 }
 
+async function confirmBacklogDeletion(items) {
+  const backlogsWithContent = findBacklogsAtRisk(items);
+
+  if (backlogsWithContent.length === 0) return true;
+
+  console.log('\n  ┌──────────────────────────────────────────────────────┐ ');
+  console.log('  │  ⚠️  LOCAL BACKLOG CONTAINS WORKING STATE             │ ');
+  console.log('  │  tasks.md, learned.md, troubleshoot.md are NOT in git │ ');
+  console.log('  │  Deletion is permanent. No recovery from remote.      │ ');
+  console.log('  └──────────────────────────────────────────────────────┘ ');
+  for (const backlogPath of backlogsWithContent) {
+    console.log(`  - ${backlogPath}`);
+  }
+
+  const backlogConfirmed = await confirm({
+    message: '\n  Delete local backlog anyway?',
+    default: false,
+  });
+  return backlogConfirmed;
+}
+
 function executeCleanup(items) {
   console.log('\n  Cleaning up...');
 
@@ -118,8 +146,23 @@ function executeCleanup(items) {
   }
 }
 
+function findBacklogsAtRisk(items) {
+  const backlogPaths = items
+    .filter((item) => item.name === '.ai' || item.name.endsWith('/.ai'))
+    .map((aiItem) => path.join(aiItem.fullPath, 'backlog'));
+
+  const populatedBacklogs = backlogPaths.filter((backlogPath) => {
+    if (!fs.existsSync(backlogPath)) return false;
+    const isPopulated = fs.readdirSync(backlogPath).length > 0;
+    return isPopulated;
+  });
+
+  return populatedBacklogs;
+}
+
 export const Cleaner = {
   run,
+  findBacklogsAtRisk,
 };
 
 runIfDirect(import.meta.url, run);

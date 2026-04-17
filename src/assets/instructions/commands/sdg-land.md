@@ -6,8 +6,8 @@ Landing on project: $ARGUMENTS. Runs once before the first `feat:` — turns raw
 
 ## Outputs
 
-- `## Vision` section → `.ai-backlog/context.md`
-- Ordered epics → `.ai-backlog/tasks.md`
+- `## Vision` section → `.ai/backlog/context.md`
+- Ordered epics → `.ai/backlog/tasks.md`
 - STOP — explicit approval required before any `feat:`
 
 ## Phase: VISION — MODE: PLANNING

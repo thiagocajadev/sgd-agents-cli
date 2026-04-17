@@ -26,8 +26,8 @@ O conjunto de instruções cobre:
 - **Idiomas de linguagem**: convenções idiomáticas para o seu stack (JS, TS, Python, C#, Java, Kotlin, Go, Rust, Swift, Flutter, SQL, VB.NET).
 - **Flavors arquiteturais**: regras para o padrão estrutural do projeto (vertical slice, MVC, lite, legacy).
 - **Compatível com qualquer agente**: uma única fonte canônica em `.ai/skills/AGENTS.md` que qualquer agente de IA (Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini, Cline/Roo) pode referenciar. O `CLAUDE.md` é gerado automaticamente na raiz para o Claude Code; outras ferramentas são conectadas com um ponteiro de uma linha (veja "Usando com outras IDEs" abaixo).
-- **Harness Engineering (Memory)**: uma pasta `.ai-backlog/` que persiste contexto e estado de tarefas entre sessões.
-- **Impact Map**: um arquivo volátil de blast-radius (`.ai-backlog/impact-map.md`) criado no Phase PLAN e limpo no Phase END — diz ao agente exatamente quais arquivos carregar no ciclo atual, mantendo o contexto enxuto e focado.
+- **Harness Engineering (Memory)**: uma pasta `.ai/backlog/` que persiste contexto e estado de tarefas entre sessões.
+- **Impact Map**: um arquivo volátil de blast-radius (`.ai/backlog/impact-map.md`) criado no Phase PLAN e limpo no Phase END — diz ao agente exatamente quais arquivos carregar no ciclo atual, mantendo o contexto enxuto e focado.
 
 ---
 
@@ -71,9 +71,9 @@ seu-projeto/
 │   │   ├── security.md
 │   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)
 │   ├── instructions/            ← Flavors, idiomas, competências, templates
-│   └── commands/                ← Comandos de ciclo (feat/fix/docs/audit/land/end)
-└── .ai-backlog/                 ← Harness Engineering (Memory) — gitignored
-    └── ...                      ← (Veja docs/PROJECT-STRUCTURE.md para detalhes)
+│   ├── commands/                ← Comandos de ciclo (feat/fix/docs/audit/land/end)
+│   └── backlog/                 ← Harness Engineering (Memory) — gitignored, estado local de trabalho
+│       └── ...                  ← (Veja docs/PROJECT-STRUCTURE.md para detalhes)
 ```
 
 `.ai/skills/AGENTS.md` é um roteador mínimo: lista todas as skills disponíveis e as carrega sob demanda. Apenas `workflow.md` (o protocolo de 5 fases) fica sempre em contexto — tudo mais só é ativado quando o ciclo atual precisa.

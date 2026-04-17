@@ -47,8 +47,8 @@
 2. **Logical Sequencing**: Order by dependency.
 3. **Effort Tagging**: `[S]` small, `[M]` medium, `[L]` large (must split).
 4. **Sub-task Split**: Every `[L]` → numbered steps (1.1, 1.2...).
-5. **Backlog Sync**: Save to `.ai-backlog/tasks.md`, mark first as in-progress.
-6. **Impact Map**: Write `.ai-backlog/impact-map.md`. `git diff --name-only HEAD` for changed files. Trace imports for dependents. Sections: `## Changed`, `## Blast Radius`, `## Tests at Risk`, `## Safe`.
+5. **Backlog Sync**: Save to `.ai/backlog/tasks.md`, mark first as in-progress.
+6. **Impact Map**: Write `.ai/backlog/impact-map.md`. `git diff --name-only HEAD` for changed files. Trace imports for dependents. Sections: `## Changed`, `## Blast Radius`, `## Tests at Risk`, `## Safe`.
 7. **Cost Estimate**: `wc -c` on Changed + Blast Radius files. Sum / 4 + context + 8K overhead. Show: `Task estimate: ~N tokens`.
 8. **Approval Gate**: Stop. Wait for approval.
 
@@ -101,7 +101,7 @@
 
 <rule name="TaskHandoff">
 
-`.ai-backlog/tasks.md` is the SSOT for work state. Any agent, any session can continue.
+`.ai/backlog/tasks.md` is the SSOT for work state. Any agent, any session can continue.
 
 **Checkpoint** (after each atomic task): Mark `[DONE]` → `## Done`. Next task → `## Active` as `[IN_PROGRESS]` with context note.
 
