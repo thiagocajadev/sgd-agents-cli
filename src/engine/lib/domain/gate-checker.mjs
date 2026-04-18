@@ -22,14 +22,23 @@ function checkResult(jsonInput) {
 
 function parseJson(rawInput) {
   try {
-    const trimmed = rawInput.trim();
-    const value = JSON.parse(trimmed);
+    const stripped = stripFences(rawInput.trim());
+    const value = JSON.parse(stripped);
     const successResult = { isSuccess: true, value };
     return successResult;
   } catch {
     const failResult = { isSuccess: false, error: 'Invalid JSON from LLM output' };
     return failResult;
   }
+}
+
+function stripFences(text) {
+  const isFenced = text.startsWith('```');
+  if (!isFenced) {
+    return text;
+  }
+  const stripped = text.replace(/^```(?:json)?\s*\n?/, '').replace(/\n?```\s*$/, '');
+  return stripped;
 }
 
 function filterBlockViolations(violations) {

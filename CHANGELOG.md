@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [3.6.0] - 2026-04-18
+
+### Added
+
+### Fixed
+
+- **`gate-checker` strips markdown fences from LLM output**: `parseJson` now calls `stripFences()` before `JSON.parse`, handling ` ```json ``` ` and ` ``` ``` ` wrappers that most LLMs emit despite the "ONLY valid JSON" prompt instruction. Without this fix the real-world pipeline was silently skipping every review.
+- **`sdg-rules.json` rule descriptions calibrated via dogfooding**: `named-const-before-call` description now explicitly states the violation is at the argument position — not in variable assignment RHS, object property values, or array elements. `taboo-nouns` now states the full identifier must equal the banned word — compound names like `packageData`, `ruleObj`, `existingItems` are not violations. Reduces LLM false positive rate observed during 3-round audit against the sdg-agents-cli codebase itself.
+
 ## [3.5.0] - 2026-04-18
 
 ### Added

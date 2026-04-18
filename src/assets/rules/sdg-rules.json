@@ -41,14 +41,14 @@
     {
       "id": "named-const-before-call",
       "tier": "BLOCK",
-      "description": "No computed expression (function call, method call, ternary) passed directly as an argument to any function call. Extract into a named const first. Applies to assertions, throw, console.log, and all callsites.",
+      "description": "No computed expression (function call, method call, ternary) passed directly as an argument in a function call. The violation is at the argument position — not in variable assignment RHS, object property values, or array elements. Extract into a named const first. Applies to all callsites: assert, throw, console.log, and all function invocations.",
       "exampleViolation": "assert.ok(Array.isArray(actual.block));\nassert.ok(actual.block.every(r => r.tier === 'BLOCK'));",
       "exampleFix": "const isBlockArray = Array.isArray(actual.block);\nconst hasOnlyBlockRules = actual.block.every(r => r.tier === 'BLOCK');\nassert.ok(isBlockArray);\nassert.ok(hasOnlyBlockRules);"
     },
     {
       "id": "taboo-nouns",
       "tier": "BLOCK",
-      "description": "Variable and parameter names must not use banned nouns: data, info, obj, item, thing, res, req, ctx, cb, fn, val, tmp, arr.",
+      "description": "Variable and parameter names must not be exactly a banned noun (standalone, not as part of a compound name). The full identifier must equal the banned word — compound names like `packageData`, `ruleObj`, `existingItems` are not violations. Banned nouns: data, info, obj, item, thing, res, req, ctx, cb, fn, val, tmp, arr.",
       "banned": [
         "data",
         "info",
