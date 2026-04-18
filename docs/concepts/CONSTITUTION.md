@@ -6,7 +6,7 @@ This document defines the philosophical and technical foundation of `sdg-agents`
 
 The developer sets direction and approves decisions. The agent handles execution — reading the codebase, proposing a structured plan, writing the code, and running the tests. The agent stops at SPEC and PLAN for explicit approval before proceeding.
 
-This document is the mental model for developers. The technical rules the agent follows are in [`.ai/skills/staff-dna.md`](../src/assets/skills/staff-dna.md).
+This document is the mental model for developers. The technical rules the agent follows are in [`.ai/skills/staff-dna.md`](../../src/assets/skills/staff-dna.md).
 
 ---
 

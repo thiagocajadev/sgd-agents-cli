@@ -239,7 +239,9 @@ function checkBacklogHealth() {
 
 function checkSoulPulse() {
   const requiredFiles = ['README.md'];
-  const maintainerOnlyFiles = isMaintainerMode() ? ['docs/README.pt-BR.md', 'docs/ROADMAP.md'] : [];
+  const maintainerOnlyFiles = isMaintainerMode()
+    ? ['docs/i18n/README.pt-BR.md', 'docs/ROADMAP.md']
+    : [];
   const files = [...requiredFiles, ...maintainerOnlyFiles];
   const missing = files.filter((file) => !fs.existsSync(path.join(PROJECT_ROOT, file)));
   const soulPulse = { isFailure: missing.length > 0, missing };

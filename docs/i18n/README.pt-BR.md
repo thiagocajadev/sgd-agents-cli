@@ -3,13 +3,13 @@
   <h1 align="center">Spec-Driven Guide — Agents</h1>
   <p align="center">
     Um CLI que instala um conjunto de instruções para agentes de IA no seu projeto.<br>
-    <a href="../README.md">Read in English</a>
+    <a href="../../README.md">Read in English</a>
   </p>
   <p align="center">
       Leia o manifesto e o guia visual em <a href="https://specdrivenguide.org">specdrivenguide.org</a>
   </p>
   <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D24-brightgreen?style=flat-square&logo=nodedotjs" alt="Node" /></a>
-  <a href="../LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square" alt="License: ISC" /></a>
+  <a href="../../LICENSE"><img src="https://img.shields.io/badge/license-ISC-blue?style=flat-square" alt="License: ISC" /></a>
 </div>
 
 <br>
@@ -73,14 +73,14 @@ seu-projeto/
 │   ├── instructions/            ← Flavors, idiomas, competências, templates
 │   ├── commands/                ← Comandos de ciclo (feat/fix/docs/audit/land/end)
 │   └── backlog/                 ← Harness Engineering (Memory) — gitignored, estado local de trabalho
-│       └── ...                  ← (Veja docs/PROJECT-STRUCTURE.md para detalhes)
+│       └── ...                  ← (Veja docs/reference/PROJECT-STRUCTURE.md para detalhes)
 ```
 
 `.ai/skills/AGENTS.md` é um roteador mínimo: lista todas as skills disponíveis e as carrega sob demanda. Apenas `workflow.md` (o protocolo de 5 fases) fica sempre em contexto — tudo mais só é ativado quando o ciclo atual precisa.
 
 O `CLAUDE.md` na raiz é um ponteiro fino que usa `@`-import para carregar `.ai/skills/AGENTS.md`, então o Claude Code carrega a governança automaticamente em toda sessão. Outras IDEs são conectadas apontando o arquivo de configuração nativo delas para a mesma fonte canônica — veja "Usando com outras IDEs" abaixo.
 
-> Para um detalhamento do papel de cada arquivo, veja [Estrutura do Projeto](PROJECT-STRUCTURE.md).
+> Para um detalhamento do papel de cada arquivo, veja [Estrutura do Projeto](../reference/PROJECT-STRUCTURE.md).
 
 ---
 
@@ -108,8 +108,8 @@ SPEC  →  PLAN  →  CODE  →  TEST  →  END
 
 > Digite `end:` para encerrar o ciclo ativo. O agente executa o checklist completo do END — changelog, sincronização do backlog, proposta de commit. Se o agente perder o fio numa conversa paralela, `end:` também recupera o ciclo.
 
-Para um guia detalhado de cada fase, veja [Guia Spec-Driven Development](SPEC-DRIVEN-DEV-GUIDE.md).
-Para um diagrama visual dos gates de decisão e loops internos, veja [Agent Deep-Flow](AGENT-DEEP-FLOW.md).
+Para um guia detalhado de cada fase, veja [Guia Spec-Driven Development](../concepts/SPEC-DRIVEN-DEV-GUIDE.md).
+Para um diagrama visual dos gates de decisão e loops internos, veja [Agent Deep-Flow](../concepts/AGENT-DEEP-FLOW.md).
 
 ---
 
@@ -124,7 +124,7 @@ Escolha o flavor que corresponde à estrutura do seu projeto:
 | `lite`           | Scaffold mínimo                           | Scripts, CLIs, utilitários          |
 | `legacy`         | Padrões bridge seguros para refatoração   | Migrando bases de código existentes |
 
-Para o diagrama de fluxo de dados de cada flavor, veja [Pipelines Arquiteturais](PIPELINES.md).
+Para o diagrama de fluxo de dados de cada flavor, veja [Pipelines Arquiteturais](../reference/PIPELINES.md).
 
 ---
 
@@ -160,7 +160,7 @@ O `sdg-agents` gera uma única fonte canônica em `.ai/skills/AGENTS.md` e um po
 | Gemini CLI       | `GEMINI.md`                       | Mesma linha de ponteiro.                                                                 |
 | Cline / Roo Code | `.clinerules`                     | Mesma linha de ponteiro.                                                                 |
 
-> **Quer um preset, voz ou skill customizado?** Cole o conteúdo do skill no seu agente como um prompt — do mesmo jeito que `docs/REFERENCES.md` documenta influências externas. Skills customizados não exigem subcomando CLI.
+> **Quer um preset, voz ou skill customizado?** Cole o conteúdo do skill no seu agente como um prompt — do mesmo jeito que `docs/reference/REFERENCES.md` documenta influências externas. Skills customizados não exigem subcomando CLI.
 
 ---
 
@@ -178,16 +178,16 @@ npx sdg-agents clear     # Remover a pasta .ai/
 
 ## Referência
 
-- [Referência Rápida (CHEATSHEET)](CHEATSHEET.md) — todos os flags do CLI e triggers do agente
-- [Estrutura do Projeto](PROJECT-STRUCTURE.md) — detalhamento de cada arquivo gerado
-- [Pipelines Arquiteturais](PIPELINES.md) — diagramas de fluxo por flavor
-- [Leis de Engenharia (CONSTITUTION)](CONSTITUTION.md) — os princípios por trás das regras
-- [Sistema UI/UX](UI-UX.md) — filosofia de design, hierarquia, escala tonal de superfície, presets e referências externas de pesquisa
-- [Roadmap](ROADMAP.md) — trabalho planejado
-- [Otimização de Tokens](TOKEN-OPTIMIZATION.md) — modelo de custo, processo de compactação e eficiência do roteador
-- [Migração v2 → v3](MIGRATION-v3.md) — breaking changes e guia de migração passo a passo
-- [Changelog](../CHANGELOG.md) — histórico de versões
-- [Créditos e Filosofias](REFERENCES.md) — influências do projeto e créditos de pesquisa
+- [Referência Rápida (CHEATSHEET)](../reference/CHEATSHEET.md) — todos os flags do CLI e triggers do agente
+- [Estrutura do Projeto](../reference/PROJECT-STRUCTURE.md) — detalhamento de cada arquivo gerado
+- [Pipelines Arquiteturais](../reference/PIPELINES.md) — diagramas de fluxo por flavor
+- [Leis de Engenharia (CONSTITUTION)](../concepts/CONSTITUTION.md) — os princípios por trás das regras
+- [Sistema UI/UX](../guides/UI-UX.md) — filosofia de design, hierarquia, escala tonal de superfície, presets e referências externas de pesquisa
+- [Roadmap](../ROADMAP.md) — trabalho planejado
+- [Otimização de Tokens](../guides/TOKEN-OPTIMIZATION.md) — modelo de custo, processo de compactação e eficiência do roteador
+- [Migração v2 → v3](../guides/MIGRATION-v3.md) — breaking changes e guia de migração passo a passo
+- [Changelog](../../CHANGELOG.md) — histórico de versões
+- [Créditos e Filosofias](../reference/REFERENCES.md) — influências do projeto e créditos de pesquisa
 
 ---
 

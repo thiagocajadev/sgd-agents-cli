@@ -2,7 +2,7 @@
 
 This page is a high-level tour of how `sdg-agents` handles UI/UX. It is for readers who want to understand **what the system does and where it comes from**, not for agents executing tasks.
 
-The enforceable rules live in a single file — [`.ai/skills/ui-ux.md`](../src/assets/skills/ui-ux.md). Agents load it on demand in Phase CODE when a task touches a visual surface. Everything below is a narrated map of that file, plus the external research that shaped it.
+The enforceable rules live in a single file — [`.ai/skills/ui-ux.md`](../../src/assets/skills/ui-ux.md). Agents load it on demand in Phase CODE when a task touches a visual surface. Everything below is a narrated map of that file, plus the external research that shaped it.
 
 ---
 
@@ -82,7 +82,7 @@ Components render; ViewModels decide. UI state, derived values, and mapping live
 
 ## Customizing the system
 
-`sdg-agents` does not ship a CLI subcommand for custom presets or voices. The single-source-of-truth governance model is intentional: one canonical `ui-ux.md` that teams extend by **pasting skill content directly into their agent as a prompt** — the same pattern [`docs/REFERENCES.md`](REFERENCES.md) uses to document external influences.
+`sdg-agents` does not ship a CLI subcommand for custom presets or voices. The single-source-of-truth governance model is intentional: one canonical `ui-ux.md` that teams extend by **pasting skill content directly into their agent as a prompt** — the same pattern [`docs/reference/REFERENCES.md`](../reference/REFERENCES.md) uses to document external influences.
 
 If you want a different preset, tone, or typographic voice, author a skill fragment and feed it to the agent at session start. No fork, no flag, no subcommand.
 
@@ -124,6 +124,6 @@ The UI/UX skill is built on public research and open-source work. The items belo
 
 ## Related docs
 
-- [Engineering Laws (CONSTITUTION)](CONSTITUTION.md) — Law 4 (Visual Excellence) is what `ui-ux.md` operationalizes.
-- [Spec-Driven Development Guide](SPEC-DRIVEN-DEV-GUIDE.md) — how the UI/UX skill plugs into the 5-phase cycle.
-- [Credits and Philosophies](REFERENCES.md) — the broader influences behind the whole project, not just UI/UX.
+- [Engineering Laws (CONSTITUTION)](../concepts/CONSTITUTION.md) — Law 4 (Visual Excellence) is what `ui-ux.md` operationalizes.
+- [Spec-Driven Development Guide](../concepts/SPEC-DRIVEN-DEV-GUIDE.md) — how the UI/UX skill plugs into the 5-phase cycle.
+- [Credits and Philosophies](../reference/REFERENCES.md) — the broader influences behind the whole project, not just UI/UX.

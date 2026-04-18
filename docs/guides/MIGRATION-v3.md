@@ -147,4 +147,4 @@ git commit -m "chore: migrate to sdg-agents v3"
 
 - Open an issue at [github.com/thiagocajadev/sgd-agents-cli](https://github.com/thiagocajadev/sgd-agents-cli).
 - Read the manifesto at [specdrivenguide.org](https://specdrivenguide.org).
-- For the philosophical foundation, see [CONSTITUTION.md](CONSTITUTION.md).
+- For the philosophical foundation, see [CONSTITUTION.md](../concepts/CONSTITUTION.md).

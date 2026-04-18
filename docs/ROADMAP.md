@@ -28,7 +28,7 @@ A major leap in technical maturity. Introduced the `audit:` command to detect "g
 
 ### v3.0 — Reformulation & Multi-Agent (Current)
 
-Complete architectural reformulation. `AGENTS.md` became a **semantic router** (~2.8KB) instead of a knowledge dump — skills load on-demand per cycle phase, not at session start. Multi-agent support (Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini, Roo Code) with agent stubs under `.ai/<agent>/`. Multi-idiom install (`--idiom typescript,python,go`). Engineering Laws renumbered 1–8. Token compaction across 39 files saved ~25K tokens (~118KB, 50% reduction). See [Token Optimization](TOKEN-OPTIMIZATION.md) and [Migration v2 → v3](MIGRATION-v3.md).
+Complete architectural reformulation. `AGENTS.md` became a **semantic router** (~2.8KB) instead of a knowledge dump — skills load on-demand per cycle phase, not at session start. Multi-agent support (Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini, Roo Code) with agent stubs under `.ai/<agent>/`. Multi-idiom install (`--idiom typescript,python,go`). Engineering Laws renumbered 1–8. Token compaction across 39 files saved ~25K tokens (~118KB, 50% reduction). See [Token Optimization](guides/TOKEN-OPTIMIZATION.md) and [Migration v2 → v3](guides/MIGRATION-v3.md).
 
 ### v3.1 — Global Instruction Registry
 

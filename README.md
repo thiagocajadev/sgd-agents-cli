@@ -3,7 +3,7 @@
   <h1 align="center">Spec-Driven Guide — Agents</h1>
   <p align="center">
     A CLI that installs a structured instruction set for AI agents into your project.<br>
-    <a href="docs/README.pt-BR.md">Versão em Português (Brasil)</a>
+    <a href="docs/i18n/README.pt-BR.md">Versão em Português (Brasil)</a>
   </p>
   <p align="center">
       Read the manifesto and visual guide at <a href="https://specdrivenguide.org">specdrivenguide.org</a>
@@ -73,14 +73,14 @@ your-project/
 │   ├── instructions/            ← Flavors, idioms, competencies, templates
 │   ├── commands/                ← Cycle commands (feat/fix/docs/audit/land/end)
 │   └── backlog/                 ← Harness Engineering (Memory) — gitignored, local working state
-│       └── ...                  ← (See docs/PROJECT-STRUCTURE.md for details)
+│       └── ...                  ← (See docs/reference/PROJECT-STRUCTURE.md for details)
 ```
 
 `.ai/skills/AGENTS.md` is a minimal router: it lists all available skills and loads them on demand. Only `workflow.md` (the 5-phase protocol) is always in context — everything else activates only when the current cycle needs it.
 
 `CLAUDE.md` at the repo root is a thin pointer that `@`-imports `.ai/skills/AGENTS.md`, so Claude Code auto-loads the governance on every session. Other IDEs are wired up by pointing their native config file at the same canonical file — see "Using with other IDEs" below.
 
-> For a detailed breakdown of each file's role, see [Project Structure](docs/PROJECT-STRUCTURE.md).
+> For a detailed breakdown of each file's role, see [Project Structure](docs/reference/PROJECT-STRUCTURE.md).
 
 ---
 
@@ -108,8 +108,8 @@ SPEC  →  PLAN  →  CODE  →  TEST  →  END
 
 > Type `end:` to close the active cycle. The agent runs the full END checklist — changelog, backlog sync, commit proposal. If the agent loses track mid-conversation, `end:` also recovers the cycle.
 
-For a detailed walkthrough of each phase and its rules, see [Spec-Driven Development Guide](docs/SPEC-DRIVEN-DEV-GUIDE.md).
-For a visual breakdown of the internal decision gates and loops, see [Agent Deep-Flow](docs/AGENT-DEEP-FLOW.md).
+For a detailed walkthrough of each phase and its rules, see [Spec-Driven Development Guide](docs/concepts/SPEC-DRIVEN-DEV-GUIDE.md).
+For a visual breakdown of the internal decision gates and loops, see [Agent Deep-Flow](docs/concepts/AGENT-DEEP-FLOW.md).
 
 ---
 
@@ -124,7 +124,7 @@ Select the flavor that matches your project's structure:
 | `lite`           | Minimal scaffold                        | Scripts, CLIs, utilities     |
 | `legacy`         | Refactor-safe bridge patterns           | Migrating existing codebases |
 
-For the data flow diagram of each flavor, see [Architectural Pipelines](docs/PIPELINES.md).
+For the data flow diagram of each flavor, see [Architectural Pipelines](docs/reference/PIPELINES.md).
 
 ---
 
@@ -160,7 +160,7 @@ To add or extend support for a language, paste the idiom skill file into your ag
 | Gemini CLI       | `GEMINI.md`                        | Same pointer line.                                                               |
 | Cline / Roo Code | `.clinerules`                      | Same pointer line.                                                               |
 
-> **Prefer a custom preset, voice, or skill?** Paste the skill content into your agent as a prompt — the same way `docs/REFERENCES.md` documents external influences. Custom skills do not require a CLI subcommand.
+> **Prefer a custom preset, voice, or skill?** Paste the skill content into your agent as a prompt — the same way `docs/reference/REFERENCES.md` documents external influences. Custom skills do not require a CLI subcommand.
 
 ---
 
@@ -178,16 +178,16 @@ npx sdg-agents clear     # Remove the .ai/ folder
 
 ## Reference
 
-- [Quick Reference (CHEATSHEET)](docs/CHEATSHEET.md) — all CLI flags and agent triggers
-- [Project Structure](docs/PROJECT-STRUCTURE.md) — detailed breakdown of every generated file
-- [Architectural Pipelines](docs/PIPELINES.md) — data flow diagrams for each flavor
-- [Engineering Laws (CONSTITUTION)](docs/CONSTITUTION.md) — the principles behind the rules
-- [UI/UX System](docs/UI-UX.md) — design philosophy, hierarchy, surface tonal scale, presets, and external research references
+- [Quick Reference (CHEATSHEET)](docs/reference/CHEATSHEET.md) — all CLI flags and agent triggers
+- [Project Structure](docs/reference/PROJECT-STRUCTURE.md) — detailed breakdown of every generated file
+- [Architectural Pipelines](docs/reference/PIPELINES.md) — data flow diagrams for each flavor
+- [Engineering Laws (CONSTITUTION)](docs/concepts/CONSTITUTION.md) — the principles behind the rules
+- [UI/UX System](docs/guides/UI-UX.md) — design philosophy, hierarchy, surface tonal scale, presets, and external research references
 - [Roadmap](docs/ROADMAP.md) — planned work
 - [Changelog](CHANGELOG.md) — release history
-- [Token Optimization](docs/TOKEN-OPTIMIZATION.md) — cost model, compaction process, and routing efficiency
-- [Migration v2 → v3](docs/MIGRATION-v3.md) — breaking changes and step-by-step migration guide
-- [Credits and Philosophies](docs/REFERENCES.md) — project influences and research credits
+- [Token Optimization](docs/guides/TOKEN-OPTIMIZATION.md) — cost model, compaction process, and routing efficiency
+- [Migration v2 → v3](docs/guides/MIGRATION-v3.md) — breaking changes and step-by-step migration guide
+- [Credits and Philosophies](docs/reference/REFERENCES.md) — project influences and research credits
 
 ---
 
