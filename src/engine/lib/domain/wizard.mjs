@@ -56,7 +56,7 @@ async function gatherUserSelections(targetDirectory = process.cwd()) {
       availableIdioms,
       targetDirectory,
     };
-    const stepResult = await executeWizardStep(step, context);
+    const stepResult = await dispatchWizardStep(step, context);
 
     if (stepResult.isFailure) {
       const stepFailure = stepResult;
@@ -64,7 +64,7 @@ async function gatherUserSelections(targetDirectory = process.cwd()) {
     }
 
     if (stepResult.value.mode === 'quick') {
-      const quickSetupData = handleQuickSetup();
+      const quickSetupData = buildQuickSetup();
       return quickSetupData;
     }
 
@@ -111,7 +111,7 @@ function applyStepResult(currentSelections, stepValue) {
   }
 }
 
-async function executeWizardStep(step, context) {
+async function dispatchWizardStep(step, context) {
   const STEP_HANDLERS = {
     [WIZARD_STEPS.INITIAL]: () => promptInitialChoice(),
     [WIZARD_STEPS.FLAVOR]: () => promptArchitectureFlavor(context),
@@ -152,7 +152,7 @@ async function promptInitialChoice() {
   return initialChoiceResult;
 }
 
-function handleQuickSetup() {
+function buildQuickSetup() {
   const quickSetupResult = success({
     mode: 'quick',
     flavor: 'lite',

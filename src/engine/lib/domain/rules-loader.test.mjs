@@ -103,5 +103,15 @@ describe('RulesLoader', () => {
       const hasExemption = rule.description.includes(expectedFragment);
       assert.ok(hasExemption);
     });
+
+    it('should prime method-call-as-boolean-subject case in named-const-before-call', () => {
+      const expectedFragment = 'assert.ok(actual.includes(expected))';
+
+      const actual = RulesLoader.loadRules();
+      const rule = actual.block.find((r) => r.id === 'named-const-before-call');
+
+      const hasMethodCallPriming = rule.description.includes(expectedFragment);
+      assert.ok(hasMethodCallPriming);
+    });
   });
 });

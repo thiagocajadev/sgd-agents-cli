@@ -83,7 +83,7 @@ describe('CliParser', () => {
 
       const actual = parseCliArgs(input);
 
-      assert.equal(actual.dryRun, expectedDryRun);
+      assert.equal(actual.isDryRun, expectedDryRun);
     });
 
     it('should parse --quick flag', () => {
@@ -147,8 +147,9 @@ describe('CliParser', () => {
       const expectedError = '--flavor is required';
 
       const actual = validateInit(input);
+      const hasExpectedError = actual.includes(expectedError);
 
-      assert.ok(actual.includes(expectedError));
+      assert.ok(hasExpectedError);
     });
 
     it('should return an error message if idioms are empty in non-interactive mode', () => {
@@ -156,8 +157,9 @@ describe('CliParser', () => {
       const expectedError = 'At least one --idiom is required';
 
       const actual = validateInit(input);
+      const hasExpectedError = actual.includes(expectedError);
 
-      assert.ok(actual.includes(expectedError));
+      assert.ok(hasExpectedError);
     });
   });
 });

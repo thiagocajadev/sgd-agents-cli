@@ -149,9 +149,11 @@ describe('InstructionAssembler', () => {
       const expectedSubstring2 = '.ai/skills/staff-dna.md';
 
       const actual = buildMasterInstructions(input);
+      const hasManifestoTitle = actual.includes(expectedSubstring1);
+      const hasStaffDnaLink = actual.includes(expectedSubstring2);
 
-      assert.ok(actual.includes(expectedSubstring1));
-      assert.ok(actual.includes(expectedSubstring2));
+      assert.ok(hasManifestoTitle);
+      assert.ok(hasStaffDnaLink);
     });
 
     it('should include Semantic Router with all cycle triggers', () => {
@@ -169,7 +171,9 @@ describe('InstructionAssembler', () => {
       const actual = buildMasterInstructions(input);
 
       expectedSubstrings.forEach((expected) => {
-        assert.ok(actual.includes(expected), `Missing: ${expected}`);
+        const hasExpectedTrigger = actual.includes(expected);
+        const missingTriggerMessage = `Missing: ${expected}`;
+        assert.ok(hasExpectedTrigger, missingTriggerMessage);
       });
     });
 
@@ -178,8 +182,9 @@ describe('InstructionAssembler', () => {
       const expectedSubstring = 'workflow.md';
 
       const actual = buildMasterInstructions(input);
+      const hasWorkflowReference = actual.includes(expectedSubstring);
 
-      assert.ok(actual.includes(expectedSubstring));
+      assert.ok(hasWorkflowReference);
     });
 
     it('should include Phase CODE skill loading section', () => {
@@ -187,8 +192,9 @@ describe('InstructionAssembler', () => {
       const expectedSubstring = '## Phase CODE';
 
       const actual = buildMasterInstructions(input);
+      const hasPhaseCodeHeader = actual.includes(expectedSubstring);
 
-      assert.ok(actual.includes(expectedSubstring));
+      assert.ok(hasPhaseCodeHeader);
     });
 
     it('should include backend competency link for backend-only idiom (go)', () => {
@@ -197,9 +203,11 @@ describe('InstructionAssembler', () => {
       const forbiddenSubstring = '.ai/instructions/competencies/frontend.md';
 
       const actual = buildMasterInstructions(input);
+      const hasBackendLink = actual.includes(expectedSubstring);
+      const hasNoFrontendLink = !actual.includes(forbiddenSubstring);
 
-      assert.ok(actual.includes(expectedSubstring));
-      assert.ok(!actual.includes(forbiddenSubstring));
+      assert.ok(hasBackendLink);
+      assert.ok(hasNoFrontendLink);
     });
 
     it('should include both competency links for fullstack idiom (typescript)', () => {
@@ -212,9 +220,11 @@ describe('InstructionAssembler', () => {
       const expectedSubstring2 = '.ai/instructions/competencies/frontend.md';
 
       const actual = buildMasterInstructions(input);
+      const hasBackendLink = actual.includes(expectedSubstring1);
+      const hasFrontendLink = actual.includes(expectedSubstring2);
 
-      assert.ok(actual.includes(expectedSubstring1));
-      assert.ok(actual.includes(expectedSubstring2));
+      assert.ok(hasBackendLink);
+      assert.ok(hasFrontendLink);
     });
 
     it('should include an instruction link for each idiom', () => {
@@ -227,9 +237,11 @@ describe('InstructionAssembler', () => {
       const expectedSubstring2 = 'idioms/python/patterns.md';
 
       const actual = buildMasterInstructions(input);
+      const hasTypescriptIdiom = actual.includes(expectedSubstring1);
+      const hasPythonIdiom = actual.includes(expectedSubstring2);
 
-      assert.ok(actual.includes(expectedSubstring1));
-      assert.ok(actual.includes(expectedSubstring2));
+      assert.ok(hasTypescriptIdiom);
+      assert.ok(hasPythonIdiom);
     });
 
     it('should unconditionally include Agent Roles block', () => {
@@ -242,9 +254,11 @@ describe('InstructionAssembler', () => {
       const expectedSubstring2 = 'agent-roles.md';
 
       const actual = buildMasterInstructions(input);
+      const hasAgentRolesHeader = actual.includes(expectedSubstring1);
+      const hasAgentRolesLink = actual.includes(expectedSubstring2);
 
-      assert.ok(actual.includes(expectedSubstring1));
-      assert.ok(actual.includes(expectedSubstring2));
+      assert.ok(hasAgentRolesHeader);
+      assert.ok(hasAgentRolesLink);
     });
 
     it('should classify testing/security/observability as surgical skills', () => {
@@ -252,21 +266,28 @@ describe('InstructionAssembler', () => {
       const expectedSubstring = '**Surgical**';
 
       const actual = buildMasterInstructions(input);
+      const hasSurgicalHeader = actual.includes(expectedSubstring);
+      const hasTestingSkill = actual.includes('testing.md');
+      const hasSecuritySkill = actual.includes('security.md');
+      const hasObservabilitySkill = actual.includes('observability.md');
 
-      assert.ok(actual.includes(expectedSubstring));
-      assert.ok(actual.includes('testing.md'));
-      assert.ok(actual.includes('security.md'));
-      assert.ok(actual.includes('observability.md'));
+      assert.ok(hasSurgicalHeader);
+      assert.ok(hasTestingSkill);
+      assert.ok(hasSecuritySkill);
+      assert.ok(hasObservabilitySkill);
     });
 
     it('should NOT include DNA-GATE or Working Protocol inline blocks', () => {
       const input = { flavor: 'lite', idioms: ['go'], versions: {} };
 
       const actual = buildMasterInstructions(input);
+      const hasNoDnaGateBlock = !actual.includes('DNA-GATE & MENTAL RESET');
+      const hasNoPhaseBanner = !actual.includes('PHASE EXECUTION IS MANDATORY');
+      const hasNoWorkingProtocolBlock = !actual.includes('## Working Protocol');
 
-      assert.ok(!actual.includes('DNA-GATE & MENTAL RESET'));
-      assert.ok(!actual.includes('PHASE EXECUTION IS MANDATORY'));
-      assert.ok(!actual.includes('## Working Protocol'));
+      assert.ok(hasNoDnaGateBlock);
+      assert.ok(hasNoPhaseBanner);
+      assert.ok(hasNoWorkingProtocolBlock);
     });
 
     it('should be significantly smaller than 2.7KB', () => {

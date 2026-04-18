@@ -289,7 +289,7 @@ function writeBacklogFiles(targetDirectory, selections) {
     }
 
     if (fs.existsSync(contextPath)) {
-      handleContextInjection(contextPath, partnerInfo);
+      injectPartnerSection(contextPath, partnerInfo);
       const injectedResult = undefined;
       return injectedResult;
     }
@@ -308,7 +308,7 @@ function writeBacklogFiles(targetDirectory, selections) {
     fs.writeFileSync(contextPath, contextContent);
   }
 
-  function handleContextInjection(contextPath, partnerInfo) {
+  function injectPartnerSection(contextPath, partnerInfo) {
     const existingContent = fs.readFileSync(contextPath, 'utf8');
     if (existingContent.includes('## Partner')) return;
 

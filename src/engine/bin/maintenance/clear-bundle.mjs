@@ -16,7 +16,7 @@ async function clearProject(targetDirectory = process.cwd(), options = {}) {
 }
 
 async function orchestrateCleanup(targetDirectory, options = {}) {
-  const dryRun = options.dryRun || process.argv.includes('--dry-run');
+  const isDryRun = options.isDryRun || process.argv.includes('--dry-run');
 
   console.log('\n  Spec Driven Guide — Clear Generated Content');
   console.log('  ' + '─'.repeat(50));
@@ -52,7 +52,7 @@ async function orchestrateCleanup(targetDirectory, options = {}) {
     return noContentResult;
   }
 
-  if (dryRun) {
+  if (isDryRun) {
     console.log('\n  [DRY RUN] The following items would be removed:');
     for (const entry of existingItems) {
       console.log(`  - ${entry.name}`);
@@ -85,7 +85,6 @@ async function orchestrateCleanup(targetDirectory, options = {}) {
 
   applyCleanup(existingItems);
 
-  console.log('\n  ✨ Project cleared successfully!\n');
   console.log('\n  ✨ Project cleared successfully!\n');
   const cleanupResult = success();
   return cleanupResult;

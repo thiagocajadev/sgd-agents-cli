@@ -44,7 +44,8 @@ describe('WizardUtils (Non-Interactive)', () => {
 
       assert.equal(actual.isFailure, expectedFailure);
       assert.equal(actual.error.code, expectedCode);
-      assert.ok(actual.error.message.includes(expectedInMessage));
+      const hasExpectedInMessage = actual.error.message.includes(expectedInMessage);
+      assert.ok(hasExpectedInMessage);
     });
 
     it('should reject empty idioms', () => {
@@ -76,7 +77,8 @@ describe('WizardUtils (Non-Interactive)', () => {
 
       assert.equal(actual.isFailure, expectedFailure);
       assert.equal(actual.error.code, expectedCode);
-      assert.ok(actual.error.message.includes(expectedInMessage));
+      const hasExpectedInMessage = actual.error.message.includes(expectedInMessage);
+      assert.ok(hasExpectedInMessage);
     });
 
     it('should accept multiple valid idioms', () => {

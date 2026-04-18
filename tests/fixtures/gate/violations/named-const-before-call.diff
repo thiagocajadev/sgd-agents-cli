@@ -7,3 +7,5 @@ index a1b2c3d..e4f5g6h 100644
 +      assert.ok(actualBytes < 2700, `Output is ${actualBytes} bytes`);
 +      assert.ok(!actual.includes(pattern), `Pattern leaked: ${pattern}`);
 +      assert.ok(h2Matches.length <= 5, `Too many sections`);
++      assert.ok(actual.includes(expectedSubstring));
++      assert.ok(actual.error.message.includes(expectedInMessage));

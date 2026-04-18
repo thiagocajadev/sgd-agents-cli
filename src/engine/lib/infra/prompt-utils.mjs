@@ -41,8 +41,8 @@ async function safeConfirm(options) {
     return isConfirmed;
   } catch (error) {
     if (isExitError(error)) {
-      const abortSignal = false;
-      return abortSignal;
+      const isAborted = false;
+      return isAborted;
     }
     throw error;
   }

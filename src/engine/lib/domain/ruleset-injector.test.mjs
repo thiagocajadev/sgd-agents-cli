@@ -221,7 +221,8 @@ describe('RulesetInjector', () => {
       const { directories: actual } = collectOutputSummary(inputSelections);
 
       expectedDirs.forEach((expected) => {
-        assert.ok(actual.includes(expected));
+        const hasExpectedDir = actual.includes(expected);
+        assert.ok(hasExpectedDir);
       });
     });
 
@@ -229,9 +230,11 @@ describe('RulesetInjector', () => {
       const inputSelections = { mode: 'agents', flavor: null, idioms: [] };
 
       const { directories: actual } = collectOutputSummary(inputSelections);
+      const hasNoFlavorDir = !actual.includes('.ai/instructions/flavor/');
+      const hasSkillsDir = actual.includes('.ai/skills/');
 
-      assert.ok(!actual.includes('.ai/instructions/flavor/'));
-      assert.ok(actual.includes('.ai/skills/'));
+      assert.ok(hasNoFlavorDir);
+      assert.ok(hasSkillsDir);
     });
   });
 });

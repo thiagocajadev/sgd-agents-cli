@@ -103,8 +103,8 @@ function evaluateVersionCondition(condition, targetNum) {
       return isStrictEqual;
     }
     default: {
-      const defaultMatch = true;
-      return defaultMatch;
+      const isDefaultMatch = true;
+      return isDefaultMatch;
     }
   }
 }

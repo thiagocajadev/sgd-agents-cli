@@ -61,7 +61,7 @@ async function orchestrateBuild(targetDirectory, options) {
 }
 
 async function buildNonInteractive(targetDirectory, options) {
-  const { dryRun = false, selections } = options;
+  const { isDryRun = false, selections } = options;
 
   const validationResult = validateSelections(selections);
   if (validationResult.isFailure) {
@@ -75,7 +75,7 @@ async function buildNonInteractive(targetDirectory, options) {
 
   const state = { step: 'execute', userSelections: selections };
   const result = await finalizeExecutionPhase(state, targetDirectory, {
-    dryRun,
+    isDryRun,
     skipConfirm: true,
   });
   if (result.isFailure) {
@@ -132,15 +132,15 @@ async function processSelectionPhase(state, targetDirectory) {
 }
 
 async function finalizeExecutionPhase(state, targetDirectory, options = {}) {
-  const { dryRun = false, skipConfirm = false } = options;
+  const { isDryRun = false, skipConfirm = false } = options;
   const selections = state.userSelections;
 
   if (selections.mode === 'quick') {
-    const quickModeResult = await buildQuickMode(state, targetDirectory, { dryRun });
+    const quickModeResult = await buildQuickMode(state, targetDirectory, { isDryRun });
     return quickModeResult;
   }
 
-  if (dryRun) {
+  if (isDryRun) {
     printDryRunPreview(selections, targetDirectory);
     state.step = 'done';
     const dryRunSuccess = success();
@@ -153,8 +153,8 @@ async function finalizeExecutionPhase(state, targetDirectory, options = {}) {
   return agentsModeResult;
 }
 
-async function buildQuickMode(state, targetDirectory, { dryRun }) {
-  if (dryRun) {
+async function buildQuickMode(state, targetDirectory, { isDryRun }) {
+  if (isDryRun) {
     const dryRunResult = abortForDryRun(state, targetDirectory, printQuickDryRun);
     return dryRunResult;
   }
@@ -246,7 +246,7 @@ bootstrapIfDirect(import.meta.url, launchFromCli);
 
 function launchFromCli() {
   const targetDirectory = process.argv[2] ?? process.cwd();
-  const dryRun = process.argv.includes('--dry-run');
-  const buildResult = run(path.resolve(targetDirectory), { dryRun });
+  const isDryRun = process.argv.includes('--dry-run');
+  const buildResult = run(path.resolve(targetDirectory), { isDryRun });
   return buildResult;
 }

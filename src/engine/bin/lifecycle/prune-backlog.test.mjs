@@ -57,8 +57,10 @@ describe('PruneBacklog.pruneBacklog()', () => {
     const actual = pruneBacklog(input, 3);
 
     assert.equal(actual.removed, expectedRemoved);
-    assert.ok(actual.pruned.includes('## Notes'));
-    assert.ok(actual.pruned.includes('- keep me intact'));
+    const hasNotesSection = actual.pruned.includes('## Notes');
+    const hasKeepMarker = actual.pruned.includes('- keep me intact');
+    assert.ok(hasNotesSection);
+    assert.ok(hasKeepMarker);
   });
 
   it('should be idempotent — second prune is no-op', () => {

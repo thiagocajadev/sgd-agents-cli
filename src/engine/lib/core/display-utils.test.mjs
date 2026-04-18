@@ -82,10 +82,14 @@ describe('DisplayUtils', () => {
       const expectedTruncationMarker = '[TRUNCATED 185 LINES]';
       const expectedLineCount = headLimit + tailLimit + 1; // head + message line + tail
 
-      assert.ok(actual.startsWith(expectedHeadStart));
-      assert.ok(actual.endsWith(expectedTailEnd));
-      assert.ok(actual.includes(expectedTruncationMarker));
-      assert.equal(actual.split('\n').length, expectedLineCount);
+      const startsWithHead = actual.startsWith(expectedHeadStart);
+      const endsWithTail = actual.endsWith(expectedTailEnd);
+      const hasTruncationMarker = actual.includes(expectedTruncationMarker);
+      const actualLineCount = actual.split('\n').length;
+      assert.ok(startsWithHead);
+      assert.ok(endsWithTail);
+      assert.ok(hasTruncationMarker);
+      assert.equal(actualLineCount, expectedLineCount);
     });
 
     it('should return empty string for empty input', () => {
@@ -105,9 +109,12 @@ describe('DisplayUtils', () => {
       const expectedReason = `REASON: ${summary}`;
       const expectedStatus = 'Contextual Snapshot';
 
-      assert.ok(actual.includes(expectedPrefix));
-      assert.ok(actual.includes(expectedReason));
-      assert.ok(actual.includes(expectedStatus));
+      const hasPrefix = actual.includes(expectedPrefix);
+      const hasReason = actual.includes(expectedReason);
+      const hasStatus = actual.includes(expectedStatus);
+      assert.ok(hasPrefix);
+      assert.ok(hasReason);
+      assert.ok(hasStatus);
     });
   });
 });

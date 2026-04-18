@@ -38,12 +38,12 @@ async function getLatestVersion() {
  */
 function isNewer(current, latest) {
   if (!current || !latest) {
-    const missingVersion = false;
-    return missingVersion;
+    const isMissingVersion = false;
+    return isMissingVersion;
   }
   if (current === latest) {
-    const sameVersion = false;
-    return sameVersion;
+    const isSameVersion = false;
+    return isSameVersion;
   }
 
   const currentParts = current.split('.').map(Number);

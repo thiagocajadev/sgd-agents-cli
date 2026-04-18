@@ -206,7 +206,7 @@ async function processInitSubcommand(args) {
     : null;
 
   const buildParams = {
-    dryRun: args.dryRun,
+    isDryRun: args.isDryRun,
     selections: selectionPayload,
   };
   const buildResult = await SpecDrivenGuide.run(args.targetDirectory, buildParams);
@@ -266,7 +266,9 @@ async function dispatchMenuAction(menuChoice, args) {
   switch (menuChoice) {
     case 'init': {
       const { SDG: SpecDrivenGuide } = await import('./init/build-bundle.mjs');
-      const initResult = await SpecDrivenGuide.run(args.targetDirectory, { dryRun: args.dryRun });
+      const initResult = await SpecDrivenGuide.run(args.targetDirectory, {
+        isDryRun: args.isDryRun,
+      });
       return initResult;
     }
     case 'settings': {

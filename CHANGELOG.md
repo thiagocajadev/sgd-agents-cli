@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [3.8.0] - 2026-04-18
+
+### Added
+
+### Fixed
+
+- **Engine full-scan fix sweep + `named-const-before-call` form (a) detector gap closure**: full manual audit of `src/engine/**` against the 10 SDG rules surfaced ~40 BLOCK sites uncaught by previous sweeps. Real bugs fixed: duplicate `console.log` at [clear-bundle.mjs:89](src/engine/bin/maintenance/clear-bundle.mjs#L89) (success message was printed twice). Boolean-prefix renames (leaf utilities, zero external callers): `missingVersion`/`sameVersion` → `is*` ([version-utils.mjs:41,45](src/engine/lib/domain/version-utils.mjs#L41)), `defaultMatch` → `isDefaultMatch` ([fs-utils.mjs:106](src/engine/lib/core/fs-utils.mjs#L106)), `abortSignal` → `isAborted` ([prompt-utils.mjs:44](src/engine/lib/infra/prompt-utils.mjs#L44)), `strictMagicMatch` → `hasStrictMagicMatch` ([audit-bundle.mjs:162](src/engine/bin/audit/audit-bundle.mjs#L162)). Taboo-verb function renames (single-file scope): `executeWizardStep` → `dispatchWizardStep`, `handleQuickSetup` → `buildQuickSetup` ([wizard.mjs:59,67,114,155](src/engine/lib/domain/wizard.mjs#L114)), `handleContextInjection` → `injectPartnerSection` ([instruction-assembler.mjs:292,311](src/engine/lib/domain/instruction-assembler.mjs#L311)). `dryRun` full-chain rename to `isDryRun` across cli-parser, bin/index, clear-bundle, build-bundle (10 sites) + test adjustment. Method-call-as-boolean-subject sweep across test files surfaced 27 hits of `assert.ok(x.includes(y))` / `.startsWith()` / `.endsWith()` / `.match()` — each extracted into a named const (`hasExpected`, `hasPrefix`, `hasSurgicalHeader`, etc.) before the call. Carve-outs respected per `feedback_audit_vs_tests_contradiction.md`: `fs.existsSync(path.join(...))` FP class and trivial-literal returns remain on the backlog queue.
+- **`named-const-before-call` form (a) rule priming expanded**: [sdg-rules.json](src/assets/rules/sdg-rules.json) description now explicitly covers the high-frequency test idiom — `assert.ok(actual.includes(expected))` / `.startsWith()` / `.match()` / nested property paths like `obj.error.message.includes(text)` — with zero-tolerance wording ("MUST be extracted … even when the method argument is a plain literal"). `exampleViolation` + `exampleFix` extended with two new forms. Fixture [named-const-before-call.diff](tests/fixtures/gate/violations/named-const-before-call.diff) gained 2 lines covering non-negated method-call subjects. 2 new assertions: one in [gate-prompt.test.mjs](src/engine/lib/domain/gate-prompt.test.mjs) verifying the fixture case propagates to the LLM prompt, one in [rules-loader.test.mjs](src/engine/lib/domain/rules-loader.test.mjs) blinding the description fragment against regression. 163/163 tests green, audit 100%, lint pass.
+
 ## [3.7.0] - 2026-04-18
 
 ### Added

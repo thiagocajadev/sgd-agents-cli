@@ -9,7 +9,7 @@ function parseCliArgs(argv) {
     help: argv.includes('--help') || argv.includes('-h'),
     version: argv.includes('--version') || argv.includes('-v'),
     quick: argv.includes('--quick'),
-    dryRun: argv.includes('--dry-run'),
+    isDryRun: argv.includes('--dry-run'),
     flavor: getArgValue(argv, '--flavor'),
     idioms: getArgValues(argv, '--idioms').concat(getArgValues(argv, '--idiom')),
     mode: getArgValue(argv, '--mode'),

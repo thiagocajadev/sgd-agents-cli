@@ -159,10 +159,10 @@ function checkTestNamedExpectations() {
       );
     }
 
-    const strictMagicMatch = content.match(
+    const hasStrictMagicMatch = content.match(
       /assert\.(?:equal|deepEqual|strictEqual)\s*\([^,]+,\s*(?:['"`0-9]|\b(?:null|true|false)\b)/
     );
-    if (strictMagicMatch) {
+    if (hasStrictMagicMatch) {
       violations.push(`${testFile}: Detected magic values in assertions. Use named constants.`);
     }
   }

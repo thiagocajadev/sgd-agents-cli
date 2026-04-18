@@ -86,6 +86,19 @@ describe('GatePrompt', () => {
       assert.ok(containsDiff);
     });
 
+    it('should include named-const-before-call method-call-as-subject fixture case', () => {
+      const input = readFileSync(
+        path.join(fixturesDir, 'violations/named-const-before-call.diff'),
+        'utf8'
+      );
+      const expectedFragment = 'assert.ok(actual.includes(expectedSubstring))';
+
+      const actual = GatePrompt.buildPrompt(input);
+
+      const containsMethodCallSubject = actual.includes(expectedFragment);
+      assert.ok(containsMethodCallSubject);
+    });
+
     it('should include named-const-before-call rule id in the prompt', () => {
       const input = 'diff --git a/foo.mjs b/foo.mjs';
       const expectedRuleId = 'named-const-before-call';
