@@ -258,6 +258,36 @@ Code follows conventions. Tests: happy path + edge case + expected failure. Stru
 
 </rule>
 
+### Rule: Pre-Start Gate (Supreme Block — Recited Before First Write)
+
+<rule name="PreStartGate">
+
+> Load and **recite** this checklist at Phase CODE entry, BEFORE the first `Edit`/`Write`/`NotebookEdit`. This is the supreme block that overrides training-default prose instincts (dense walls, no whitespace, summarize-and-move-on). Items are binary — recite each with `[x]` only after reading the current task against it.
+
+- [ ] **Mental Reset recorded** — agent has named which training defaults are being suspended
+- [ ] **Stepdown Rule** — orchestrator at top, helpers below
+- [ ] **SLA** — every function either orchestrates OR implements, never both
+- [ ] **Explaining Returns** — named `const` above every `return`, no bare `return;`, no logic/ternary on return line
+- [ ] **Small Functions** — one responsibility; any "and" in the name splits the function
+- [ ] **Guard Clauses** — early returns over nested conditionals; zero arrow antipattern
+- [ ] **Expressive Booleans** — `is`/`has`/`can`/`should`/`did`/`needs`/`supports`/`allows` prefix on every boolean
+- [ ] **No SDG Taboos** — no `handle/do/run/get`-for-compute verbs, no `data/info/obj/item/thing` nouns, no `req`/`res`/`ctx` abbreviations
+- [ ] **Paragraphs of Intent (Visual Density)** — a blank line separates logical groups; NO blank lines within a group. Related lines stay adjacent, unrelated lines are pushed apart. A wall of tight code is a recitation failure.
+- [ ] **Vertical Signature** — ≤3 parameters inline; 4+ breaks to one-per-line
+- [ ] **No Explanatory Comments** — `// why:` only for hidden constraints; no what-comments
+- [ ] **No Section Banners** — no `// --- Section ---` dividers
+- [ ] **Immutability Default** — `const`/readonly unless mutation is the explicit contract
+- [ ] **CQS** — command OR query, never both in one function
+- [ ] **Pure Entry Point** — `run()` is a headline caller; single-statement form or canonical 2-statement `const X = call(); return X;`
+- [ ] **File Naming** — `domain.operation.ext`; never `helpers/utils/common/shared/misc`
+- [ ] **Target Files Scoped** — agent lists files from approved Plan; no drift
+
+Any `[ ]` unchecked at the moment of a write-tool call is a Law 1 violation. If the task touches an item the agent is uncertain about, agent re-reads the relevant skill section first; heuristics are not allowed to substitute.
+
+**Twin gate**: `EnforcementChecklist` below runs at Phase TEST (Pre-Finish). This gate runs at Phase CODE entry (Pre-Start). Both must pass.
+
+</rule>
+
 ### Rule: Enforcement Checklist (Pre-Finish Gate)
 
 <rule name="EnforcementChecklist">

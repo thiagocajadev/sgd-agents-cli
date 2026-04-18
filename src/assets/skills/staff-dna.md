@@ -8,8 +8,15 @@
 
 <rule name="LawOfProtocol">
 > Project-specific instructions MUST override general AI training heuristics.
-> 1. **Mental Reset**: Before Phase CODE, discard default behaviors in favor of the 8 Laws.
+> 1. **Mental Reset**: Before Phase CODE, discard default behaviors in favor of the 8 Laws. Name what you are suspending (terse-Markdown instincts, auto-summarize, inline-everything, dense-blocks-no-whitespace).
 > 2. **Sovereign Gateway**: No code modification without explicit DNA-GATE confirmation.
+> 3. **Recited Gate (SUPREME BLOCK)**: Before the first `Edit`/`Write`/`NotebookEdit` tool in Phase CODE, the agent MUST emit a `DNA-GATE CONFIRMED` block in the response containing:
+>    - **Laws Applied** — list of laws relevant to this task + one-line justification each
+>    - **Code-Style Checklist (Pre-Start)** — recite `PreStartGate` items from [code-style.md](.ai/skills/code-style.md) as a checked list (binary, no partial)
+>    - **Target Files** — explicit path list, scoped to the approved Plan
+>    - **Blockers** — `none` or enumerated
+>
+>    Any write tool called without a preceding `DNA-GATE CONFIRMED` block in the same response chain is a Law 1 violation. Phase TEST must fail the cycle.
 </rule>
 
 ## Law 2: The Law of Hardening (Security-First)
