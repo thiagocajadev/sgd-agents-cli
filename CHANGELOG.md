@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [3.3.0] - 2026-04-17
+
+### Added
+
+- **Auto-prune of `tasks.md ## Done` at Phase END**: new binary [prune-backlog.mjs](src/engine/bin/lifecycle/prune-backlog.mjs) + `npm run prune` script truncates the Done section to the last 3 entries after each cycle closes. Pure function `pruneBacklog(content, keepCount)` is deterministic, idempotent, preserves `## Active`/`## Backlog` and any sections after `## Done`. Wired into [workflow.md](src/assets/instructions/templates/workflow.md) Phase END step 3 so every agent, every session, ends with a clean backlog — `CHANGELOG.md` + `git log` remain the authoritative history trail. Rationale: backlog is ephemeral working state, not archive; bloat in `## Done` was costing ~6K tokens per session start for redundant context. Covered by 6 tests (truncation, no-op under threshold, missing-section handling, trailing-section preservation, idempotency, single-blank-line formatting).
+
+### Fixed
+
 ## [3.2.4] - 2026-04-17
 
 ### Added

@@ -86,7 +86,7 @@
 1. **Task Summary**: One sentence per completed task.
 2. **Changelog**: ONE entry per completed task. Every artifact-producing cycle gets recorded.
    - `feat:` → `### Added` | `fix:` → `### Fixed` | `docs:` → `### Fixed` | `land:` → `### Added`
-3. **Backlog Sync**: Finished tasks → `## Done` in `tasks.md`.
+3. **Backlog Sync**: Finished tasks → `## Done` in `tasks.md`. Then run `npm run prune` — keeps last 3 entries in `## Done` (SSOT for history = CHANGELOG + git log).
 4. **Context Update**: Update `## Now` in `context.md` with next objective or clear it.
 5. **Map Reset**: Overwrite `impact-map.md` with idle state. Missing → skip.
 6. **Lint**: Run linter, block commit if errors remain.
