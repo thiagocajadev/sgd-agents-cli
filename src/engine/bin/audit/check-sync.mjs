@@ -15,10 +15,13 @@ const AI_DIR = path.join(PROJECT_ROOT, '.ai', 'instructions');
 const MIRRORED_DIRS = ['core', 'idioms', 'templates', 'competencies'];
 
 function run() {
-  return isMaintainerMode() ? orchestrateSyncCheck() : success();
+  const syncCheckOutcome = orchestrateSyncCheck();
+  return syncCheckOutcome;
 }
 
 function orchestrateSyncCheck() {
+  if (!isMaintainerMode()) return success();
+
   const driftedFiles = [];
 
   for (const mirroredDirectory of MIRRORED_DIRS) {

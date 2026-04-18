@@ -20,7 +20,8 @@ const PROJECT_ROOT = process.cwd();
  * Orchestrator: Review Entry Point
  */
 async function run() {
-  return await orchestrateReview();
+  const reviewResult = await orchestrateReview();
+  return reviewResult;
 }
 
 async function orchestrateReview() {

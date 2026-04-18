@@ -20,7 +20,8 @@ const PROJECT_ROOT = process.cwd();
 const TODAY = new Date().toISOString().split('T')[0];
 
 async function run() {
-  return await orchestrateRulesetSync();
+  const syncResult = await orchestrateRulesetSync();
+  return syncResult;
 }
 
 async function orchestrateRulesetSync() {

@@ -22,7 +22,8 @@ const require = createRequire(import.meta.url);
 const packageJson = require('../../../package.json');
 
 async function run() {
-  return await orchestrateCommandLineLifecycle();
+  const lifecycleResult = await orchestrateCommandLineLifecycle();
+  return lifecycleResult;
 }
 
 async function orchestrateCommandLineLifecycle() {

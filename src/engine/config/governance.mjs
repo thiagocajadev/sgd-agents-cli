@@ -24,14 +24,16 @@ function loadDynamicRules() {
     return emptyChecklist;
   }
 
-  const ruleLines = checklistSection[1].match(/- \[\s\] \*\*(.*?)\*\*(?:\s*:\s*(.*))?/g);
+  const checklistItemRegex = /- \[\s\] (?:\*\*)?(.+?)(?:\*\*)?(?:\s*:\s*(.*)|\s*\(.*\))?$/gm;
+  const ruleLines = checklistSection[1].match(checklistItemRegex);
   if (!ruleLines) {
     const noRulesFound = [];
     return noRulesFound;
   }
 
+  const singleItemRegex = /- \[\s\] (?:\*\*)?(.+?)(?:\*\*)?(?:\s*:\s*(.*)|\s*\(.*\))?$/;
   const dynamicRules = ruleLines.map((ruleLine) => {
-    const [, label, description] = ruleLine.match(/- \[\s\] \*\*(.*?)\*\*(?:\s*:\s*(.*))?/) || [];
+    const [, label, description] = ruleLine.match(singleItemRegex) || [];
     const id = label.toLowerCase().replace(/ /g, '-');
 
     const ruleObj = {
@@ -52,17 +54,19 @@ function loadDynamicRules() {
  */
 const NARRATIVE_VALIDATION_STRATEGIES = {
   'Stepdown Rule': () => ({ pass: true }),
-  'SLA applied': (content) => validateSlaCompliance(content),
+  SLA: () => ({ pass: true }),
   'Narrative Siblings': (content) => validateNarrativeSiblings(content),
   'Explaining Returns': (content) => validateExplainingReturns(content),
   'No framework abbreviations': (content) => validateNamingDiscipline(content),
-  'Vertical Density applied': () => ({ pass: true }),
+  'Vertical Density': () => ({ pass: true }),
   'Revealing Module Pattern': (content) => validateRevealingModulePattern(content),
   'Shallow Boundaries': () => ({ pass: true }),
-  'Boolean names carry a prefix': (content) => validateBooleanPrefixes(content),
+  'Destructuring inside function body, not in parameters': () => ({ pass: true }),
+  'Boolean prefix': (content) => validateBooleanPrefixes(content),
   'No explanatory comments': () => ({ pass: true }),
-  'No Section Banners': (content) => validateNoSectionBanners(content),
-  'Code reads like a "Short Story"': () => ({ pass: true }),
+  'No section banners': (content) => validateNoSectionBanners(content),
+  'Pure entry point': (content) => validateSlaCompliance(content),
+  'Reads like a short story': () => ({ pass: true }),
 };
 
 function validateSlaCompliance(content) {
@@ -79,11 +83,8 @@ function validateSlaCompliance(content) {
       .map((line) => line.trim())
       .filter((line) => line !== '');
 
-    if (bodyLines.length > 1) {
-      violations.push(
-        `${entryPointName}() has ${bodyLines.length} lines (MUST be 1 line of delegation)`
-      );
-    }
+    const shapeViolation = detectEntryPointShapeViolation(entryPointName, bodyLines);
+    if (shapeViolation) violations.push(shapeViolation);
   }
 
   const runFunctionMatch = content.match(/(?:async\s+)?function run\(\) \{([\s\S]*?)\n\}/);
@@ -107,6 +108,33 @@ function validateSlaCompliance(content) {
     reason: violations.length > 0 ? `Pure Entry Point violation: ${violations.join('; ')}` : null,
   };
   return slaResult;
+}
+
+function detectEntryPointShapeViolation(entryPointName, bodyLines) {
+  if (bodyLines.length === 1) {
+    const onlyLine = bodyLines[0];
+    const hasTernary = /\?[^?]*:/.test(onlyLine);
+    if (hasTernary) {
+      const ternaryViolation = `${entryPointName}() has ternary on body — extract to 'const X = ...; return X;'`;
+      return ternaryViolation;
+    }
+    return null;
+  }
+
+  if (bodyLines.length === 2 && isCanonicalDelegationShape(bodyLines)) return null;
+
+  const lengthViolation = `${entryPointName}() body must be 1 statement OR canonical 'const X = call(); return X;' (got ${bodyLines.length} lines)`;
+  return lengthViolation;
+}
+
+function isCanonicalDelegationShape(bodyLines) {
+  const [firstLine, secondLine] = bodyLines;
+  const constMatch = firstLine.match(/^const\s+(\w+)\s*=/);
+  if (!constMatch) return false;
+  const constName = constMatch[1];
+  const expectedReturn = `return ${constName};`;
+  const isMatching = secondLine === expectedReturn || secondLine === `return ${constName}`;
+  return isMatching;
 }
 
 function validateNarrativeSiblings(content) {
@@ -140,11 +168,6 @@ function validateExplainingReturns(content) {
       );
 
     if (isPotentialBareReturn) {
-      // SLA Exemption: Entry Points (run) are allowed to perform pure delegation to maintain 1-line protocol.
-      const functionContext = scanForFunctionHeader(lines, index);
-      if (functionContext === 'run') continue;
-
-      // 100% scansion: extract the returned symbol
       const returnMatch = currentLine.match(/return\s+([a-zA-Z0-9_$]+);?$/);
 
       if (!returnMatch) {
@@ -165,15 +188,6 @@ function validateExplainingReturns(content) {
     reason: violations.length > 0 ? `Laws Compliance violation: ${violations.join('; ')}` : null,
   };
   return explainingResult;
-
-  function scanForFunctionHeader(sourceLines, returnLineIndex) {
-    for (let currentPos = returnLineIndex - 1; currentPos >= 0; currentPos--) {
-      const line = sourceLines[currentPos].trim();
-      const functionMatch = line.match(/(?:function|async)\s+(\w+)\s*\(/);
-      if (functionMatch) return functionMatch[1];
-    }
-    return null;
-  }
 
   function scanForSymbolExplainer(sourceLines, returnLineIndex, symbol) {
     const SCAN_LIMIT = 100;
