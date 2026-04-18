@@ -12,6 +12,12 @@ entry: [main entry point file]
 
 [what is actively being worked on]
 
+## Tooling (optional)
+
+Pre-made scripts live in `.ai/tooling/`. Not wired by default.
+Ask the agent: "set up husky hooks", "wire the bump script", "enable backlog prune on END".
+See `.ai/tooling/README.md` for inventory.
+
 ## Partner
 
 {{PARTNER}}

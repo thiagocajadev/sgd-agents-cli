@@ -6,7 +6,13 @@ import path from 'node:path';
 
 import { InstructionAssembler } from './instruction-assembler.mjs';
 
-const { buildMasterInstructions, writeAgentConfig, writeManifest } = InstructionAssembler;
+const {
+  buildMasterInstructions,
+  writeAgentConfig,
+  writeManifest,
+  writeToolingAssets,
+  writeBacklogFiles,
+} = InstructionAssembler;
 
 function makeTempDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'sdg-test-'));
@@ -381,6 +387,91 @@ describe('InstructionAssembler', () => {
         const missingSectionMessage = `Missing required section: ${section}`;
 
         assert.ok(sectionFound, missingSectionMessage);
+      }
+    });
+  });
+
+  describe('writeToolingAssets()', () => {
+    it('should copy tooling directory into .ai/tooling/ preserving structure', () => {
+      const tmpDir = makeTempDir();
+      const expectedFiles = [
+        path.join('.ai', 'tooling', 'scripts', 'prune-backlog.mjs'),
+        path.join('.ai', 'tooling', 'scripts', 'bump-version.mjs'),
+        path.join('.ai', 'tooling', 'husky', 'pre-commit'),
+        path.join('.ai', 'tooling', 'husky', 'commit-msg'),
+        path.join('.ai', 'tooling', 'README.md'),
+      ];
+
+      try {
+        writeToolingAssets(tmpDir);
+
+        for (const relativePath of expectedFiles) {
+          const absolutePath = path.join(tmpDir, relativePath);
+          const fileExists = fs.existsSync(absolutePath);
+          const missingFileMessage = `Missing tooling asset: ${relativePath}`;
+
+          assert.ok(fileExists, missingFileMessage);
+        }
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it('should mark husky hooks as executable', () => {
+      const tmpDir = makeTempDir();
+      const hookNames = ['pre-commit', 'commit-msg'];
+      const expectedPermissionMask = 0o100;
+
+      try {
+        writeToolingAssets(tmpDir);
+
+        for (const hookName of hookNames) {
+          const hookPath = path.join(tmpDir, '.ai', 'tooling', 'husky', hookName);
+          const stats = fs.statSync(hookPath);
+          const actualPermissionBits = stats.mode & 0o111;
+          const isExecutable = (actualPermissionBits & expectedPermissionMask) !== 0;
+          const missingExecutableMessage = `Hook not executable: ${hookName}`;
+
+          assert.ok(isExecutable, missingExecutableMessage);
+        }
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+
+    it('should be idempotent when invoked twice', () => {
+      const tmpDir = makeTempDir();
+      const referencePath = path.join(tmpDir, '.ai', 'tooling', 'README.md');
+
+      try {
+        writeToolingAssets(tmpDir);
+        const firstRunContent = fs.readFileSync(referencePath, 'utf8');
+
+        writeToolingAssets(tmpDir);
+        const secondRunContent = fs.readFileSync(referencePath, 'utf8');
+
+        assert.equal(firstRunContent, secondRunContent);
+      } finally {
+        cleanup(tmpDir);
+      }
+    });
+  });
+
+  describe('writeBacklogFiles() — tooling hint section', () => {
+    it('should include Tooling (optional) section in generated context.md', () => {
+      const tmpDir = makeTempDir();
+      const contextPath = path.join(tmpDir, '.ai', 'backlog', 'context.md');
+      const expectedSectionHeading = '## Tooling (optional)';
+      const expectedReference = '.ai/tooling/';
+
+      try {
+        writeBacklogFiles(tmpDir, { flavor: 'lite', idioms: [], versions: {} });
+        const actualContent = fs.readFileSync(contextPath, 'utf8');
+
+        assert.ok(actualContent.includes(expectedSectionHeading));
+        assert.ok(actualContent.includes(expectedReference));
+      } finally {
+        cleanup(tmpDir);
       }
     });
   });

@@ -518,6 +518,23 @@ function writeAutomationScripts(targetDirectory, selections) {
   }
 }
 
+function writeToolingAssets(targetDirectory) {
+  const sourceToolingDir = path.join(__dirname, '../../..', 'assets', 'tooling');
+  const targetToolingDir = path.join(targetDirectory, '.ai', 'tooling');
+
+  const hasSourceAssets = fs.existsSync(sourceToolingDir);
+  if (!hasSourceAssets) return;
+
+  fs.cpSync(sourceToolingDir, targetToolingDir, { recursive: true, force: true });
+
+  const executableHooks = ['pre-commit', 'commit-msg'];
+  for (const hookName of executableHooks) {
+    const hookPath = path.join(targetToolingDir, 'husky', hookName);
+    const hookExists = fs.existsSync(hookPath);
+    if (hookExists) fs.chmodSync(hookPath, 0o755);
+  }
+}
+
 export const InstructionAssembler = {
   buildMasterInstructions,
   buildClaudeContent,
@@ -526,4 +543,5 @@ export const InstructionAssembler = {
   writeGitignore,
   writeManifest,
   writeAutomationScripts,
+  writeToolingAssets,
 };

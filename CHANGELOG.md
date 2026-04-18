@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [3.9.0] - 2026-04-18
+
+### Added
+
+- **Inert tooling catalog at `.ai/tooling/`**: `sdg-agents init` now copies a pre-made, non-invasive tooling bundle into every generated project: [prune-backlog.mjs](src/assets/tooling/scripts/prune-backlog.mjs) (trims `## Done` to last N via `--keep N`, default 3, idempotent), [bump-version.mjs](src/assets/tooling/scripts/bump-version.mjs) (minimal semver bump — only rewrites `package.json.version`, zero git/CHANGELOG side-effects), husky [pre-commit](src/assets/tooling/husky/pre-commit) + [commit-msg](src/assets/tooling/husky/commit-msg) templates, and a [README.md](src/assets/tooling/README.md) with activation recipes. New `writeToolingAssets()` function in [instruction-assembler.mjs](src/engine/lib/domain/instruction-assembler.mjs) performs recursive copy + `chmod 755` on hook templates; wired into both quick and agents pipelines in [build-bundle.mjs](src/engine/bin/init/build-bundle.mjs). Generated [context.md](src/assets/instructions/templates/backlog/context.md) now includes `## Tooling (optional)` section pointing developers to the bundle. Design principle: ship pre-made scripts as inert assets — no `package.json` edit, no `.husky/` creation, no devDep auto-install. Activation is agent-assisted on demand. Test glob expanded in `package.json` to include `src/assets/tooling/**/*.test.mjs`. 180/180 tests green (+17: 5 prune + 8 bump + 3 writeToolingAssets + 1 context hint assertion), audit 100%, lint pass.
+
+### Fixed
+
 ## [3.8.0] - 2026-04-18
 
 ### Added

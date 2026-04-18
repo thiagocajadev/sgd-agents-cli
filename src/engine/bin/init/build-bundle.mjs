@@ -22,6 +22,7 @@ const {
   writeGitignore,
   writeManifest,
   writeAutomationScripts,
+  writeToolingAssets,
 } = InstructionAssembler;
 const { success } = ResultUtils;
 const { bootstrapIfDirect } = FsUtils;
@@ -215,6 +216,7 @@ function applyQuickPipeline(targetDirectory, selections) {
 
   printStep(5, 5, 'Finalizing manifest...');
   writeAutomationScripts(targetDirectory, selections);
+  writeToolingAssets(targetDirectory);
   writeManifest(targetDirectory, selections, packageJson.version);
 }
 
@@ -235,6 +237,7 @@ function applyAgentsPipeline(targetDirectory, selections) {
 
   printStep(5, 5, 'Finalizing manifest...');
   writeAutomationScripts(targetDirectory, selections);
+  writeToolingAssets(targetDirectory);
   writeManifest(targetDirectory, selections, packageJson.version);
 }
 
