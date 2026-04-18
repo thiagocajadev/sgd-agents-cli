@@ -15,12 +15,7 @@ const AI_DIR = path.join(PROJECT_ROOT, '.ai', 'instructions');
 const MIRRORED_DIRS = ['core', 'idioms', 'templates', 'competencies'];
 
 function run() {
-  if (!isMaintainerMode()) {
-    const skipResult = success();
-    return skipResult;
-  }
-  const syncResult = orchestrateSyncCheck();
-  return syncResult;
+  return isMaintainerMode() ? orchestrateSyncCheck() : success();
 }
 
 function orchestrateSyncCheck() {

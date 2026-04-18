@@ -66,7 +66,8 @@ const NARRATIVE_VALIDATION_STRATEGIES = {
 };
 
 function validateSlaCompliance(content) {
-  const entryPointRegex = /async\s+function\s+(run|start|init)\s*\([\s\S]*?\)\s*\{([\s\S]*?)\n\}/g;
+  const entryPointRegex =
+    /(?:async\s+)?function\s+(run|start|init)\s*\([\s\S]*?\)\s*\{([\s\S]*?)\n\}/g;
   const violations = [];
   let regexMatch;
 
@@ -85,7 +86,7 @@ function validateSlaCompliance(content) {
     }
   }
 
-  const runFunctionMatch = content.match(/async function run\(\) \{([\s\S]*?)\n\}/);
+  const runFunctionMatch = content.match(/(?:async\s+)?function run\(\) \{([\s\S]*?)\n\}/);
   if (runFunctionMatch) {
     const runBody = runFunctionMatch[1];
     const forbiddenPatterns = [
