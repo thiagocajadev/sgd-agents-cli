@@ -18,8 +18,7 @@ async function dispatchGate(args) {
     return checkResult;
   }
 
-  const usageResult = printUsage();
-  return usageResult;
+  printUsage();
 }
 
 async function processPromptMode() {

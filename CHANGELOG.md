@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [3.6.3] - 2026-04-18
+
+### Added
+
+### Fixed
+
+- **Full-repo gate audit + 2 sanitization residuals closed**: audit sweep across `src/engine/lib/**` (14 files) and cross-grep of `bin/**` surfaced a ceremonial-void-return regression at [gate-bundle.mjs:21](src/engine/bin/maintenance/gate-bundle.mjs#L21) (`const usageResult = printUsage(); return usageResult;` — the `print*`-prefixed wrap missed in the previous sanitization sweep) and a real `named-const-before-call` hit at [wizard.mjs:373](src/engine/lib/domain/wizard.mjs#L373) (template literal `Unknown flavor: "..."` passed inline to `fail()`). Both sites now follow the established pattern: `gate-bundle` uses bare `printUsage();` terminator; `wizard` extracts the interpolated message into `invalidFlavorMessage` before calling `fail()`, mirroring the sibling shape at L386-388. Audit also enqueued two rule-precision follow-ups — `named-const-before-call` needs carve-outs for pure data-access composition (`path.*` / `JSON.parse(fs.readFileSync(...))` / read-or-default ternaries) and `explaining-returns` needs a trivial-literal carve-out (~30 `const X = <atomic>; return X;` sites surfaced, including an internal contradiction in `wizard.mjs` where `return 'fullstack';` is bare but `return defaultScope;` is extracted). 157/157 tests green, audit 100%.
+
 ## [3.6.2] - 2026-04-18
 
 ### Added

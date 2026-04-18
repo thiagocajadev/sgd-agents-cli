@@ -369,10 +369,8 @@ function validateSelections(selections) {
   }
 
   if (!availableFlavors.includes(selections.flavor)) {
-    const invalidFlavorResult = fail(
-      `Unknown flavor: "${selections.flavor}". Available: ${availableFlavors.join(', ')}`,
-      'INVALID_FLAVOR'
-    );
+    const invalidFlavorMessage = `Unknown flavor: "${selections.flavor}". Available: ${availableFlavors.join(', ')}`;
+    const invalidFlavorResult = fail(invalidFlavorMessage, 'INVALID_FLAVOR');
     return invalidFlavorResult;
   }
 
