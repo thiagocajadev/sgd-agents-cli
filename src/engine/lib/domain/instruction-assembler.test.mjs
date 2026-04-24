@@ -85,11 +85,15 @@ describe('InstructionAssembler', () => {
 
         const actualRaw = fileSystem.readFileSync(manifestPath, 'utf8');
         const actual = JSON.parse(actualRaw);
+        const actualGeneratedAt = actual.generatedAt;
+        const actualSdgVersion = actual.sdgAgentVersion;
+        const actualContentHashesIsObject = typeof actual.contentHashes === 'object';
+        const actualSelections = actual.selections;
 
-        assert.ok(actual.generatedAt);
-        assert.equal(actual.sdgAgentVersion, inputVersion);
-        assert.ok(typeof actual.contentHashes === 'object');
-        assert.deepEqual(actual.selections, inputSelections);
+        assert.ok(actualGeneratedAt);
+        assert.equal(actualSdgVersion, inputVersion);
+        assert.ok(actualContentHashesIsObject);
+        assert.deepEqual(actualSelections, inputSelections);
       } finally {
         cleanup(tmpDir);
       }
@@ -106,8 +110,9 @@ describe('InstructionAssembler', () => {
         const after = Date.now();
         const actualManifest = JSON.parse(fileSystem.readFileSync(manifestPath, 'utf8'));
         const actualTs = new Date(actualManifest.generatedAt).getTime();
+        const actualTsInRange = actualTs >= before && actualTs <= after;
 
-        assert.ok(actualTs >= before && actualTs <= after);
+        assert.ok(actualTsInRange);
       } finally {
         cleanup(tmpDir);
       }
@@ -239,8 +244,10 @@ describe('InstructionAssembler', () => {
       const pathMatches = actual.match(/`\.ai\/[^`]+\.md`/g) || [];
 
       const uniquePaths = new Set(pathMatches);
+      const actualPathCount = pathMatches.length;
+      const expectedUniqueCount = uniquePaths.size;
 
-      assert.equal(pathMatches.length, uniquePaths.size);
+      assert.equal(actualPathCount, expectedUniqueCount);
     });
 
     it('should not contain verbose protocol patterns', () => {
@@ -333,9 +340,11 @@ describe('InstructionAssembler', () => {
       try {
         writeBacklogFiles(tmpDir, { flavor: 'lite' });
         const actualContent = fileSystem.readFileSync(contextPath, 'utf8');
+        const actualHasToolingSection = actualContent.includes('## Tooling (optional)');
+        const actualHasToolingPath = actualContent.includes('.ai/tooling/');
 
-        assert.ok(actualContent.includes('## Tooling (optional)'));
-        assert.ok(actualContent.includes('.ai/tooling/'));
+        assert.ok(actualHasToolingSection);
+        assert.ok(actualHasToolingPath);
       } finally {
         cleanup(tmpDir);
       }
@@ -352,9 +361,13 @@ describe('InstructionAssembler', () => {
         assert.ok(actualExists, 'stack.md seed must be written on init');
 
         const actualContent = fileSystem.readFileSync(stackPath, 'utf8');
-        assert.ok(actualContent.includes('# Project Stack'));
-        assert.ok(actualContent.includes('### Backend'));
-        assert.ok(actualContent.includes('### Frontend'));
+        const actualHasProjectStack = actualContent.includes('# Project Stack');
+        const actualHasBackend = actualContent.includes('### Backend');
+        const actualHasFrontend = actualContent.includes('### Frontend');
+
+        assert.ok(actualHasProjectStack);
+        assert.ok(actualHasBackend);
+        assert.ok(actualHasFrontend);
       } finally {
         cleanup(tmpDir);
       }

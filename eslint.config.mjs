@@ -38,6 +38,7 @@ export default [
       'multiline-ternary': ['error', 'always-multiline'],
       'local/semantic-spacing': ['error', { minBodySize: 2 }],
       'local/no-boolean-comparison': 'error',
+      'local/no-inline-assert': 'error',
       'padding-line-between-statements': [
         'error',
         { blankLine: 'always', prev: 'function', next: '*' },
@@ -51,12 +52,6 @@ export default [
           mjs: 'always',
         },
       ],
-    },
-  },
-  {
-    files: ['src/engine/config/governance.test.mjs'],
-    rules: {
-      'local/no-inline-assert': 'error',
     },
   },
   {

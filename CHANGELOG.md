@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.3.2] - 2026-04-24
+
+### Fixed
+
+- **`no-inline-assert` — full sweep**: rule promoted from `governance.test.mjs`-only `files:` override to global enforcement in [`eslint.config.mjs`](eslint.config.mjs). 129 violations extracted across 13 test files: `MemberExpression` (`actual.isSuccess`, `actual.removed`, `actual.canCommit`, etc.), `CallExpression` (`fileSystem.existsSync(path)`, `stdout.includes(msg)`, `content.includes(fragment)`), `BinaryExpression` (`actualTs >= before && actualTs <= after`), `LogicalExpression`, and `ArrayExpression` (`[]` as second arg to `assert.deepEqual`) — all converted to named consts (`actual<Property>` / `expected<Name>` convention from governance.test.mjs beachhead). `files:` override block removed from `eslint.config.mjs`. Mirrored `.ai/tooling/scripts/` copies updated to match `src/assets/`. 219/219 tests green, lint 0 errors.
+
 ## [5.3.1] - 2026-04-24
 
 ### Added

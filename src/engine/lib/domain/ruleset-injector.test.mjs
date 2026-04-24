@@ -29,7 +29,8 @@ describe('RulesetInjector', () => {
         prepareProjectStructure(tmpDir);
 
         for (const expectedDir of expectedDirs) {
-          assert.ok(fileSystem.existsSync(expectedDir));
+          const actualExists = fileSystem.existsSync(expectedDir);
+          assert.ok(actualExists);
         }
       } finally {
         cleanup(tmpDir);
@@ -58,8 +59,9 @@ describe('RulesetInjector', () => {
       try {
         prepareProjectStructure(tmpDir);
         injectRulesets(tmpDir, inputSelections);
+        const actualSkillExists = fileSystem.existsSync(expectedSkillFile);
 
-        assert.ok(fileSystem.existsSync(expectedSkillFile));
+        assert.ok(actualSkillExists);
       } finally {
         cleanup(tmpDir);
       }
@@ -73,8 +75,9 @@ describe('RulesetInjector', () => {
       try {
         prepareProjectStructure(tmpDir);
         injectRulesets(tmpDir, inputSelections);
+        const actualFlavorDirExists = fileSystem.existsSync(expectedDir);
 
-        assert.ok(fileSystem.existsSync(expectedDir));
+        assert.ok(actualFlavorDirExists);
       } finally {
         cleanup(tmpDir);
       }
@@ -89,9 +92,11 @@ describe('RulesetInjector', () => {
       try {
         prepareProjectStructure(tmpDir);
         injectRulesets(tmpDir, inputSelections);
+        const actualTemplatesExist = fileSystem.existsSync(expectedTemplates);
+        const actualCommandsExist = fileSystem.existsSync(expectedCommands);
 
-        assert.ok(fileSystem.existsSync(expectedTemplates));
-        assert.ok(fileSystem.existsSync(expectedCommands));
+        assert.ok(actualTemplatesExist);
+        assert.ok(actualCommandsExist);
       } finally {
         cleanup(tmpDir);
       }

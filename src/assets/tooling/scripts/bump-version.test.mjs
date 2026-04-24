@@ -45,9 +45,10 @@ describe('bump-version.mjs', () => {
     try {
       const stdout = runScript(projectDir, ['patch']);
       const actualVersion = readVersion(packagePath);
+      const actualIncludesArrow = stdout.includes('3.8.0 → 3.8.1');
 
       assert.equal(actualVersion, expectedVersion);
-      assert.ok(stdout.includes('3.8.0 → 3.8.1'));
+      assert.ok(actualIncludesArrow);
     } finally {
       cleanup(projectDir);
     }
@@ -99,12 +100,22 @@ describe('bump-version.mjs', () => {
       runScript(projectDir, ['patch']);
       const actualRaw = fileSystem.readFileSync(packagePath, 'utf8');
       const actualParsed = JSON.parse(actualRaw);
+      const actualName = actualParsed.name;
+      const expectedName = originalPackage.name;
+      const actualDescription = actualParsed.description;
+      const expectedDescription = originalPackage.description;
+      const actualScripts = actualParsed.scripts;
+      const expectedScripts = originalPackage.scripts;
+      const actualDependencies = actualParsed.dependencies;
+      const expectedDependencies = originalPackage.dependencies;
+      const actualVersion = actualParsed.version;
+      const expectedBumpedVersion = '1.0.1';
 
-      assert.equal(actualParsed.name, originalPackage.name);
-      assert.equal(actualParsed.description, originalPackage.description);
-      assert.deepEqual(actualParsed.scripts, originalPackage.scripts);
-      assert.deepEqual(actualParsed.dependencies, originalPackage.dependencies);
-      assert.equal(actualParsed.version, '1.0.1');
+      assert.equal(actualName, expectedName);
+      assert.equal(actualDescription, expectedDescription);
+      assert.deepEqual(actualScripts, expectedScripts);
+      assert.deepEqual(actualDependencies, expectedDependencies);
+      assert.equal(actualVersion, expectedBumpedVersion);
     } finally {
       cleanup(projectDir);
     }
@@ -142,9 +153,12 @@ describe('bump-version.mjs', () => {
 
   it('should not import child_process (zero git side-effects guarantee)', () => {
     const scriptSource = fileSystem.readFileSync(SCRIPT_PATH, 'utf8');
+    const actualHasNoChildProcess = !scriptSource.includes('child_process');
+    const actualHasNoExecSync = !scriptSource.includes('execSync');
+    const actualHasNoExec = !scriptSource.includes('exec(');
 
-    assert.ok(!scriptSource.includes('child_process'));
-    assert.ok(!scriptSource.includes('execSync'));
-    assert.ok(!scriptSource.includes('exec('));
+    assert.ok(actualHasNoChildProcess);
+    assert.ok(actualHasNoExecSync);
+    assert.ok(actualHasNoExec);
   });
 });

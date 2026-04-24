@@ -11,8 +11,9 @@ describe('WizardUtils (Non-Interactive)', () => {
       const expectedSuccess = true;
 
       const actual = validateSelections(input);
+      const actualIsSuccess = actual.isSuccess;
 
-      assert.equal(actual.isSuccess, expectedSuccess);
+      assert.equal(actualIsSuccess, expectedSuccess);
     });
 
     it('should reject missing flavor', () => {
@@ -20,9 +21,11 @@ describe('WizardUtils (Non-Interactive)', () => {
       const expectedFailure = true;
       const expectedCode = 'MISSING_FLAVOR';
       const actual = validateSelections(input);
+      const actualIsFailure = actual.isFailure;
+      const actualErrorCode = actual.error.code;
 
-      assert.equal(actual.isFailure, expectedFailure);
-      assert.equal(actual.error.code, expectedCode);
+      assert.equal(actualIsFailure, expectedFailure);
+      assert.equal(actualErrorCode, expectedCode);
     });
 
     it('should reject unknown flavor', () => {
@@ -31,10 +34,12 @@ describe('WizardUtils (Non-Interactive)', () => {
       const expectedCode = 'INVALID_FLAVOR';
       const expectedInMessage = 'nonexistent';
       const actual = validateSelections(input);
-
-      assert.equal(actual.isFailure, expectedFailure);
-      assert.equal(actual.error.code, expectedCode);
+      const actualIsFailure = actual.isFailure;
+      const actualErrorCode = actual.error.code;
       const hasExpectedInMessage = actual.error.message.includes(expectedInMessage);
+
+      assert.equal(actualIsFailure, expectedFailure);
+      assert.equal(actualErrorCode, expectedCode);
       assert.ok(hasExpectedInMessage);
     });
 
@@ -43,16 +48,19 @@ describe('WizardUtils (Non-Interactive)', () => {
       const expectedSuccess = true;
       const expectedFlavor = 'lite';
       const actual = validateSelections(input);
+      const actualIsSuccess = actual.isSuccess;
+      const actualFlavor = actual.value.flavor;
 
-      assert.equal(actual.isSuccess, expectedSuccess);
-      assert.equal(actual.value.flavor, expectedFlavor);
+      assert.equal(actualIsSuccess, expectedSuccess);
+      assert.equal(actualFlavor, expectedFlavor);
     });
 
     it('should accept each supported flavor', () => {
       const expectedSuccess = true;
       for (const flavor of ['lite', 'vertical-slice', 'mvc', 'legacy']) {
         const actual = validateSelections({ flavor });
-        assert.equal(actual.isSuccess, expectedSuccess, `flavor ${flavor} should be accepted`);
+        const actualIsSuccess = actual.isSuccess;
+        assert.equal(actualIsSuccess, expectedSuccess, `flavor ${flavor} should be accepted`);
       }
     });
   });
@@ -61,7 +69,10 @@ describe('WizardUtils (Non-Interactive)', () => {
     it('should only export gatherUserSelections and validateSelections', () => {
       const expectedKeys = ['gatherUserSelections', 'validateSelections'];
       const actualKeys = Object.keys(WizardUtils).sort();
-      assert.deepEqual(actualKeys, expectedKeys.sort());
+
+      const expectedSortedKeys = expectedKeys.sort();
+
+      assert.deepEqual(actualKeys, expectedSortedKeys);
     });
   });
 });

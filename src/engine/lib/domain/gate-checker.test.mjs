@@ -15,8 +15,9 @@ describe('GateChecker', () => {
       const expected = false;
 
       const actual = GateChecker.checkResult(input);
+      const actualCanCommit = actual.canCommit;
 
-      assert.equal(actual.canCommit, expected);
+      assert.equal(actualCanCommit, expected);
     });
 
     it('should return canCommit true when result is clean', () => {
@@ -24,8 +25,9 @@ describe('GateChecker', () => {
       const expected = true;
 
       const actual = GateChecker.checkResult(input);
+      const actualCanCommit = actual.canCommit;
 
-      assert.equal(actual.canCommit, expected);
+      assert.equal(actualCanCommit, expected);
     });
 
     it('should return canCommit true when only WARN violations present', () => {
@@ -33,8 +35,9 @@ describe('GateChecker', () => {
       const expected = true;
 
       const actual = GateChecker.checkResult(input);
+      const actualCanCommit = actual.canCommit;
 
-      assert.equal(actual.canCommit, expected);
+      assert.equal(actualCanCommit, expected);
     });
 
     it('should isolate block violations from warn violations', () => {
@@ -42,8 +45,9 @@ describe('GateChecker', () => {
       const expectedBlockCount = 1;
 
       const actual = GateChecker.checkResult(input);
+      const actualBlockCount = actual.blockViolations.length;
 
-      assert.equal(actual.blockViolations.length, expectedBlockCount);
+      assert.equal(actualBlockCount, expectedBlockCount);
     });
 
     it('should fail open when JSON is invalid', () => {
@@ -51,8 +55,9 @@ describe('GateChecker', () => {
       const expected = true;
 
       const actual = GateChecker.checkResult(input);
+      const actualCanCommit = actual.canCommit;
 
-      assert.equal(actual.canCommit, expected);
+      assert.equal(actualCanCommit, expected);
     });
 
     it('should fail open when input is empty', () => {
@@ -60,8 +65,9 @@ describe('GateChecker', () => {
       const expected = true;
 
       const actual = GateChecker.checkResult(input);
+      const actualCanCommit = actual.canCommit;
 
-      assert.equal(actual.canCommit, expected);
+      assert.equal(actualCanCommit, expected);
     });
   });
 

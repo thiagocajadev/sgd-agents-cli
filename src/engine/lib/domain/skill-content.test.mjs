@@ -29,8 +29,13 @@ describe('Skill Content — Governance Layer', () => {
       ];
 
       const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
+      const expectedEmpty = [];
 
-      assert.deepEqual(actualMissing, [], 'Security-first block must be explicit and early');
+      assert.deepEqual(
+        actualMissing,
+        expectedEmpty,
+        'Security-first block must be explicit and early'
+      );
     });
 
     it('should expose a PreCodeChecklist rule before PreFinishGate', () => {
@@ -57,8 +62,13 @@ describe('Skill Content — Governance Layer', () => {
       ];
 
       const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
+      const expectedEmpty = [];
 
-      assert.deepEqual(actualMissing, [], 'Pre-Code Checklist must cover all eight concerns');
+      assert.deepEqual(
+        actualMissing,
+        expectedEmpty,
+        'Pre-Code Checklist must cover all eight concerns'
+      );
     });
 
     it('should enumerate the eight Pre-Finish Gate items wired to heuristics', () => {
@@ -75,8 +85,13 @@ describe('Skill Content — Governance Layer', () => {
       ];
 
       const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
+      const expectedEmpty = [];
 
-      assert.deepEqual(actualMissing, [], 'Pre-Finish Gate must match heuristic strategy keys');
+      assert.deepEqual(
+        actualMissing,
+        expectedEmpty,
+        'Pre-Finish Gate must match heuristic strategy keys'
+      );
     });
 
     it('should ban Engineering Laws / DNA-GATE vocabulary from code-style', () => {
@@ -89,10 +104,11 @@ describe('Skill Content — Governance Layer', () => {
       ];
 
       const actualLeaks = forbiddenFragments.filter((fragment) => input.includes(fragment));
+      const expectedEmpty = [];
 
       assert.deepEqual(
         actualLeaks,
-        [],
+        expectedEmpty,
         'code-style must not reference removed governance ceremony'
       );
     });
@@ -123,8 +139,13 @@ describe('Skill Content — Governance Layer', () => {
       ];
 
       const actualMissing = expectedSources.filter((fragment) => !input.includes(fragment));
+      const expectedEmpty = [];
 
-      assert.deepEqual(actualMissing, [], 'Phase STACK must expose the doc-source allow-list');
+      assert.deepEqual(
+        actualMissing,
+        expectedEmpty,
+        'Phase STACK must expose the doc-source allow-list'
+      );
     });
 
     it('should direct the output to .ai/backlog/stack.md', () => {
@@ -140,8 +161,13 @@ describe('Skill Content — Governance Layer', () => {
       const expectedHeaders = ['### Backend', '### Frontend', '### Data', '### Scripts'];
 
       const actualMissing = expectedHeaders.filter((fragment) => !input.includes(fragment));
+      const expectedEmpty = [];
 
-      assert.deepEqual(actualMissing, [], 'stack.md seed must declare all four role headers');
+      assert.deepEqual(
+        actualMissing,
+        expectedEmpty,
+        'stack.md seed must declare all four role headers'
+      );
     });
 
     it('should guide the developer to run land:', () => {
@@ -162,8 +188,13 @@ describe('Skill Content — Governance Layer', () => {
       ];
 
       const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
+      const expectedEmpty = [];
 
-      assert.deepEqual(actualMissing, [], 'delivery.md must contain both discriminated sections');
+      assert.deepEqual(
+        actualMissing,
+        expectedEmpty,
+        'delivery.md must contain both discriminated sections'
+      );
     });
   });
 
@@ -182,8 +213,9 @@ describe('Skill Content — Governance Layer', () => {
       const expectedFragments = ['Edit', 'Write', 'NotebookEdit'];
 
       const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
+      const expectedEmpty = [];
 
-      assert.deepEqual(actualMissing, [], 'Phase CODE must name blocked write tools');
+      assert.deepEqual(actualMissing, expectedEmpty, 'Phase CODE must name blocked write tools');
     });
 
     it('should have shed all Laws / DNA-GATE vocabulary', () => {
@@ -197,8 +229,13 @@ describe('Skill Content — Governance Layer', () => {
       ];
 
       const actualLeaks = forbiddenFragments.filter((fragment) => input.includes(fragment));
+      const expectedEmpty = [];
 
-      assert.deepEqual(actualLeaks, [], 'workflow.md must not retain removed governance ceremony');
+      assert.deepEqual(
+        actualLeaks,
+        expectedEmpty,
+        'workflow.md must not retain removed governance ceremony'
+      );
     });
   });
 });

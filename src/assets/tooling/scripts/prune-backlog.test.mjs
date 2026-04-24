@@ -59,10 +59,15 @@ describe('prune-backlog.mjs', () => {
       const stdout = runScript(projectDir, ['--keep', '3']);
       const actualContent = fileSystem.readFileSync(tasksPath, 'utf8');
 
-      assert.ok(stdout.includes('Pruned: kept 3 / 7'));
-      assert.ok(actualContent.includes(expectedFirstKept));
-      assert.ok(actualContent.includes(expectedLastKept));
-      assert.ok(!actualContent.includes(expectedDropped));
+      const actualIncludesPrunedMsg = stdout.includes('Pruned: kept 3 / 7');
+      const actualIncludesFirstKept = actualContent.includes(expectedFirstKept);
+      const actualIncludesLastKept = actualContent.includes(expectedLastKept);
+      const actualHasNoDropped = !actualContent.includes(expectedDropped);
+
+      assert.ok(actualIncludesPrunedMsg);
+      assert.ok(actualIncludesFirstKept);
+      assert.ok(actualIncludesLastKept);
+      assert.ok(actualHasNoDropped);
     } finally {
       cleanup(projectDir);
     }
@@ -77,8 +82,9 @@ describe('prune-backlog.mjs', () => {
     try {
       const stdout = runScript(projectDir, ['--keep', '3']);
       const actualContent = fileSystem.readFileSync(tasksPath, 'utf8');
+      const actualIncludesNothingToPrune = stdout.includes('Nothing to prune');
 
-      assert.ok(stdout.includes('Nothing to prune'));
+      assert.ok(actualIncludesNothingToPrune);
       assert.equal(actualContent, expectedContent);
     } finally {
       cleanup(projectDir);
@@ -112,12 +118,19 @@ describe('prune-backlog.mjs', () => {
       runScript(projectDir, ['--keep', '2']);
       const actualContent = fileSystem.readFileSync(tasksPath, 'utf8');
 
-      assert.ok(actualContent.includes('- [IN_PROGRESS] live task'));
-      assert.ok(actualContent.includes('- [BACKLOG] pending item'));
-      assert.ok(actualContent.includes('- [DONE] old 1'));
-      assert.ok(actualContent.includes('- [DONE] old 2'));
-      assert.ok(!actualContent.includes('- [DONE] old 3'));
-      assert.ok(!actualContent.includes('- [DONE] old 4'));
+      const actualIncludesInProgress = actualContent.includes('- [IN_PROGRESS] live task');
+      const actualIncludesBacklog = actualContent.includes('- [BACKLOG] pending item');
+      const actualIncludesDoneOld1 = actualContent.includes('- [DONE] old 1');
+      const actualIncludesDoneOld2 = actualContent.includes('- [DONE] old 2');
+      const actualHasNoDoneOld3 = !actualContent.includes('- [DONE] old 3');
+      const actualHasNoDoneOld4 = !actualContent.includes('- [DONE] old 4');
+
+      assert.ok(actualIncludesInProgress);
+      assert.ok(actualIncludesBacklog);
+      assert.ok(actualIncludesDoneOld1);
+      assert.ok(actualIncludesDoneOld2);
+      assert.ok(actualHasNoDoneOld3);
+      assert.ok(actualHasNoDoneOld4);
     } finally {
       cleanup(projectDir);
     }

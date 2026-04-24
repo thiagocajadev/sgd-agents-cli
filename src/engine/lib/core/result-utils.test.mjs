@@ -13,11 +13,15 @@ describe('ResultUtils', () => {
       const expectedFailure = false;
       const expectedNull = null;
       const actual = success(input);
+      const actualIsSuccess = actual.isSuccess;
+      const actualIsFailure = actual.isFailure;
+      const actualValue = actual.value;
+      const actualError = actual.error;
 
-      assert.equal(actual.isSuccess, expectedSuccess);
-      assert.equal(actual.isFailure, expectedFailure);
-      assert.equal(actual.value, expectedValue);
-      assert.equal(actual.error, expectedNull);
+      assert.equal(actualIsSuccess, expectedSuccess);
+      assert.equal(actualIsFailure, expectedFailure);
+      assert.equal(actualValue, expectedValue);
+      assert.equal(actualError, expectedNull);
     });
 
     it('should create a success result with undefined when no value is passed', () => {
@@ -26,11 +30,15 @@ describe('ResultUtils', () => {
       const expectedFailure = false;
       const expectedNull = null;
       const actual = success();
+      const actualIsSuccess = actual.isSuccess;
+      const actualIsFailure = actual.isFailure;
+      const actualValue = actual.value;
+      const actualError = actual.error;
 
-      assert.equal(actual.isSuccess, expectedSuccess);
-      assert.equal(actual.isFailure, expectedFailure);
-      assert.equal(actual.value, expectedValue);
-      assert.equal(actual.error, expectedNull);
+      assert.equal(actualIsSuccess, expectedSuccess);
+      assert.equal(actualIsFailure, expectedFailure);
+      assert.equal(actualValue, expectedValue);
+      assert.equal(actualError, expectedNull);
     });
 
     it('should preserve complex objects as values', () => {
@@ -38,8 +46,9 @@ describe('ResultUtils', () => {
       const expected = input;
 
       const actual = success(input);
+      const actualValue = actual.value;
 
-      assert.deepEqual(actual.value, expected);
+      assert.deepEqual(actualValue, expected);
     });
 
     it('should handle null as a valid value', () => {
@@ -47,9 +56,11 @@ describe('ResultUtils', () => {
       const expectedValue = null;
       const expectedSuccess = true;
       const actual = success(input);
+      const actualIsSuccess = actual.isSuccess;
+      const actualValue = actual.value;
 
-      assert.equal(actual.isSuccess, expectedSuccess);
-      assert.equal(actual.value, expectedValue);
+      assert.equal(actualIsSuccess, expectedSuccess);
+      assert.equal(actualValue, expectedValue);
     });
   });
 
@@ -66,11 +77,15 @@ describe('ResultUtils', () => {
       const expectedFailure = true;
       const expectedNull = null;
       const actual = fail(inputMessage, inputCode);
+      const actualIsSuccess = actual.isSuccess;
+      const actualIsFailure = actual.isFailure;
+      const actualValue = actual.value;
+      const actualError = actual.error;
 
-      assert.equal(actual.isSuccess, expectedSuccess);
-      assert.equal(actual.isFailure, expectedFailure);
-      assert.equal(actual.value, expectedNull);
-      assert.deepEqual(actual.error, expectedError);
+      assert.equal(actualIsSuccess, expectedSuccess);
+      assert.equal(actualIsFailure, expectedFailure);
+      assert.equal(actualValue, expectedNull);
+      assert.deepEqual(actualError, expectedError);
     });
 
     it('should guarantee isSuccess and isFailure are always opposite', () => {
@@ -79,9 +94,13 @@ describe('ResultUtils', () => {
 
       const actualOk = success(inputOk);
       const actualErr = fail(inputErr, 'FAIL');
+      const actualOkIsSuccess = actualOk.isSuccess;
+      const actualOkIsFailure = actualOk.isFailure;
+      const actualErrIsSuccess = actualErr.isSuccess;
+      const actualErrIsFailure = actualErr.isFailure;
 
-      assert.notEqual(actualOk.isSuccess, actualOk.isFailure);
-      assert.notEqual(actualErr.isSuccess, actualErr.isFailure);
+      assert.notEqual(actualOkIsSuccess, actualOkIsFailure);
+      assert.notEqual(actualErrIsSuccess, actualErrIsFailure);
     });
   });
 });

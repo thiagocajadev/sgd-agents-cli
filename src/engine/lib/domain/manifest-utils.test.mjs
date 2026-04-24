@@ -12,10 +12,13 @@ describe('ManifestUtils', () => {
       const expectedUnchanged = ['core/code-style.md', 'core/security.md'];
       const expectedEmpty = [];
       const actual = compareHashes(stored, current);
+      const actualUnchanged = actual.unchanged;
+      const actualChanged = actual.changed;
+      const actualAdded = actual.added;
 
-      assert.deepEqual(actual.unchanged, expectedUnchanged);
-      assert.deepEqual(actual.changed, expectedEmpty);
-      assert.deepEqual(actual.added, expectedEmpty);
+      assert.deepEqual(actualUnchanged, expectedUnchanged);
+      assert.deepEqual(actualChanged, expectedEmpty);
+      assert.deepEqual(actualAdded, expectedEmpty);
     });
 
     it('should detect changed files', () => {
@@ -24,9 +27,11 @@ describe('ManifestUtils', () => {
       const expectedChanged = ['core/code-style.md'];
       const expectedEmpty = [];
       const actual = compareHashes(stored, current);
+      const actualChanged = actual.changed;
+      const actualUnchanged = actual.unchanged;
 
-      assert.deepEqual(actual.changed, expectedChanged);
-      assert.deepEqual(actual.unchanged, expectedEmpty);
+      assert.deepEqual(actualChanged, expectedChanged);
+      assert.deepEqual(actualUnchanged, expectedEmpty);
     });
 
     it('should detect newly added files', () => {
@@ -35,9 +40,11 @@ describe('ManifestUtils', () => {
       const expectedAdded = ['core/new-file.md'];
       const expectedUnchanged = ['core/code-style.md'];
       const actual = compareHashes(stored, current);
+      const actualAdded = actual.added;
+      const actualUnchanged = actual.unchanged;
 
-      assert.deepEqual(actual.added, expectedAdded);
-      assert.deepEqual(actual.unchanged, expectedUnchanged);
+      assert.deepEqual(actualAdded, expectedAdded);
+      assert.deepEqual(actualUnchanged, expectedUnchanged);
     });
 
     it('should handle mixed changes, additions, and unchanged', () => {
@@ -58,10 +65,13 @@ describe('ManifestUtils', () => {
       const expectedChanged = ['core/b.md'];
       const expectedAdded = ['core/d.md'];
       const actual = compareHashes(stored, current);
+      const actualUnchanged = actual.unchanged;
+      const actualChanged = actual.changed;
+      const actualAdded = actual.added;
 
-      assert.deepEqual(actual.unchanged, expectedUnchanged);
-      assert.deepEqual(actual.changed, expectedChanged);
-      assert.deepEqual(actual.added, expectedAdded);
+      assert.deepEqual(actualUnchanged, expectedUnchanged);
+      assert.deepEqual(actualChanged, expectedChanged);
+      assert.deepEqual(actualAdded, expectedAdded);
     });
 
     it('should handle empty stored hashes (fresh install scenario)', () => {
@@ -70,10 +80,13 @@ describe('ManifestUtils', () => {
       const expectedAdded = ['core/a.md', 'core/b.md'];
       const expectedEmpty = [];
       const actual = compareHashes(stored, current);
+      const actualAdded = actual.added;
+      const actualChanged = actual.changed;
+      const actualUnchanged = actual.unchanged;
 
-      assert.deepEqual(actual.added, expectedAdded);
-      assert.deepEqual(actual.changed, expectedEmpty);
-      assert.deepEqual(actual.unchanged, expectedEmpty);
+      assert.deepEqual(actualAdded, expectedAdded);
+      assert.deepEqual(actualChanged, expectedEmpty);
+      assert.deepEqual(actualUnchanged, expectedEmpty);
     });
 
     it('should handle empty current hashes', () => {
@@ -81,11 +94,14 @@ describe('ManifestUtils', () => {
       const current = {};
       const expectedEmpty = [];
       const actual = compareHashes(stored, current);
+      const actualAdded = actual.added;
+      const actualChanged = actual.changed;
+      const actualUnchanged = actual.unchanged;
 
       // Files in stored but not in current are simply not reported
-      assert.deepEqual(actual.added, expectedEmpty);
-      assert.deepEqual(actual.changed, expectedEmpty);
-      assert.deepEqual(actual.unchanged, expectedEmpty);
+      assert.deepEqual(actualAdded, expectedEmpty);
+      assert.deepEqual(actualChanged, expectedEmpty);
+      assert.deepEqual(actualUnchanged, expectedEmpty);
     });
   });
 

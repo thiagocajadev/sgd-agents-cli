@@ -12,10 +12,13 @@ describe('CliParser', () => {
       const expectedTargetDir = 'my-project';
       const expectedFlavor = 'lite';
       const actual = parseCliArgs(input);
+      const actualSubcommand = actual.subcommand;
+      const actualTargetDir = actual.targetDirectory;
+      const actualFlavor = actual.flavor;
 
-      assert.equal(actual.subcommand, expectedSubcommand);
-      assert.equal(actual.targetDirectory, expectedTargetDir);
-      assert.equal(actual.flavor, expectedFlavor);
+      assert.equal(actualSubcommand, expectedSubcommand);
+      assert.equal(actualTargetDir, expectedTargetDir);
+      assert.equal(actualFlavor, expectedFlavor);
     });
 
     it('should correctly parse positional arg after a flag with value', () => {
@@ -23,9 +26,11 @@ describe('CliParser', () => {
       const expectedTargetDir = 'my-project';
       const expectedFlavor = 'mvc';
       const actual = parseCliArgs(input);
+      const actualTargetDir = actual.targetDirectory;
+      const actualFlavor = actual.flavor;
 
-      assert.equal(actual.targetDirectory, expectedTargetDir);
-      assert.equal(actual.flavor, expectedFlavor);
+      assert.equal(actualTargetDir, expectedTargetDir);
+      assert.equal(actualFlavor, expectedFlavor);
     });
 
     it('should handle missing subcommand and default to null', () => {
@@ -33,9 +38,11 @@ describe('CliParser', () => {
       const expectedSubcommand = null;
       const expectedHelp = true;
       const actual = parseCliArgs(input);
+      const actualSubcommand = actual.subcommand;
+      const actualHelp = actual.help;
 
-      assert.equal(actual.subcommand, expectedSubcommand);
-      assert.equal(actual.help, expectedHelp);
+      assert.equal(actualSubcommand, expectedSubcommand);
+      assert.equal(actualHelp, expectedHelp);
     });
 
     it('should identify help and version flags (long and short)', () => {
@@ -61,8 +68,9 @@ describe('CliParser', () => {
       const expectedDryRun = true;
 
       const actual = parseCliArgs(input);
+      const actualIsDryRun = actual.isDryRun;
 
-      assert.equal(actual.isDryRun, expectedDryRun);
+      assert.equal(actualIsDryRun, expectedDryRun);
     });
 
     it('should parse --quick flag', () => {
@@ -70,8 +78,9 @@ describe('CliParser', () => {
       const expectedQuick = true;
 
       const actual = parseCliArgs(input);
+      const actualQuick = actual.quick;
 
-      assert.equal(actual.quick, expectedQuick);
+      assert.equal(actualQuick, expectedQuick);
     });
 
     it('should default quick to false when flag is absent', () => {
@@ -79,8 +88,9 @@ describe('CliParser', () => {
       const expectedQuick = false;
 
       const actual = parseCliArgs(input);
+      const actualQuick = actual.quick;
 
-      assert.equal(actual.quick, expectedQuick);
+      assert.equal(actualQuick, expectedQuick);
     });
 
     it('should not expose an idioms field (legacy flag removed in v5.0)', () => {

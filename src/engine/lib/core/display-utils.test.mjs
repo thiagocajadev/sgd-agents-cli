@@ -85,8 +85,11 @@ describe('DisplayUtils', () => {
 
     it('should return empty string for empty input', () => {
       const expected = '';
-      assert.equal(DisplayUtils.smartTruncate(null), expected);
-      assert.equal(DisplayUtils.smartTruncate(''), expected);
+      const actualNull = DisplayUtils.smartTruncate(null);
+      const actualEmpty = DisplayUtils.smartTruncate('');
+
+      assert.equal(actualNull, expected);
+      assert.equal(actualEmpty, expected);
     });
   });
 

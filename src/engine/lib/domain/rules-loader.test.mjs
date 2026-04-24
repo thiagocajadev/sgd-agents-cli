@@ -9,7 +9,9 @@ describe('RulesLoader', () => {
 
       const actual = RulesLoader.loadRules();
 
-      assert.equal(actual.version, expected);
+      const actualVersion = actual.version;
+
+      assert.equal(actualVersion, expected);
     });
 
     it('should separate BLOCK and WARN rules into distinct arrays', () => {
@@ -33,7 +35,9 @@ describe('RulesLoader', () => {
 
       const expectedTotal = actual.block.length + actual.warn.length;
 
-      assert.equal(actual.all.length, expectedTotal);
+      const actualAllLength = actual.all.length;
+
+      assert.equal(actualAllLength, expectedTotal);
     });
 
     it('should load exclude patterns', () => {
@@ -53,8 +57,10 @@ describe('RulesLoader', () => {
       const actual = RulesLoader.loadRules();
       const rule = actual.block.find((r) => r.id === expectedId);
       const ruleFound = rule !== undefined;
+      const actualTier = rule.tier;
+
       assert.ok(ruleFound);
-      assert.equal(rule.tier, expectedTier);
+      assert.equal(actualTier, expectedTier);
     });
 
     it('should carry void-terminator exemption in explaining-returns description', () => {
@@ -74,8 +80,10 @@ describe('RulesLoader', () => {
       const actual = RulesLoader.loadRules();
       const rule = actual.warn.find((r) => r.id === expectedId);
       const ruleFound = rule !== undefined;
+      const actualTier = rule.tier;
+
       assert.ok(ruleFound);
-      assert.equal(rule.tier, expectedTier);
+      assert.equal(actualTier, expectedTier);
     });
 
     it('should enumerate binary-comparison and unary-negation forms in named-const-before-call', () => {
