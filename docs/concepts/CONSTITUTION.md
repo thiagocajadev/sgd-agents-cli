@@ -6,7 +6,7 @@ This document defines the philosophical and technical foundation of `sdg-agents`
 
 The developer sets direction and approves decisions. The agent handles execution — reading the codebase, proposing a structured plan, writing the code, and running the tests. The agent stops at SPEC and PLAN for explicit approval before proceeding.
 
-This document is the mental model for developers. The technical rules the agent follows are in [`.ai/skills/staff-dna.md`](../../src/assets/skills/staff-dna.md).
+This document is the mental model for developers. The operational rules the agent follows live in [`.ai/skills/code-style.md`](../../src/assets/skills/code-style.md) (Pre-Code Checklist + Pre-Finish Gate) and [`.ai/instructions/templates/workflow.md`](../../src/assets/instructions/templates/workflow.md) (5-phase cycle protocol).
 
 ---
 
@@ -14,7 +14,7 @@ This document is the mental model for developers. The technical rules the agent 
 
 **Project-specific rules override general AI training.**
 
-Before any code is written, the agent crosses a DNA-GATE: discards default heuristics, re-activates the project Laws, and confirms mental alignment. Training bias is purged at every phase transition (SPEC → PLAN → CODE → TEST → END).
+Before any code is written, the agent recites a Pre-Code Checklist: names the training default being suspended, re-grounds in the project's code-style rules, and confirms target files and blockers. Training bias is purged at every phase transition (SPEC → PLAN → CODE → TEST → END).
 
 ## 2. Hardening (Security Execution)
 

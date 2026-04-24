@@ -31,12 +31,11 @@ function orchestrateGovernanceAudit() {
   const results = {
     drift: SyncChecker.check(),
     narrative: checkChangelogHealth(),
-    laws: checkLawsCompliance(),
+    codeStyle: checkCodeStyleCompliance(),
     tests: checkTestNamedExpectations(),
     soul: checkSoulPulse(),
     hygiene: checkHygienePulse(),
     backlog: checkBacklogHealth(),
-    sovereign: checkSovereignCompliance(),
   };
 
   const auditResults = results;
@@ -96,7 +95,7 @@ function checkChangelogHealth() {
   return healthResult;
 }
 
-function checkLawsCompliance() {
+function checkCodeStyleCompliance() {
   const files = isMaintainerMode()
     ? AuditFileScanner.getMaintainerFiles()
     : AuditFileScanner.getFilesRecursive(
@@ -118,14 +117,14 @@ function checkLawsCompliance() {
     }
   }
 
-  const lawsResult = {
+  const codeStyleResult = {
     isFailure: violations.length > 0,
     violations,
     score: violations.length === 0 ? '100%' : `${Math.max(0, 100 - violations.length * 10)}%`,
   };
 
-  const finalLawsResult = lawsResult;
-  return finalLawsResult;
+  const finalCodeStyleResult = codeStyleResult;
+  return finalCodeStyleResult;
 }
 
 function checkTestNamedExpectations() {
@@ -175,36 +174,6 @@ function checkTestNamedExpectations() {
 
   const finalExpectationsResult = expectationsResult;
   return finalExpectationsResult;
-}
-
-function checkSovereignCompliance() {
-  const staffDnaPath = path.join(PROJECT_ROOT, '.ai', 'skills', 'staff-dna.md');
-  const agentsPath = path.join(PROJECT_ROOT, '.ai', 'skills', 'AGENTS.md');
-
-  const violations = [];
-
-  if (fs.existsSync(staffDnaPath)) {
-    const dnaContent = fs.readFileSync(staffDnaPath, 'utf8');
-    if (!dnaContent.includes('Law 1: The Law of Protocol')) {
-      violations.push('staff-dna.md: Missing Law 1 (Sovereignty Gate)');
-    }
-    if (!dnaContent.includes('Law 8: The Law of Contextual Efficiency')) {
-      violations.push('staff-dna.md: Missing Law 8 (Token Discipline)');
-    }
-  } else {
-    violations.push('staff-dna.md: File missing from .ai/');
-  }
-
-  if (!fs.existsSync(agentsPath)) {
-    violations.push('AGENTS.md: File missing from .ai/');
-  }
-
-  const sovereignComplianceResult = {
-    isFailure: violations.length > 0,
-    violations,
-    message: violations.length > 0 ? violations.join(' | ') : 'Sovereign Protocol active.',
-  };
-  return sovereignComplianceResult;
 }
 
 function checkBacklogHealth() {
@@ -283,12 +252,12 @@ function reportSummary(results) {
   const isNarrativeOk = !results.narrative.isFailure;
   printResult('Narrative (Changelog)', isNarrativeOk, results.narrative.reason);
 
-  const isLawsOk = !results.laws.isFailure;
-  const lawsReason = isLawsOk
+  const isCodeStyleOk = !results.codeStyle.isFailure;
+  const codeStyleReason = isCodeStyleOk
     ? null
-    : `found ${results.laws.violations.length} violations:\n      - ` +
-      results.laws.violations.join('\n      - ');
-  printResult('Laws Compliance', isLawsOk, lawsReason);
+    : `found ${results.codeStyle.violations.length} violations:\n      - ` +
+      results.codeStyle.violations.join('\n      - ');
+  printResult('Code Style Compliance', isCodeStyleOk, codeStyleReason);
 
   const isTestsOk = !results.tests.isFailure;
   const firstTestViolation = results.tests.violations[0];
@@ -307,17 +276,13 @@ function reportSummary(results) {
   const isBacklogOk = !results.backlog.isFailure;
   printResult('Backlog Health', isBacklogOk, results.backlog.message);
 
-  const isSovereignOk = !results.sovereign.isFailure;
-  printResult('Sovereign Protocol', isSovereignOk, results.sovereign.message);
-
   const totalFailures = [
     results.drift,
     results.narrative,
-    results.laws,
+    results.codeStyle,
     results.soul,
     results.tests,
     results.hygiene,
-    results.sovereign,
     results.backlog,
   ].filter((result) => result && result.isFailure).length;
 

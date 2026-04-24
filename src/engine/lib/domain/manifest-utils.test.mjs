@@ -7,9 +7,9 @@ const { compareHashes, daysAgo } = ManifestUtils;
 describe('ManifestUtils', () => {
   describe('compareHashes()', () => {
     it('should classify unchanged files correctly', () => {
-      const stored = { 'core/staff-dna.md': 'abc123', 'core/security.md': 'def456' };
-      const current = { 'core/staff-dna.md': 'abc123', 'core/security.md': 'def456' };
-      const expectedUnchanged = ['core/staff-dna.md', 'core/security.md'];
+      const stored = { 'core/code-style.md': 'abc123', 'core/security.md': 'def456' };
+      const current = { 'core/code-style.md': 'abc123', 'core/security.md': 'def456' };
+      const expectedUnchanged = ['core/code-style.md', 'core/security.md'];
       const expectedEmpty = [];
 
       const actual = compareHashes(stored, current);
@@ -20,9 +20,9 @@ describe('ManifestUtils', () => {
     });
 
     it('should detect changed files', () => {
-      const stored = { 'core/staff-dna.md': 'abc123' };
-      const current = { 'core/staff-dna.md': 'xyz789' };
-      const expectedChanged = ['core/staff-dna.md'];
+      const stored = { 'core/code-style.md': 'abc123' };
+      const current = { 'core/code-style.md': 'xyz789' };
+      const expectedChanged = ['core/code-style.md'];
       const expectedEmpty = [];
 
       const actual = compareHashes(stored, current);
@@ -32,10 +32,10 @@ describe('ManifestUtils', () => {
     });
 
     it('should detect newly added files', () => {
-      const stored = { 'core/staff-dna.md': 'abc123' };
-      const current = { 'core/staff-dna.md': 'abc123', 'core/new-file.md': 'new456' };
+      const stored = { 'core/code-style.md': 'abc123' };
+      const current = { 'core/code-style.md': 'abc123', 'core/new-file.md': 'new456' };
       const expectedAdded = ['core/new-file.md'];
-      const expectedUnchanged = ['core/staff-dna.md'];
+      const expectedUnchanged = ['core/code-style.md'];
 
       const actual = compareHashes(stored, current);
 

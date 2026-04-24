@@ -66,8 +66,7 @@ seu-projeto/
 ├── .ai/                         ← Conjuntos de instruções (commitado)
 │   ├── skills/                  ← Skills de engenharia (carregadas sob demanda por fase do ciclo)
 │   │   ├── AGENTS.md            ← Ponto de entrada + registro de skills
-│   │   ├── staff-dna.md         ← 8 Leis de Engenharia (carregada em Phase CODE)
-│   │   ├── code-style.md
+│   │   ├── code-style.md        ← Code style + Pre-Code Checklist + Pre-Finish Gate (núcleo da Phase CODE)
 │   │   ├── testing.md
 │   │   ├── security.md
 │   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)

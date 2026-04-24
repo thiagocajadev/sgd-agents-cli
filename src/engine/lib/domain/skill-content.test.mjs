@@ -7,7 +7,6 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ASSETS = path.join(__dirname, '..', '..', '..', 'assets');
 
-const STAFF_DNA = path.join(ASSETS, 'skills', 'staff-dna.md');
 const WORKFLOW = path.join(ASSETS, 'instructions', 'templates', 'workflow.md');
 const CODE_STYLE = path.join(ASSETS, 'skills', 'code-style.md');
 
@@ -16,102 +15,118 @@ function readAsset(assetPath) {
   return content;
 }
 
-describe('Skill Content — Supreme Gate (Law 1 hardening)', () => {
-  describe('staff-dna.md Law 1 Recited Gate', () => {
-    it('should require a DNA-GATE CONFIRMED block before write tools', () => {
-      const input = readAsset(STAFF_DNA);
-      const expectedMarker = 'Recited Gate (SUPREME BLOCK)';
+describe('Skill Content — Governance Layer', () => {
+  describe('code-style.md essentials', () => {
+    it('should open with a two-line Security-First block', () => {
+      const input = readAsset(CODE_STYLE);
+      const expectedFragments = [
+        '## Security first',
+        'Default deny at every boundary',
+        'Never concatenate user input',
+      ];
 
-      const actual = input.includes(expectedMarker);
+      const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
 
-      assert.ok(actual, 'Law 1 must name the Recited Gate as SUPREME BLOCK');
+      assert.deepEqual(actualMissing, [], 'Security-first block must be explicit and early');
     });
 
-    it('should list the mandatory DNA-GATE CONFIRMED block contents', () => {
-      const input = readAsset(STAFF_DNA);
+    it('should expose a PreCodeChecklist rule before PreFinishGate', () => {
+      const input = readAsset(CODE_STYLE);
+      const preCodeIndex = input.indexOf('<rule name="PreCodeChecklist">');
+      const preFinishIndex = input.indexOf('<rule name="PreFinishGate">');
+
+      const actual = preCodeIndex !== -1 && preCodeIndex < preFinishIndex;
+
+      assert.ok(actual, 'PreCodeChecklist must exist and precede PreFinishGate');
+    });
+
+    it('should enumerate the eight Pre-Code Checklist concerns', () => {
+      const input = readAsset(CODE_STYLE);
       const expectedFragments = [
-        'DNA-GATE CONFIRMED',
-        'Laws Applied',
-        'Code-Style Checklist (Pre-Start)',
+        'Mental Reset',
         'Target Files',
+        'Naming',
+        'Narrative',
+        'Comments',
+        'Tests planned',
+        'Security',
         'Blockers',
       ];
 
       const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
 
-      assert.deepEqual(actualMissing, [], 'All DNA-GATE block fields must be enumerated');
+      assert.deepEqual(actualMissing, [], 'Pre-Code Checklist must cover all eight concerns');
     });
 
-    it('should declare that missing block is a Law 1 violation', () => {
-      const input = readAsset(STAFF_DNA);
-      const expectedMarker = 'Law 1 violation';
+    it('should enumerate the eight Pre-Finish Gate items wired to heuristics', () => {
+      const input = readAsset(CODE_STYLE);
+      const expectedFragments = [
+        'Narrative Siblings',
+        'Explaining Returns',
+        'No framework abbreviations',
+        'Vertical Density',
+        'Revealing Module Pattern',
+        'Boolean prefix',
+        'No section banners',
+        'Pure entry point',
+      ];
 
-      const actual = input.includes(expectedMarker);
+      const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
 
-      assert.ok(actual, 'Missing gate must be labeled a Law 1 violation');
+      assert.deepEqual(actualMissing, [], 'Pre-Finish Gate must match heuristic strategy keys');
+    });
+
+    it('should ban Engineering Laws / DNA-GATE vocabulary from code-style', () => {
+      const input = readAsset(CODE_STYLE);
+      const forbiddenFragments = [
+        'Engineering Laws',
+        'DNA-GATE',
+        'staff-dna',
+        'Sovereign Protocol',
+      ];
+
+      const actualLeaks = forbiddenFragments.filter((fragment) => input.includes(fragment));
+
+      assert.deepEqual(
+        actualLeaks,
+        [],
+        'code-style must not reference removed governance ceremony'
+      );
     });
   });
 
-  describe('workflow.md Phase CODE Supreme Block', () => {
-    it('should promote DNA-GATE to a BLOCKING supreme block', () => {
+  describe('workflow.md Phase CODE', () => {
+    it('should route Phase CODE through the Pre-Code Checklist', () => {
       const input = readAsset(WORKFLOW);
-      const expectedMarker = 'DNA-GATE (SUPREME BLOCK — BLOCKING)';
+      const expectedMarker = 'Pre-Code Checklist (BLOCKING)';
 
       const actual = input.includes(expectedMarker);
 
-      assert.ok(actual, 'Phase CODE step 1 must be labeled SUPREME BLOCK — BLOCKING');
+      assert.ok(actual, 'Phase CODE step 1 must be the Pre-Code Checklist');
     });
 
-    it('should forbid Edit/Write/NotebookEdit before the gate emission', () => {
+    it('should still name the blocked write tools', () => {
       const input = readAsset(WORKFLOW);
-      const expectedFragments = ['DNA-GATE CONFIRMED', 'Edit', 'Write', 'NotebookEdit'];
+      const expectedFragments = ['Edit', 'Write', 'NotebookEdit'];
 
       const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
 
       assert.deepEqual(actualMissing, [], 'Phase CODE must name blocked write tools');
     });
 
-    it('should install a Circuit Breaker tied to Law 1', () => {
+    it('should have shed all Laws / DNA-GATE vocabulary', () => {
       const input = readAsset(WORKFLOW);
-      const expectedMarker = 'Circuit Breaker';
-
-      const actual = input.includes(expectedMarker) && input.includes('Law 1 violation');
-
-      assert.ok(actual, 'Phase CODE must wire Circuit Breaker to Law 1 violation');
-    });
-  });
-
-  describe('code-style.md PreStartGate rule', () => {
-    it('should expose a PreStartGate rule before EnforcementChecklist', () => {
-      const input = readAsset(CODE_STYLE);
-      const preStartIndex = input.indexOf('<rule name="PreStartGate">');
-      const enforcementIndex = input.indexOf('<rule name="EnforcementChecklist">');
-
-      const actual = preStartIndex !== -1 && preStartIndex < enforcementIndex;
-
-      assert.ok(actual, 'PreStartGate must exist and precede EnforcementChecklist');
-    });
-
-    it('should promote "Paragraphs of Intent" to a binary checklist item', () => {
-      const input = readAsset(CODE_STYLE);
-      const expectedFragments = [
-        'Paragraphs of Intent',
-        'blank line separates logical groups',
-        'NO blank lines within a group',
+      const forbiddenFragments = [
+        'DNA-GATE CONFIRMED',
+        'SUPREME BLOCK',
+        'Engineering Laws',
+        'Law 1 violation',
+        'staff-dna.md',
       ];
 
-      const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
+      const actualLeaks = forbiddenFragments.filter((fragment) => input.includes(fragment));
 
-      assert.deepEqual(actualMissing, [], 'Paragraphs of Intent must be explicit and binary');
-    });
-
-    it('should declare the twin-gate relationship with EnforcementChecklist', () => {
-      const input = readAsset(CODE_STYLE);
-      const expectedFragments = ['Twin gate', 'Pre-Finish', 'Pre-Start'];
-
-      const actualMissing = expectedFragments.filter((fragment) => !input.includes(fragment));
-
-      assert.deepEqual(actualMissing, [], 'PreStartGate must declare twin-gate pairing');
+      assert.deepEqual(actualLeaks, [], 'workflow.md must not retain removed governance ceremony');
     });
   });
 });

@@ -149,17 +149,27 @@ describe('InstructionAssembler', () => {
   });
 
   describe('buildMasterInstructions()', () => {
-    it('should include pointer to Universal Engineering Manifesto', () => {
+    it('should point at code-style.md and workflow.md in the header', () => {
       const input = { flavor: 'lite', idioms: ['go'], versions: {} };
-      const expectedSubstring1 = 'Universal Engineering Manifesto';
-      const expectedSubstring2 = '.ai/skills/staff-dna.md';
+      const expectedCodeStyleRef = '.ai/skills/code-style.md';
+      const expectedWorkflowRef = '.ai/instructions/templates/workflow.md';
 
       const actual = buildMasterInstructions(input);
-      const hasManifestoTitle = actual.includes(expectedSubstring1);
-      const hasStaffDnaLink = actual.includes(expectedSubstring2);
+      const hasCodeStyleRef = actual.includes(expectedCodeStyleRef);
+      const hasWorkflowRef = actual.includes(expectedWorkflowRef);
 
-      assert.ok(hasManifestoTitle);
-      assert.ok(hasStaffDnaLink);
+      assert.ok(hasCodeStyleRef);
+      assert.ok(hasWorkflowRef);
+    });
+
+    it('should NOT reference the removed staff-dna.md skill', () => {
+      const input = { flavor: 'lite', idioms: ['go'], versions: {} };
+      const forbiddenSubstring = 'staff-dna.md';
+
+      const actual = buildMasterInstructions(input);
+      const hasNoStaffDnaLink = !actual.includes(forbiddenSubstring);
+
+      assert.ok(hasNoStaffDnaLink, 'staff-dna.md must not appear in generated AGENTS.md');
     });
 
     it('should include Semantic Router with all cycle triggers', () => {
@@ -349,12 +359,14 @@ describe('InstructionAssembler', () => {
       const actual = buildMasterInstructions(WORST_CASE_INPUT);
 
       const forbiddenPatterns = [
-        { pattern: 'SOVEREIGN PROTOCOL', reason: 'DNA-GATE text belongs in staff-dna.md' },
+        { pattern: 'SOVEREIGN PROTOCOL', reason: 'removed ceremony must not resurface' },
         { pattern: 'PHASE EXECUTION IS MANDATORY', reason: 'Phase rules belong in workflow.md' },
         { pattern: 'Skipping any phase', reason: 'Phase enforcement belongs in workflow.md' },
         { pattern: 'Training heuristics', reason: 'Anti-heuristic text belongs in workflow.md' },
-        { pattern: 'Mental Reset', reason: 'DNA-GATE ceremony belongs in staff-dna.md' },
-        { pattern: 'Sovereign Gateway', reason: 'DNA-GATE ceremony belongs in staff-dna.md' },
+        { pattern: 'Mental Reset', reason: 'checklist items belong in code-style.md' },
+        { pattern: 'Sovereign Gateway', reason: 'removed ceremony must not resurface' },
+        { pattern: 'DNA-GATE', reason: 'removed ceremony must not resurface' },
+        { pattern: 'Engineering Laws', reason: 'removed vocabulary must not resurface' },
         { pattern: '[!IMPORTANT]', reason: 'Callout boxes waste tokens in always-on context' },
         { pattern: '[!CAUTION]', reason: 'Callout boxes waste tokens in always-on context' },
       ];

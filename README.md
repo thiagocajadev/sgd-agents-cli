@@ -20,8 +20,8 @@
 
 The instruction set covers:
 
-- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) that structures how the agent handles any task. Includes **Quality Gate** (CODE), **Audit Gate** (TEST), and a 3-strike **Circuit Breaker** (STOP) to prevent regression loops.
-- **Engineering Laws**: 8 universal laws (Protocol, Hardening, Resilience, Narrative Cascade, Visual Excellence, Boundaries, Reflection, Contextual Efficiency) loaded only in Phase CODE.
+- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) that structures how the agent handles any task. Includes a **Pre-Code Checklist** (CODE entry), a **Pre-Finish Gate** (TEST), and a 3-strike **Circuit Breaker** (STOP) to prevent regression loops.
+- **Code style & quality gates**: consolidated in `code-style.md` — a single Pre-Code Checklist (Mental Reset, Target Files, Naming, Narrative, Comments, Tests, Security, Blockers) and a Pre-Finish Gate wired to narrative heuristics (Stepdown, SLA, Explaining Returns, banned abbreviations, Boolean prefix, Revealing Module Pattern, etc.).
 - **Skills, on-demand**: code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX — each a self-contained skill unit loaded only when the current cycle needs it.
 - **Language idioms**: idiomatic conventions for your specific stack (JS, TS, Python, C#, Java, Kotlin, Go, Rust, Swift, Flutter, SQL, VB.NET).
 - **Architectural flavors**: rules for your project's structural pattern (vertical slice, MVC, lite, legacy).
@@ -66,8 +66,7 @@ your-project/
 ├── .ai/                         ← Instruction set (committed)
 │   ├── skills/                  ← Engineering skills (loaded on-demand per cycle phase)
 │   │   ├── AGENTS.md            ← Main entry point + skill registry
-│   │   ├── staff-dna.md         ← 8 Engineering Laws (loaded in Phase CODE)
-│   │   ├── code-style.md
+│   │   ├── code-style.md        ← Code style + Pre-Code Checklist + Pre-Finish Gate (Phase CODE core)
 │   │   ├── testing.md
 │   │   ├── security.md
 │   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)
@@ -184,7 +183,7 @@ npx sdg-agents clear     # Remove the .ai/ folder
 - [Quick Reference (CHEATSHEET)](docs/reference/CHEATSHEET.md) — all CLI flags and agent triggers
 - [Project Structure](docs/reference/PROJECT-STRUCTURE.md) — detailed breakdown of every generated file
 - [Architectural Pipelines](docs/reference/PIPELINES.md) — data flow diagrams for each flavor
-- [Engineering Laws (CONSTITUTION)](docs/concepts/CONSTITUTION.md) — the principles behind the rules
+- [Engineering Constitution](docs/concepts/CONSTITUTION.md) — the philosophical principles behind the rules (reference only; runtime rules live in `code-style.md`)
 - [UI/UX System](docs/guides/UI-UX.md) — design philosophy, hierarchy, surface tonal scale, presets, and external research references
 - [Roadmap](docs/ROADMAP.md) — planned work
 - [Changelog](CHANGELOG.md) — release history

@@ -4,9 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { NarrativeHeuristics } from './heuristics/narrative-heuristics.mjs';
 
 /**
- * Governance SSOT — Single Source of Truth for SDG Agents Engineering Laws.
- * Dynamically parses instruction files (Markdown) to extract labels and descriptions,
- * ensuring perfect synchronization between documentation and automated enforcement.
+ * Governance SSOT — extracts the Pre-Finish Gate checklist from code-style.md
+ * and wires each labeled item to its narrative-heuristic validator.
  */
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -31,7 +30,7 @@ const NARRATIVE_VALIDATION_STRATEGIES = {
 
 function loadDynamicRules() {
   const content = fs.readFileSync(STANDARDS_PATH, 'utf8');
-  const checklistSection = content.match(/<rule name="EnforcementChecklist">([\s\S]*?)<\/rule>/);
+  const checklistSection = content.match(/<rule name="PreFinishGate">([\s\S]*?)<\/rule>/);
 
   if (!checklistSection) {
     const emptyChecklist = [];
@@ -63,22 +62,8 @@ function loadDynamicRules() {
   return finalDynamicRules;
 }
 
-export const GOVERNANCE_RULES = {
-  LAW_2_HARDENING: {
-    id: 'hardening',
-    label: 'Law 2: Hardening',
-    checkpoint: 'Absolute boundary isolation.',
-  },
-  LAW_3_RESILIENCE: {
-    id: 'resilience',
-    label: 'Law 3: Resilience',
-    checkpoint: 'Defensive dominance.',
-  },
-  LAW_4_NARRATIVE: {
-    id: 'narrative',
-    label: 'Law 4: Narrative Cascade',
-    checkpoint: 'Stepdown Rule; SLA; Narrative Siblings.',
-  },
-};
-
 export const NARRATIVE_CHECKLIST = loadDynamicRules();
+
+export const Governance = {
+  NARRATIVE_CHECKLIST,
+};

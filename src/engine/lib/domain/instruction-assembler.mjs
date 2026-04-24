@@ -29,11 +29,6 @@ const SOURCE_INSTRUCTIONS = path.join(__dirname, '../../..', 'assets', 'instruct
  */
 const SKILL_CATALOG = [
   {
-    path: '.ai/skills/staff-dna.md',
-    category: 'core',
-    description: 'Engineering Laws',
-  },
-  {
     path: '.ai/skills/code-style.md',
     category: 'core',
     description: 'Code Style & Standards',
@@ -117,8 +112,8 @@ function buildMasterInstructions(selections) {
     const headerString = dedent`
       # Staff Engineer — Governance Command Center
 
-      > This project follows the Universal Engineering Manifesto.
-      > Engineering Laws defined in staff-dna.md — loaded in Phase CODE only.`;
+      > Code style and quality gates live in code-style.md.
+      > Cycle phases live in workflow.md.`;
 
     return headerString;
   }

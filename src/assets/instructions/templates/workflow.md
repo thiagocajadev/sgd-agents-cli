@@ -58,18 +58,12 @@
 
 <rule name="PhaseCODE">
 
-1. **DNA-GATE (SUPREME BLOCK — BLOCKING)**: Emit a `DNA-GATE CONFIRMED` block BEFORE the first `Edit`/`Write`/`NotebookEdit` call. No write tool fires without it. The block MUST contain:
-   - **Mental Reset** — one line naming what training default is being suspended for this task
-   - **Laws Applied** — Engineering Laws from `staff-dna.md` relevant to this task + one-line justification each
-   - **Code-Style Checklist (Pre-Start)** — recite `PreStartGate` items from `code-style.md` as a binary checked list
-   - **Target Files** — explicit path list, scoped to the approved Plan
-   - **Blockers** — `none` or enumerated
-2. **Context Load**: Read standards + style guide + competencies. Core rules exempt from Impact Map skip.
-3. **Quality Gate**: Narrative Gate against every modified function.
-4. **Plan Adherence**: Follow plan. No extras.
-5. **Blocker Surface**: Raise blockers immediately. Never work around silently.
+1. **Pre-Code Checklist (BLOCKING)**: Recite `PreCodeChecklist` from `code-style.md` BEFORE the first `Edit` / `Write` / `NotebookEdit` call. No write tool fires without it. Items are binary (Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers).
+2. **Context Load**: Read `code-style.md` + domain skills relevant to the task.
+3. **Plan Adherence**: Follow plan. No extras.
+4. **Blocker Surface**: Raise blockers immediately. Never work around silently.
 
-> **Circuit Breaker**: Any write tool call without a preceding `DNA-GATE CONFIRMED` block = Law 1 violation. Phase TEST auto-fails the cycle; remediation is re-entry into Phase CODE with the block emitted.
+> **Circuit Breaker**: Any write tool call without a preceding `Pre-Code Checklist` recitation auto-fails Phase TEST; remediation is re-entry into Phase CODE with the checklist emitted.
 
 </rule>
 
@@ -79,7 +73,7 @@
 
 1. **Checklist Verification**: Every item from Spec's checklist.
 2. **Regression Check**: For `fix:` — bug gone, nothing else broke.
-3. **Audit Gate**: Modified files vs Engineering Laws.
+3. **Audit Gate**: Modified files vs `PreFinishGate` from `code-style.md`.
 4. **Lint Fix**: Run linter, fix what's possible.
 5. **Circuit Breaker**: Fail → Phase CODE → re-TEST. Max 3 attempts. 3rd failure → stop + Failure Report.
 6. **Report**: Result per checklist item + lint + audit status.

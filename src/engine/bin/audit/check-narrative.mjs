@@ -4,7 +4,7 @@ import { NARRATIVE_CHECKLIST } from '../../config/governance.mjs';
 import { FsUtils } from '../../lib/core/fs-utils.mjs';
 
 /**
- * Narrative Auditor — Specialized Law 4 compliance tool.
+ * Narrative Auditor — Narrative Cascade compliance tool.
  */
 
 const PROJECT_ROOT = process.cwd();
@@ -25,7 +25,7 @@ async function orchestrateNarrativeAudit() {
 
 function printHeader() {
   console.log('\n' + '─'.repeat(50));
-  console.log('  📖 SDG NARRATIVE AUDIT — Law 4 Compliance');
+  console.log('  📖 SDG NARRATIVE AUDIT — Narrative Cascade Compliance');
   console.log('─'.repeat(50) + '\n');
 }
 
@@ -102,7 +102,7 @@ function reportResults(violationsByFile, totalViolations) {
 
   console.log('─'.repeat(50));
   console.log(`  ⚠️  NARRATIVE DRIFT DETECTED: ${totalViolations} violations found.`);
-  console.log('  Recommendation: Apply "Code as Documentation" (Law 4).');
+  console.log('  Recommendation: Apply "Code as Documentation" (see code-style.md).');
   console.log('─'.repeat(50) + '\n');
 }
 

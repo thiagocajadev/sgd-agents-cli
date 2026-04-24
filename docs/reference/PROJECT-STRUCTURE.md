@@ -9,8 +9,7 @@ your-project/
 ├── .ai/                         ← Instruction set (committed)
 │   ├── skills/                  ← Engineering skills (loaded on-demand per cycle phase)
 │   │   ├── AGENTS.md            ← Main entry point + skill registry
-│   │   ├── staff-dna.md         ← 8 Engineering Laws (loaded in Phase CODE)
-│   │   ├── code-style.md        ← Narrative Cascade, naming, engineering standards
+│   │   ├── code-style.md        ← Code style + Pre-Code Checklist + Pre-Finish Gate (Phase CODE core)
 │   │   ├── testing.md           ← Test principles (loaded in Phase CODE/TEST)
 │   │   ├── security.md          ← Security boundaries + pipeline rules
 │   │   ├── api-design.md        ← API contracts and envelopes
@@ -45,15 +44,14 @@ The skill directory is the **canonical Single Source of Truth** for engineering 
 
 ### skills/AGENTS.md
 
-The main entry point. Referenced by `CLAUDE.md` (and equivalent files for other agents) so it loads automatically at session start. It is a **minimal router**: manifesto + DNA-GATE + session start checklist + skill registry + cycle commands. It does not contain knowledge — it tells the agent which skill to load for the current task.
-
-### skills/staff-dna.md
-
-The 8 Engineering Laws: Protocol, Hardening, Resilience, Narrative Cascade, Visual Excellence, Boundaries, Reflection, Contextual Efficiency. Loaded only in Phase CODE, when the agent crosses the DNA-GATE before writing any code.
+The main entry point. Referenced by `CLAUDE.md` (and equivalent files for other agents) so it loads automatically at session start. It is a **minimal router**: header + session start checklist + semantic router + skill registry. It does not contain knowledge — it tells the agent which skill to load for the current task.
 
 ### skills/code-style.md
 
-Consolidated naming, style, and engineering standards — Narrative Cascade, Stepdown Rule, SLA, Revealing Module Pattern, banned abbreviations, definition of done.
+The **Phase CODE core**. Two-line Security-First block, code-style rules (naming, narrative, comments, tests, dependencies, structure, formatting, logging), and the two gates the agent must recite:
+
+- **Pre-Code Checklist** (Phase CODE entry, before the first `Edit` / `Write`) — Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers.
+- **Pre-Finish Gate** (Phase TEST) — eight binary items wired to narrative heuristic validators in `governance.mjs` (Stepdown, SLA, Explaining Returns, banned abbreviations, Boolean prefix, Revealing Module Pattern, Vertical Density, No section banners).
 
 ### skills/testing.md
 
@@ -156,6 +154,6 @@ This design is inspired by the structural philosophy of [code-review-graph](http
 | :---- | :------------------------------------------------------------------------------------------------------- |
 | SPEC  | `commands/sdg-<cycle>.md`, `.ai/backlog/context.md`, `.ai/backlog/tasks.md`                              |
 | PLAN  | `.ai/backlog/tasks.md`, `.ai/backlog/impact-map.md` (written here via `git diff`)                        |
-| CODE  | `skills/staff-dna.md`, `skills/code-style.md` + domain skills on demand, `.ai/backlog/impact-map.md`     |
+| CODE  | `skills/code-style.md` + domain skills on demand, `.ai/backlog/impact-map.md`                            |
 | TEST  | `skills/testing.md` — Includes **Audit Gate** (drift detection) and **Circuit Breaker** (3-strike rule)  |
 | END   | `.ai/backlog/context.md`, `.ai/backlog/tasks.md`, `learned.md`, `troubleshoot.md`, `commands/sdg-end.md` |

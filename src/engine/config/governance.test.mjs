@@ -11,10 +11,10 @@ function findRule(label) {
 }
 
 describe('governance.NARRATIVE_CHECKLIST', () => {
-  it('parses all 14 enforcement checklist items from code-style.md', () => {
-    const expectedChecklistSize = 14;
+  it('parses all 8 Pre-Finish Gate items from code-style.md', () => {
+    const expectedChecklistSize = 8;
     const actualChecklistSize = NARRATIVE_CHECKLIST.length;
-    const failureMessage = 'parser regex must capture every checklist item (Bug X regression)';
+    const failureMessage = 'parser regex must capture every Pre-Finish Gate item';
 
     assert.equal(actualChecklistSize, expectedChecklistSize, failureMessage);
   });
@@ -29,9 +29,9 @@ describe('governance.NARRATIVE_CHECKLIST', () => {
     assert.equal(orphanCount, expectedOrphanCount, failureMessage);
   });
 
-  it('exposes SLA, Pure entry point, and Explaining Returns as enforced rules', () => {
+  it('exposes Pure entry point, Explaining Returns, and Boolean prefix as enforced rules', () => {
     const ruleLabels = NARRATIVE_CHECKLIST.map((rule) => rule.label);
-    const requiredRules = ['SLA', 'Pure entry point', 'Explaining Returns'];
+    const requiredRules = ['Pure entry point', 'Explaining Returns', 'Boolean prefix'];
 
     for (const expectedLabel of requiredRules) {
       const isPresent = ruleLabels.includes(expectedLabel);

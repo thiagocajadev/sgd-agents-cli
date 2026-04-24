@@ -54,7 +54,7 @@ describe('RulesetInjector', () => {
       const tmpDir = makeTempDir();
       const inputSelections = { flavor: 'lite', idioms: ['go'], versions: { go: null } };
       const expectedDir = path.join(tmpDir, '.ai', 'skills');
-      const expectedSkillFile = path.join(expectedDir, 'staff-dna.md');
+      const expectedSkillFile = path.join(expectedDir, 'code-style.md');
 
       try {
         prepareProjectStructure(tmpDir);
