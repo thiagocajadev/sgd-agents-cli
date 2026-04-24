@@ -34,7 +34,9 @@ export function pruneBacklog(content, keepCount = DEFAULT_KEEP_COUNT) {
 
   for (const line of doneLines) {
     const isEntry = DONE_ENTRY_PATTERN.test(line);
-    if (!isEntry) continue;
+    if (!isEntry) {
+      continue;
+    }
     if (keptEntries.length < keepCount) {
       keptEntries.push(line);
     } else {

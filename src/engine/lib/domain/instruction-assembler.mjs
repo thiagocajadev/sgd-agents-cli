@@ -145,7 +145,9 @@ function buildMasterInstructions(selections) {
 
     for (const category of ['core', 'delivery', 'backend', 'frontend', 'surgical']) {
       const skills = groupedByCategory[category];
-      if (!skills || skills.length === 0) continue;
+      if (!skills || skills.length === 0) {
+        continue;
+      }
       sections.push(categoryHeaders[category]);
       for (const skill of skills) {
         sections.push(`- \`${skill.path}\` — ${skill.description}`);
@@ -168,7 +170,9 @@ function buildMasterInstructions(selections) {
   function groupSkills(skills) {
     const groups = { core: [], delivery: [], backend: [], frontend: [], surgical: [] };
     for (const skill of skills) {
-      if (groups[skill.category]) groups[skill.category].push(skill);
+      if (groups[skill.category]) {
+        groups[skill.category].push(skill);
+      }
     }
     const groupedResult = groups;
     return groupedResult;
@@ -200,7 +204,10 @@ function writeBacklogFiles(targetDirectory, selections) {
 
   function detectProjectLanguage(projectDirectory) {
     const packagePath = path.join(projectDirectory, 'package.json');
-    if (!fileSystem.existsSync(packagePath)) return 'en';
+    if (!fileSystem.existsSync(packagePath)) {
+      const defaultLanguage = 'en';
+      return defaultLanguage;
+    }
 
     try {
       const packageData = JSON.parse(fileSystem.readFileSync(packagePath, 'utf8'));
@@ -262,7 +269,9 @@ function writeBacklogFiles(targetDirectory, selections) {
 
   function injectPartnerSection(contextPath, partnerInfo) {
     const existingContent = fileSystem.readFileSync(contextPath, 'utf8');
-    if (existingContent.includes('## Partner')) return;
+    if (existingContent.includes('## Partner')) {
+      return;
+    }
 
     const separator = existingContent.endsWith('\n') ? '' : '\n';
     const injection = `\n## Partner\n\n${partnerInfo}\n`;
@@ -271,29 +280,39 @@ function writeBacklogFiles(targetDirectory, selections) {
 
   function writeStackFile(backlogDirectoryPath) {
     const stackPath = path.join(backlogDirectoryPath, 'stack.md');
-    if (fileSystem.existsSync(stackPath)) return;
+    if (fileSystem.existsSync(stackPath)) {
+      return;
+    }
     const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'stack.md');
-    if (!fileSystem.existsSync(templatePath)) return;
+    if (!fileSystem.existsSync(templatePath)) {
+      return;
+    }
     fileSystem.copyFileSync(templatePath, stackPath);
   }
 
   function writeTasksFile(backlogDirectoryPath) {
     const tasksPath = path.join(backlogDirectoryPath, 'tasks.md');
-    if (fileSystem.existsSync(tasksPath)) return;
+    if (fileSystem.existsSync(tasksPath)) {
+      return;
+    }
     const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'tasks.md');
     fileSystem.copyFileSync(templatePath, tasksPath);
   }
 
   function writeLearnedFile(backlogDirectoryPath) {
     const learnedPath = path.join(backlogDirectoryPath, 'learned.md');
-    if (fileSystem.existsSync(learnedPath)) return;
+    if (fileSystem.existsSync(learnedPath)) {
+      return;
+    }
     const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'learned.md');
     fileSystem.copyFileSync(templatePath, learnedPath);
   }
 
   function writeTroubleshootFile(backlogDirectoryPath) {
     const troubleshootPath = path.join(backlogDirectoryPath, 'troubleshoot.md');
-    if (fileSystem.existsSync(troubleshootPath)) return;
+    if (fileSystem.existsSync(troubleshootPath)) {
+      return;
+    }
     const templatePath = path.join(SOURCE_INSTRUCTIONS, 'templates', 'backlog', 'troubleshoot.md');
     fileSystem.copyFileSync(templatePath, troubleshootPath);
   }
@@ -381,7 +400,9 @@ function writeGitignore(targetDirectory) {
     return blockContent;
   }).filter(Boolean);
 
-  if (blocksToAppend.length === 0) return;
+  if (blocksToAppend.length === 0) {
+    return;
+  }
 
   const separator = existingContent.length > 0 && !existingContent.endsWith('\n') ? '\n' : '';
   fileSystem.appendFileSync(gitignorePath, `${separator}\n${blocksToAppend.join('\n\n')}\n`);
@@ -414,14 +435,18 @@ function writeManifest(targetDirectory, selections, packageVersion) {
  * Idempotent: skips if scripts/bump.mjs exists or if selections.bump is false.
  */
 function writeAutomationScripts(targetDirectory, selections) {
-  if (selections.bump === false) return;
+  if (selections.bump === false) {
+    return;
+  }
 
   const scriptsDir = path.join(targetDirectory, 'scripts');
   const bumpScriptPath = path.join(scriptsDir, 'bump.mjs');
 
   const packagePath = path.join(targetDirectory, 'package.json');
   const packageData = safeReadJson(packagePath);
-  if (!packageData) return;
+  if (!packageData) {
+    return;
+  }
 
   const hasExistingBump =
     packageData.scripts &&
@@ -438,7 +463,9 @@ function writeAutomationScripts(targetDirectory, selections) {
     fileSystem.writeFileSync(bumpScriptPath, templateContent);
   }
 
-  if (!packageData.scripts) packageData.scripts = {};
+  if (!packageData.scripts) {
+    packageData.scripts = {};
+  }
   if (!packageData.scripts.bump) {
     packageData.scripts.bump = 'node scripts/bump.mjs';
     writeJsonAtomic(packagePath, packageData, fileSystem.readFileSync(packagePath, 'utf8'));
@@ -480,7 +507,9 @@ function writeToolingAssets(targetDirectory) {
   const targetToolingDir = path.join(targetDirectory, '.ai', 'tooling');
 
   const hasSourceAssets = fileSystem.existsSync(sourceToolingDir);
-  if (!hasSourceAssets) return;
+  if (!hasSourceAssets) {
+    return;
+  }
 
   fileSystem.cpSync(sourceToolingDir, targetToolingDir, { recursive: true, force: true });
 
@@ -488,7 +517,9 @@ function writeToolingAssets(targetDirectory) {
   for (const hookName of executableHooks) {
     const hookPath = path.join(targetToolingDir, 'husky', hookName);
     const hookExists = fileSystem.existsSync(hookPath);
-    if (hookExists) fileSystem.chmodSync(hookPath, 0o755);
+    if (hookExists) {
+      fileSystem.chmodSync(hookPath, 0o755);
+    }
   }
 }
 
@@ -500,7 +531,9 @@ function writeToolingAssets(targetDirectory) {
  */
 function removeGeneratedInstructions(targetDirectory) {
   const generatedInstructionsDir = path.join(targetDirectory, '.ai', 'instructions');
-  if (!fileSystem.existsSync(generatedInstructionsDir)) return;
+  if (!fileSystem.existsSync(generatedInstructionsDir)) {
+    return;
+  }
   fileSystem.rmSync(generatedInstructionsDir, { recursive: true, force: true });
 }
 

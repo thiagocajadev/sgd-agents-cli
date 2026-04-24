@@ -18,6 +18,7 @@ const NARRATIVE_VALIDATION_STRATEGIES = {
   'Vertical Density': NarrativeHeuristics.validateVerticalDensity,
   'Revealing Module Pattern': NarrativeHeuristics.validateRevealingModulePattern,
   'Boolean prefix': NarrativeHeuristics.validateBooleanPrefixes,
+  'Braced guards': NarrativeHeuristics.validateBracedGuards,
   'No section banners': NarrativeHeuristics.validateNoSectionBanners,
   'Pure entry point': NarrativeHeuristics.validateSlaCompliance,
 };

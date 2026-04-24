@@ -83,8 +83,12 @@ async function gatherUserSelections(targetDirectory = process.cwd()) {
 }
 
 function applyStepResult(currentSelections, stepValue) {
-  if (stepValue.mode) currentSelections.mode = stepValue.mode;
-  if (stepValue.flavor) currentSelections.flavor = stepValue.flavor;
+  if (stepValue.mode) {
+    currentSelections.mode = stepValue.mode;
+  }
+  if (stepValue.flavor) {
+    currentSelections.flavor = stepValue.flavor;
+  }
   if (stepValue.partner) {
     currentSelections.partner = currentSelections.partner || {};
     Object.assign(currentSelections.partner, stepValue.partner);
@@ -208,7 +212,10 @@ async function promptPartnerInfo() {
 
 function parsePartnerInput(input) {
   const isEmpty = !input || input.trim().length === 0;
-  if (isEmpty) return { name: null, role: null };
+  if (isEmpty) {
+    const emptyPartner = { name: null, role: null };
+    return emptyPartner;
+  }
 
   const separatorIndex = input.indexOf(',');
   const hasComma = separatorIndex !== -1;

@@ -62,13 +62,17 @@ function collectOutputSummary() {
 }
 
 function injectCompetencies(projectAiInstructions) {
-  if (!fileSystem.existsSync(SOURCE_COMPETENCIES)) return;
+  if (!fileSystem.existsSync(SOURCE_COMPETENCIES)) {
+    return;
+  }
 
   const competenciesDir = path.join(projectAiInstructions, 'competencies');
   fileSystem.mkdirSync(competenciesDir, { recursive: true });
 
   const deliverySrc = path.join(SOURCE_COMPETENCIES, 'delivery.md');
-  if (!fileSystem.existsSync(deliverySrc)) return;
+  if (!fileSystem.existsSync(deliverySrc)) {
+    return;
+  }
   fileSystem.copyFileSync(deliverySrc, path.join(competenciesDir, 'delivery.md'));
 }
 

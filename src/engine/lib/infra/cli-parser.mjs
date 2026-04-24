@@ -22,7 +22,9 @@ function parseCliArgs(argv) {
 }
 
 function isPositionalArg(arg, index, tokens) {
-  if (arg.startsWith('-')) return false;
+  if (arg.startsWith('-')) {
+    return false;
+  }
   const precedingToken = tokens[index - 1];
   const flagsThatConsumeNextArg = ['--flavor', '--mode', '--track'];
   const isPositional = !precedingToken || !flagsThatConsumeNextArg.includes(precedingToken);
@@ -38,10 +40,14 @@ function getArgValue(argv, flag) {
 
 function validateInit(args) {
   const isQuickMode = args.quick || args.mode === 'quick';
-  if (isQuickMode) return null;
+  if (isQuickMode) {
+    return null;
+  }
 
   const isNonInteractive = args.mode || args.flavor;
-  if (!isNonInteractive) return null;
+  if (!isNonInteractive) {
+    return null;
+  }
 
   if (!args.flavor) {
     const missingFlavorError =

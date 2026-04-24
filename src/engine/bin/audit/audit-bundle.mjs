@@ -109,7 +109,9 @@ function checkCodeStyleCompliance() {
     const fileName = path.basename(filePath);
 
     for (const rule of NARRATIVE_CHECKLIST) {
-      if (!rule.heuristic) continue;
+      if (!rule.heuristic) {
+        continue;
+      }
       const result = rule.heuristic(content);
       if (!result.pass) {
         violations.push(`${fileName}: ${result.reason}`);

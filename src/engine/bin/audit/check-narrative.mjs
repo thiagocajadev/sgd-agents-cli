@@ -67,7 +67,9 @@ function scanFilesForViolations(files) {
     const fileViolations = [];
 
     for (const rule of NARRATIVE_CHECKLIST) {
-      if (!rule.heuristic) continue;
+      if (!rule.heuristic) {
+        continue;
+      }
       const result = rule.heuristic(content);
       if (!result.pass) {
         fileViolations.push({ label: rule.label, reason: result.reason });

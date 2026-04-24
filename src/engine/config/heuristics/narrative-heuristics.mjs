@@ -33,7 +33,9 @@ function validateSlaCompliance(content) {
       .filter((line) => line !== '');
 
     const shapeViolation = detectEntryPointShapeViolation(entryPointName, bodyLines);
-    if (shapeViolation) violations.push(shapeViolation);
+    if (shapeViolation) {
+      violations.push(shapeViolation);
+    }
   }
 
   const runFunctionMatch = content.match(/(?:async\s+)?function run\(\) \{([\s\S]*?)\n\}/);
@@ -70,7 +72,9 @@ function detectEntryPointShapeViolation(entryPointName, bodyLines) {
     return null;
   }
 
-  if (bodyLines.length === 2 && isCanonicalDelegationShape(bodyLines)) return null;
+  if (bodyLines.length === 2 && isCanonicalDelegationShape(bodyLines)) {
+    return null;
+  }
 
   const lengthViolation = `${entryPointName}() body must be 1 statement OR canonical 'const X = call(); return X;' (got ${bodyLines.length} lines)`;
   return lengthViolation;
@@ -79,7 +83,9 @@ function detectEntryPointShapeViolation(entryPointName, bodyLines) {
 function isCanonicalDelegationShape(bodyLines) {
   const [firstLine, secondLine] = bodyLines;
   const constMatch = firstLine.match(/^const\s+(\w+)\s*=/);
-  if (!constMatch) return false;
+  if (!constMatch) {
+    return false;
+  }
   const constName = constMatch[1];
   const expectedReturn = `return ${constName};`;
   const isMatching = secondLine === expectedReturn || secondLine === `return ${constName}`;
@@ -125,6 +131,7 @@ function validateExplainingReturns(content) {
       }
 
       const returnedSymbol = returnMatch[1];
+
       const isExplained = scanForSymbolExplainer(lines, index, returnedSymbol);
       if (!isExplained) {
         violations.push(`line ${index + 1} (Bare return: "${returnedSymbol}")`);
@@ -148,37 +155,57 @@ function scanForSymbolExplainer(sourceLines, returnLineIndex, symbol) {
     const lineText = sourceLines[currentPos].trim();
 
     const isSkipLine = lineText === '' || /^[{}'`\];,.!]+$/.test(lineText);
-    if (isSkipLine) continue;
+    if (isSkipLine) {
+      continue;
+    }
 
-    if (constRegex.test(lineText)) return true;
+    if (constRegex.test(lineText)) {
+      return true;
+    }
 
     const isPureDelegation = /(function|async)\s+\w+\s*\(/.test(lineText) && lineText.includes('{');
-    if (isPureDelegation) return true;
+    if (isPureDelegation) {
+      return true;
+    }
 
     const isIndented =
       sourceLines[currentPos].startsWith('  ') || sourceLines[currentPos].startsWith('\t');
-    if (isIndented && !lineText.includes('const ')) continue;
+    if (isIndented && !lineText.includes('const ')) {
+      continue;
+    }
 
-    if (/^(if|for|while|switch|return|export|async|function)\b/.test(lineText)) break;
+    if (/^(if|for|while|switch|return|export|async|function)\b/.test(lineText)) {
+      break;
+    }
   }
   return false;
 }
 
 function classifyReturnLogic(line) {
   const isTemplateLiteral = /return\s+[^;]*`[^`]*\$\{/.test(line);
-  if (isTemplateLiteral) return 'Template literal in return';
+  if (isTemplateLiteral) {
+    return 'Template literal in return';
+  }
 
   const isStringInterpolation = /return\s+[^;]*\$"[^"]*\{/.test(line);
-  if (isStringInterpolation) return 'String interpolation in return';
+  if (isStringInterpolation) {
+    return 'String interpolation in return';
+  }
 
   const isTernary = /return\s+[^;?]+\?[^;:]+:[^;]+/.test(line);
-  if (isTernary) return 'Ternary in return';
+  if (isTernary) {
+    return 'Ternary in return';
+  }
 
   const isArithmetic = /return\s+[a-zA-Z_]\w*\s*[+\-*/]\s*[a-zA-Z_]\w*/.test(line);
-  if (isArithmetic) return 'Arithmetic in return';
+  if (isArithmetic) {
+    return 'Arithmetic in return';
+  }
 
   const isConstructor = /return\s+new\s+[A-Z]\w*\s*\(/.test(line);
-  if (isConstructor) return 'Constructor in return';
+  if (isConstructor) {
+    return 'Constructor in return';
+  }
 
   const genericHint = 'Literal return';
   return genericHint;
@@ -245,7 +272,9 @@ function scanExplainingReturnTight(lines) {
 
   for (let index = 3; index < lines.length; index++) {
     const isReturnLine = tightReturnPattern.test(lines[index]);
-    if (!isReturnLine) continue;
+    if (!isReturnLine) {
+      continue;
+    }
 
     const hasBlankAbove = lines[index - 1].trim() === '';
     const hasAtomicPrep = isAtomicDeclaration(lines[index - 2]);
@@ -276,10 +305,14 @@ function scanOrphanAtomic(lines) {
       isSimpleLiteralAtomic(pairSecond) &&
       isSimpleLiteralAtomic(pairFirst) &&
       isIsolatedBelow(nextLine);
-    if (!hasOrphanShape) continue;
+    if (!hasOrphanShape) {
+      continue;
+    }
 
     const isNextContinuingGroup = typeof nextLine === 'string' && isAtomicDeclaration(nextLine);
-    if (isNextContinuingGroup) continue;
+    if (isNextContinuingGroup) {
+      continue;
+    }
 
     violations.push(`line ${index + 1} (orphan atomic — fold into trio or rebalance to 2+2)`);
   }
@@ -313,7 +346,9 @@ function scanHelperTouching(lines) {
 
     const isTouchingViolation =
       afterBlockTouching || constToFunctionTouching || afterMultiLineCloserTouching;
-    if (!isTouchingViolation) continue;
+    if (!isTouchingViolation) {
+      continue;
+    }
 
     violations.push(
       `line ${index + 2} (helper touching previous declaration — needs blank separator)`
@@ -324,16 +359,22 @@ function scanHelperTouching(lines) {
 }
 
 function isAtomicDeclaration(line) {
-  if (typeof line !== 'string') return false;
+  if (typeof line !== 'string') {
+    return false;
+  }
   const hasValidShape = ATOMIC_DECLARATION_PATTERN.test(line);
-  if (!hasValidShape) return false;
+  if (!hasValidShape) {
+    return false;
+  }
   const hasTrailingBrace = /\{\s*$/.test(line);
   const isAtomic = !hasTrailingBrace;
   return isAtomic;
 }
 
 function isSimpleLiteralAtomic(line) {
-  if (!isAtomicDeclaration(line)) return false;
+  if (!isAtomicDeclaration(line)) {
+    return false;
+  }
   const rhs = line.split('=').slice(1).join('=');
   const hasAwait = /\bawait\b/.test(rhs);
   const hasCall = rhs.includes('(');
@@ -343,19 +384,29 @@ function isSimpleLiteralAtomic(line) {
 }
 
 function isDeclarationBoundary(line) {
-  if (line === undefined || line === null) return true;
+  if (line === undefined || line === null) {
+    return true;
+  }
   const trimmed = line.trim();
-  if (trimmed === '') return true;
+  if (trimmed === '') {
+    return true;
+  }
   const isBlockOpen = /\{\s*$/.test(line);
-  if (isBlockOpen) return true;
+  if (isBlockOpen) {
+    return true;
+  }
   const isArrowBlock = /=>\s*\{?\s*$/.test(line);
   return isArrowBlock;
 }
 
 function isIsolatedBelow(nextLine) {
-  if (nextLine === undefined) return true;
+  if (nextLine === undefined) {
+    return true;
+  }
   const trimmed = nextLine.trim();
-  if (trimmed === '') return true;
+  if (trimmed === '') {
+    return true;
+  }
   const isBlockClose = /^\s*}/.test(nextLine);
   return isBlockClose;
 }
@@ -399,6 +450,55 @@ function validateNoSectionBanners(content) {
   return bannerResult;
 }
 
+const CONTROL_PREFIX_PATTERN = /^\s*(?:\}\s*)?(?:else\s+if|else|for|while|if)\b/;
+const MULTILINE_OPENER_ENDINGS = new Set(['(', ',', '&', '|', '?', '{']);
+const BARE_ELSE_PATTERN = /^\s*\}?\s*else\s*$/;
+
+function validateBracedGuards(content) {
+  const lines = content.split('\n');
+  const bracelessHits = [];
+
+  for (const rawLine of lines) {
+    const isControlStart = CONTROL_PREFIX_PATTERN.test(rawLine);
+    if (!isControlStart) {
+      continue;
+    }
+
+    const withoutComment = rawLine.replace(/\/\/.*$/, '').trimEnd();
+    if (withoutComment === '') {
+      continue;
+    }
+
+    const lastChar = withoutComment.slice(-1);
+    if (MULTILINE_OPENER_ENDINGS.has(lastChar)) {
+      continue;
+    }
+
+    const endsWithCloseParen = lastChar === ')';
+    if (endsWithCloseParen) {
+      continue;
+    }
+
+    const isBareElseContinuation = BARE_ELSE_PATTERN.test(withoutComment);
+    if (isBareElseContinuation) {
+      continue;
+    }
+
+    bracelessHits.push(withoutComment.trim());
+  }
+
+  const uniqueHits = [...new Set(bracelessHits)];
+
+  const bracedGuardResult = {
+    pass: uniqueHits.length === 0,
+    reason:
+      uniqueHits.length > 0
+        ? `Braceless guard detected (wrap body in { }): ${uniqueHits.slice(0, 3).join(' | ')}`
+        : null,
+  };
+  return bracedGuardResult;
+}
+
 export const NarrativeHeuristics = {
   validateSlaCompliance,
   validateNarrativeSiblings,
@@ -408,4 +508,5 @@ export const NarrativeHeuristics = {
   validateRevealingModulePattern,
   validateBooleanPrefixes,
   validateNoSectionBanners,
+  validateBracedGuards,
 };

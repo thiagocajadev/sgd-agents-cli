@@ -78,13 +78,17 @@ async function orchestrateAutoBump() {
 }
 
 function updateChangelog(newVersion) {
-  if (!fileSystem.existsSync(CHANGELOG_PATH)) return;
+  if (!fileSystem.existsSync(CHANGELOG_PATH)) {
+    return;
+  }
 
   const content = fileSystem.readFileSync(CHANGELOG_PATH, 'utf8');
   const today = new Date().toISOString().split('T').at(0);
   const unreleasedRegex = /##\s*\[Unreleased\](\s*-\s*\d{4}-\d{2}-\d{2})?/i;
 
-  if (!unreleasedRegex.test(content)) return;
+  if (!unreleasedRegex.test(content)) {
+    return;
+  }
 
   const newHeader = `## [${newVersion}] - ${today}`;
   let updatedContent = content.replace(unreleasedRegex, newHeader);

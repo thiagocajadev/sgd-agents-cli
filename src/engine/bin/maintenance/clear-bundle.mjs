@@ -109,7 +109,9 @@ function printItemsToRemove(items) {
 async function confirmBacklogDeletion(items) {
   const backlogsWithContent = findBacklogsAtRisk(items);
 
-  if (backlogsWithContent.length === 0) return true;
+  if (backlogsWithContent.length === 0) {
+    return true;
+  }
 
   console.log('\n  ┌──────────────────────────────────────────────────────┐ ');
   console.log('  │  ⚠️  LOCAL BACKLOG CONTAINS WORKING STATE             │ ');
@@ -151,7 +153,9 @@ function findBacklogsAtRisk(items) {
     .map((aiEntry) => path.join(aiEntry.fullPath, 'backlog'));
 
   const populatedBacklogs = backlogPaths.filter((backlogPath) => {
-    if (!fileSystem.existsSync(backlogPath)) return false;
+    if (!fileSystem.existsSync(backlogPath)) {
+      return false;
+    }
     const isPopulated = fileSystem.readdirSync(backlogPath).length > 0;
     return isPopulated;
   });

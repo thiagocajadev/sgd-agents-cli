@@ -12,7 +12,9 @@ function run() {
   const tasksPath = resolveTasksPath();
 
   const existsResult = ensureTasksFileExists(tasksPath);
-  if (existsResult === false) return;
+  if (existsResult === false) {
+    return;
+  }
 
   const originalContent = fileSystem.readFileSync(tasksPath, 'utf8');
   const pruneOutcome = pruneDoneSection(originalContent, keepCount);
@@ -31,7 +33,9 @@ function run() {
 function parseKeepArg(args) {
   const keepIndex = args.indexOf('--keep');
   const hasKeepFlag = keepIndex >= 0 && args[keepIndex + 1];
-  if (!hasKeepFlag) return DEFAULT_KEEP;
+  if (!hasKeepFlag) {
+    return DEFAULT_KEEP;
+  }
 
   const parsedKeep = Number.parseInt(args[keepIndex + 1], 10);
   const isValidKeep = Number.isFinite(parsedKeep) && parsedKeep >= 0;
@@ -50,7 +54,9 @@ function resolveTasksPath() {
 }
 
 function ensureTasksFileExists(tasksPath) {
-  if (fileSystem.existsSync(tasksPath)) return true;
+  if (fileSystem.existsSync(tasksPath)) {
+    return true;
+  }
   console.error(`❌ Not found: ${tasksPath}`);
   process.exit(1);
 }
@@ -96,7 +102,9 @@ function collectEntryIndices(doneBlock) {
   const indices = [];
   for (let index = 0; index < doneBlock.length; index += 1) {
     const isEntryLine = doneBlock[index].startsWith(DONE_ENTRY_PREFIX);
-    if (isEntryLine) indices.push(index);
+    if (isEntryLine) {
+      indices.push(index);
+    }
   }
   return indices;
 }

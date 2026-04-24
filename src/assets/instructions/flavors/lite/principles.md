@@ -5,10 +5,11 @@
 
 ## Core Principles
 
-1. **KISS**: No classes/services/repositories unless logic is duplicated AND complex.
-2. **Direct Implementation**: Logic at point of interaction (main file or route handler).
-3. **Flat Hierarchy**: Minimize file hopping. Related logic together in single file when possible.
-4. **No Boilerplate**: Only write what is executed. No future-proofing.
+1. **Direct Implementation**: Logic at point of interaction (main file or route handler).
+2. **Flat Hierarchy**: Minimize file hopping. Related logic together in single file when possible.
+3. **No Boilerplate**: Only write what is executed. No future-proofing (YAGNI).
+
+> SRP is inherited from `code-style.md` **Small functions** (one responsibility, one level of abstraction) — applies in every flavor, not duplicated here.
 
 ## Implementation Standard
 

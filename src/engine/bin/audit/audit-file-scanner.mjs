@@ -16,7 +16,10 @@ const MAINTAINER_DIRECTORIES = [
 
 function getMaintainerFiles() {
   const sourceFiles = MAINTAINER_DIRECTORIES.flatMap((directory) => {
-    if (!fileSystem.existsSync(directory)) return [];
+    if (!fileSystem.existsSync(directory)) {
+      const noSourceFiles = [];
+      return noSourceFiles;
+    }
     return fileSystem
       .readdirSync(directory)
       .filter((file) => file.endsWith('.mjs') && !file.endsWith('.test.mjs'))
@@ -27,7 +30,10 @@ function getMaintainerFiles() {
 
 function getMaintainerTestFiles() {
   const testFiles = MAINTAINER_DIRECTORIES.flatMap((directory) => {
-    if (!fileSystem.existsSync(directory)) return [];
+    if (!fileSystem.existsSync(directory)) {
+      const noTestFiles = [];
+      return noTestFiles;
+    }
     return fileSystem
       .readdirSync(directory)
       .filter((file) => file.endsWith('.test.mjs'))
@@ -37,7 +43,10 @@ function getMaintainerTestFiles() {
 }
 
 function getFilesRecursive(baseDir, filterFn) {
-  if (!fileSystem.existsSync(baseDir)) return [];
+  if (!fileSystem.existsSync(baseDir)) {
+    const noRecursiveFiles = [];
+    return noRecursiveFiles;
+  }
   const files = [];
 
   function walk(dir) {

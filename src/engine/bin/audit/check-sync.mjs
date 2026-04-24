@@ -20,7 +20,10 @@ function checkDrift() {
 }
 
 function orchestrateSyncCheck() {
-  if (!isMaintainerMode()) return success();
+  if (!isMaintainerMode()) {
+    const skipResult = success();
+    return skipResult;
+  }
 
   const driftedFiles = [];
 
@@ -54,7 +57,9 @@ function collectDriftedFiles(liveDirectory, sourceDirectory, relativePrefix) {
       localDrifts.push(...nestedDrifts);
     } else if (entry.isFile() && entry.name.endsWith('.md')) {
       const fileDrift = checkFileDrift(livePath, sourcePath, relativePath);
-      if (fileDrift !== null) localDrifts.push(fileDrift);
+      if (fileDrift !== null) {
+        localDrifts.push(fileDrift);
+      }
     }
   }
 
@@ -107,5 +112,7 @@ export const SyncChecker = { check: checkDrift };
 
 bootstrapIfDirect(import.meta.url, async () => {
   const result = checkDrift();
-  if (result.isFailure) process.exit(1);
+  if (result.isFailure) {
+    process.exit(1);
+  }
 });

@@ -22,7 +22,10 @@ function displayName(flavorKey) {
  * Implements the 60/40 Head/Tail split for long outputs.
  */
 function smartTruncate(content, headLimit = 100, tailLimit = 50) {
-  if (!content) return '';
+  if (!content) {
+    const emptyOutput = '';
+    return emptyOutput;
+  }
 
   const lines = content.split('\n');
   const threshold = headLimit + tailLimit + 10; // Buffer to avoid truncating small overlaps

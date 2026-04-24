@@ -18,14 +18,20 @@ function getDirectories(source) {
 
 function copyRecursiveSync(src, dest, options = {}) {
   const { exclude = [] } = options;
-  if (!fileSystem.existsSync(src)) return;
+  if (!fileSystem.existsSync(src)) {
+    return;
+  }
 
   const itemName = path.basename(src);
-  if (exclude.includes(itemName)) return;
+  if (exclude.includes(itemName)) {
+    return;
+  }
 
   const stats = fileSystem.statSync(src);
   if (stats.isDirectory()) {
-    if (!fileSystem.existsSync(dest)) fileSystem.mkdirSync(dest, { recursive: true });
+    if (!fileSystem.existsSync(dest)) {
+      fileSystem.mkdirSync(dest, { recursive: true });
+    }
     for (const childItemName of fileSystem.readdirSync(src)) {
       copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName), options);
     }
@@ -41,7 +47,9 @@ function getDirname(importMetaUrl) {
 
 function bootstrapIfDirect(importMetaUrl, entryFunction) {
   const currentFile = fileURLToPath(importMetaUrl);
-  if (!process.argv[1]) return;
+  if (!process.argv[1]) {
+    return;
+  }
 
   const entryFile = fileSystem.realpathSync(path.resolve(process.argv[1]));
   if (currentFile === entryFile) {
@@ -76,7 +84,9 @@ function writeJsonAtomic(filePath, data, originalContent = null) {
   const indent = originalContent ? detectIndentation(originalContent) : '  ';
   const newContent = `${JSON.stringify(data, null, indent)}\n`;
 
-  if (originalContent === newContent) return false;
+  if (originalContent === newContent) {
+    return false;
+  }
 
   try {
     fileSystem.writeFileSync(filePath, newContent);

@@ -227,7 +227,9 @@ async function startInteractiveMode(args) {
       });
 
       const isExit = menuChoice === 'exit' || menuChoice === 'back';
-      if (isExit) break;
+      if (isExit) {
+        break;
+      }
 
       await dispatchMenuAction(menuChoice, args);
       console.log(`\n${'─'.repeat(50)}\n`);

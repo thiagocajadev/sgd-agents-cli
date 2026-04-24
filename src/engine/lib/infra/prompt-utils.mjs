@@ -56,7 +56,10 @@ async function safeConfirm(options) {
  * - Escapes Markdown breaking characters (\, `, *, _, {, }, [, ], (, ), #, +, -, ., !).
  */
 function sanitizeInput(value, maxLength = 200) {
-  if (!value) return '';
+  if (!value) {
+    const emptyInput = '';
+    return emptyInput;
+  }
 
   let sanitized = String(value)
     .normalize('NFKD') // Resovle acentos estranhos / Unicode Normalization
@@ -77,7 +80,10 @@ async function safeInput(options) {
   try {
     while (true) {
       const response = await input(inquirerOptions);
-      if (response === 'back') return 'back'; // Natural exit if they type "back"
+      if (response === 'back') {
+        const backSignal = 'back';
+        return backSignal;
+      }
 
       const sanitized = sanitizeInput(response, maxLength);
 
@@ -104,7 +110,9 @@ const PROMPT_FILE = path.join(AI_DIR, 'last-prompt.md');
 
 function isMaintainerMode() {
   const packagePath = path.join(PROJECT_ROOT, 'package.json');
-  if (!fileSystem.existsSync(packagePath)) return false;
+  if (!fileSystem.existsSync(packagePath)) {
+    return false;
+  }
   try {
     const packageData = JSON.parse(fileSystem.readFileSync(packagePath, 'utf8'));
     const isMaintainer = packageData.name === 'sdg-agents';

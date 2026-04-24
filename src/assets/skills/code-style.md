@@ -36,6 +36,9 @@
 
 - **Early return** — exit early on failure; no `else` after `return`. Max 2 indent levels.
 - **Control flow** — match tool to shape: guards for failure exits • lookup table for value mapping (`const MAP = {...}; return MAP[key] ?? default`) • `switch` for action dispatch (side-effects) • `Map` for non-string / dynamic keys • ternary only for 2-value assignment • `===` / `!==` always (never `==`). Each function orchestrates OR implements (SLA) — never both.
+  - **Braced guards** — every `if` / `else if` / `else` / `for` / `while` body wrapped in `{ }`, body on its own line. Applies to any single-instruction body: `return`, `throw`, `break`, `continue`, assignment. Rationale: forces a blank line between adjacent guards, prevents wall-of-`if`-return. Braceless one-liners like `if (x) return y;` pile up visually and defeat **Low visual density — Paragraphs of Intent**.
+    - ❌ `if (isEmpty) return null;`
+    - ✅ `if (isEmpty) {\n  return null;\n}`
 - **Low visual density** — **Paragraphs of Intent**: 1 blank line between logical groups, 0 within a group, never 2+ consecutive. Wall of tight code and double-blank noise are equal violations.
 - **Expressive names** — names reveal domain intent, not storage or implementation detail.
   - Banned verbs: `handle`, `do`, `run`, `execute`, `perform`; `get` for computations (use `compute` / `calculate` / `derive`).
@@ -100,6 +103,7 @@
 - [ ] **Revealing Module Pattern**: named export at footer.
 - [ ] **Vertical Density**: 1 blank between groups, 0 within, never 2+.
 - [ ] **Boolean prefix**: `is` / `has` / `can` / `should` / `did` / `needs` / `supports` / `allows`.
+- [ ] **Braced guards**: every `if` / `else` / `for` / `while` body in `{ }` with body on its own line — no `if (x) return y;` one-liners.
 - [ ] **No framework abbreviations**: `req` / `res` / `ctx` forbidden; plus SDG taboos (banned verbs / nouns / abbrs).
 - [ ] **No section banners**: no `// --- Section ---` dividers.
 

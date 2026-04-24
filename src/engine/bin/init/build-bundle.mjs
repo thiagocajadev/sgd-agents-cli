@@ -71,7 +71,9 @@ async function buildNonInteractive(targetDirectory, options) {
     process.exit(1);
   }
 
-  if (selections.bump === undefined) selections.bump = true;
+  if (selections.bump === undefined) {
+    selections.bump = true;
+  }
 
   const state = { step: 'execute', userSelections: selections };
   const result = await finalizeExecutionPhase(state, targetDirectory, {
