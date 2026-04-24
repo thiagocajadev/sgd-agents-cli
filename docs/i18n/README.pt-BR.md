@@ -20,10 +20,11 @@
 
 O conjunto de instruções cobre:
 
-- **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END) que estrutura como o agente conduz qualquer tarefa. Inclui **Quality Gate** (CODE), **Audit Gate** (TEST) e um **Circuit Breaker** de 3 tentativas (STOP).
-- **Leis de Engenharia**: 8 leis universais (Protocol, Hardening, Resilience, Narrative Cascade, Visual Excellence, Boundaries, Reflection, Contextual Efficiency) carregadas apenas na fase CODE.
+- **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END) que estrutura como o agente conduz qualquer tarefa. Inclui **Pre-Code Checklist** (entrada na CODE), **Pre-Finish Gate** (TEST) e um **Circuit Breaker** de 3 tentativas (STOP) para evitar loops de regressão.
+- **Estilo de código e quality gates**: consolidados em `code-style.md` — um único Pre-Code Checklist (Mental Reset, Target Files, Naming, Narrative, Comments, Tests, Security, Blockers) e um Pre-Finish Gate conectado a heurísticas de narrativa (Stepdown, SLA, Explaining Returns, abreviações proibidas, prefixo booleano, Revealing Module Pattern, etc.).
 - **Skills sob demanda**: code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX — cada uma é uma unidade auto-contida carregada somente quando o ciclo atual precisa.
-- **Idiomas de linguagem**: convenções idiomáticas para o seu stack (JS, TS, Python, C#, Java, Kotlin, Go, Rust, Swift, Flutter, SQL, VB.NET).
+- **Contexto de stack dinâmico**: o ciclo `land:` elicita as linguagens e versões do projeto do desenvolvedor, opcionalmente as enriquece via uma lista de fontes de documentação canônicas, e persiste o resultado em `.ai/backlog/stack.md`. A fase CODE carrega esse arquivo como fonte única de verdade — sem catálogo estático de idiomas, sem flag `--idiom` para manter.
+- **Contrato de entrega**: envelope de resposta BFF (server-side) e execução de contrato UI (client-side) fundidos em um único `competencies/delivery.md` auto-gateado, carregado quando a tarefa toca lógica de entrega.
 - **Flavors arquiteturais**: regras para o padrão estrutural do projeto (vertical slice, MVC, lite, legacy).
 - **Compatível com qualquer agente**: uma única fonte canônica em `.ai/skills/AGENTS.md` que qualquer agente de IA (Claude Code, Cursor, Windsurf, Copilot, Codex, Gemini, Cline/Roo) pode referenciar. O `CLAUDE.md` é gerado automaticamente na raiz para o Claude Code; outras ferramentas são conectadas com um ponteiro de uma linha (veja "Usando com outras IDEs" abaixo).
 - **Harness Engineering (Memory)**: uma pasta `.ai/backlog/` que persiste contexto e estado de tarefas entre sessões.
@@ -42,18 +43,20 @@ npx sdg-agents
   <kbd><img src="https://raw.githubusercontent.com/thiagocajadev/sgd-agents-cli/main/docs/img/sdg-agents-menu-v2.png" alt="Spec Driven Guide CLI em ação" /></kbd>
 </p>
 
-O assistente interativo guia você na escolha do flavor arquitetural e um ou mais idiomas. Para uso não-interativo:
+O assistente interativo guia você na escolha do flavor arquitetural. A descoberta de stack (linguagens + versões) acontece depois via o ciclo `land:` — mantida fora da instalação para que o desenvolvedor a declare deliberadamente, quando o brief do projeto estiver claro. Para uso não-interativo:
 
 ```bash
-# Instalação sem prompts (padrão lite + JS/TS)
+# Instalação sem prompts (flavor lite + stack.md placeholder)
 npx sdg-agents init --quick
 
-# TypeScript + Vertical Slice
-npx sdg-agents init --flavor vertical-slice --idiom typescript
+# Vertical Slice — qualquer stack
+npx sdg-agents init --flavor vertical-slice
 
-# Multi-idioma
-npx sdg-agents init --flavor mvc --idiom typescript,python
+# MVC — qualquer stack
+npx sdg-agents init --flavor mvc
 ```
+
+Após a instalação, abra o chat do agente e execute `land: <visão>` — o agente elicita o stack, escreve `.ai/backlog/stack.md` e semeia o backlog.
 
 ---
 
@@ -129,21 +132,22 @@ Para o diagrama de fluxo de dados de cada flavor, veja [Pipelines Arquiteturais]
 
 ---
 
-## Idiomas
+## Declaração de Stack via `land:`
 
-Instale padrões específicos da linguagem junto com o protocolo:
+Stack é **dinâmico, não catalogado**. Após o `sdg-agents init`, execute o ciclo `land:` para declarar as linguagens, runtimes e versões de framework do projeto:
 
-`typescript` · `javascript` · `python` · `csharp` · `java` · `kotlin` · `go` · `rust` · `swift` · `flutter` · `sql` · `vbnet`
-
-```bash
-# Idioma único
-npx sdg-agents init --idiom typescript
-
-# Multi-idioma (projetos poliglotas)
-npx sdg-agents init --idiom typescript,python,go
+```
+land: uma API Node.js + TypeScript servindo um dashboard React
 ```
 
-Para adicionar ou estender suporte a uma linguagem, cole o skill do idioma no seu agente via prompt — sem precisar de subcomando CLI.
+O agente:
+
+1. Pede que você liste cada linguagem e versão (formato livre).
+2. Classifica cada entrada por papel (Backend / Frontend / Data / Scripts).
+3. Oferece enriquecimento **opcional** via uma lista de fontes de documentação canônicas (`nodejs.org/api`, `react.dev`, `typescriptlang.org`, `tc39.es`, `docs.astro.build`, `docs.python.org`, `go.dev/doc`, `doc.rust-lang.org`, `kotlinlang.org/docs`, `dart.dev`, `learn.microsoft.com/dotnet`, `developer.apple.com/documentation/swift`).
+4. Escreve `.ai/backlog/stack.md` — a fonte única de verdade para idiomas específicos do stack. Edite diretamente quando as versões mudarem; sem necessidade de regen.
+
+A fase CODE carrega `stack.md` em todo ciclo. Sem catálogo estático de idiomas, sem flag `--idiom`.
 
 ---
 
@@ -170,8 +174,6 @@ O `sdg-agents` gera uma única fonte canônica em `.ai/skills/AGENTS.md` e um po
 ```bash
 npx sdg-agents gate      # Executar revisão SDG gate contra o diff staged (pre-commit agnóstico de linguagem)
 npx sdg-agents review    # Detectar drift entre regras locais e a fonte
-npx sdg-agents sync      # Atualizar rulesets da fonte
-npx sdg-agents update    # Atualizar o registro de versões LTS
 npx sdg-agents audit     # Executar auditoria de governança (violações de leis, drift)
 npx sdg-agents clear     # Remover a pasta .ai/
 ```
@@ -183,7 +185,7 @@ npx sdg-agents clear     # Remover a pasta .ai/
 - [Referência Rápida (CHEATSHEET)](../reference/CHEATSHEET.md) — todos os flags do CLI e triggers do agente
 - [Estrutura do Projeto](../reference/PROJECT-STRUCTURE.md) — detalhamento de cada arquivo gerado
 - [Pipelines Arquiteturais](../reference/PIPELINES.md) — diagramas de fluxo por flavor
-- [Leis de Engenharia (CONSTITUTION)](../concepts/CONSTITUTION.md) — os princípios por trás das regras
+- [Constituição de Engenharia (CONSTITUTION)](../concepts/CONSTITUTION.md) — os princípios filosóficos por trás das regras (referência apenas; regras em runtime ficam em `code-style.md`)
 - [Sistema UI/UX](../guides/UI-UX.md) — filosofia de design, hierarquia, escala tonal de superfície, presets e referências externas de pesquisa
 - [Roadmap](../ROADMAP.md) — trabalho planejado
 - [Otimização de Tokens](../guides/TOKEN-OPTIMIZATION.md) — modelo de custo, processo de compactação e eficiência do roteador

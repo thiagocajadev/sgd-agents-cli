@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.5.0] - 2026-04-24
+
+### Fixed
+
+- **`code-style.md` — function line-limit semantics clarified**: `Small functions` rule rewritten to state the 4–30 ceiling counts **logical statements, not raw LoC**. Three formatting patterns that inflate raw line count without adding logical statements are explicitly excluded: vertical dot-chain breaks (one expression split across indented lines), density-driven paragraph blank lines, and multi-line function signature expansions. Rule is now unambiguous: a three-line dot-chain method call counts as one statement. `.ai/skills/code-style.md` synced.
+
 ## [5.4.0] - 2026-04-24
 
 ### Added

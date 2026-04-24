@@ -58,7 +58,7 @@
 
 ## Quality Control — state, errors, async, and tests
 
-- **Small functions** — 4–30 lines. Name needs "and" → split. One responsibility, one level of abstraction.
+- **Small functions** — 4–30 **logical statements** (not raw LoC). Vertical dot-chain breaks, density blanks, and multi-line signature expansions don't count toward the ceiling — one expression split across lines is one statement. Name needs "and" → split. One responsibility, one level of abstraction.
 - **Compute vs format** — compute data and format output in separate functions.
 - **Immutability by default** — `const` / readonly first; `let` only when necessary. Mutation crosses boundaries explicitly.
 - **CQS** — function mutates (command) OR reads (query, pure) — never both.
