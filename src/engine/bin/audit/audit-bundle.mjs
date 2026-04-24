@@ -43,9 +43,9 @@ function orchestrateGovernanceAudit() {
 }
 
 function printHeader() {
-  console.log('\n' + '─'.repeat(50));
+  console.log(`\n${'─'.repeat(50)}`);
   console.log(`  🔍 SDG GOVERNANCE AUDIT — v${PROJECT_VERSION} compliance`);
-  console.log('─'.repeat(50) + '\n');
+  console.log(`${'─'.repeat(50)}\n`);
 }
 
 function checkChangelogHealth() {
@@ -79,7 +79,7 @@ function checkChangelogHealth() {
   const hasOtherStagedChanges =
     stagedChanges.split('\n').filter((file) => file && file !== 'CHANGELOG.md').length > 0;
 
-  const today = new Date().toLocaleDateString('en-CA');
+  const today = new Date().toISOString().split('T').at(0);
   const todayReleasePattern = new RegExp(`##\\s*\\[\\d+\\.\\d+\\.\\d+\\]\\s*-\\s*${today}`);
   const isReleaseContext = todayReleasePattern.test(content);
 
@@ -242,7 +242,7 @@ function checkHygienePulse() {
 }
 
 function reportSummary(results) {
-  console.log('\n' + '─'.repeat(50));
+  console.log(`\n${'─'.repeat(50)}`);
   console.log('  AUDIT SUMMARY');
   console.log('─'.repeat(50));
 

@@ -210,11 +210,13 @@ function validateVerticalDensity(content) {
   const doubleBlankViolations = scanDoubleBlankLines(lines);
   const tightReturnViolations = scanExplainingReturnTight(lines);
   const orphanAtomicViolations = scanOrphanAtomic(lines);
+  const helperTouchingViolations = scanHelperTouching(lines);
 
   const violations = [
     ...doubleBlankViolations,
     ...tightReturnViolations,
     ...orphanAtomicViolations,
+    ...helperTouchingViolations,
   ];
 
   const densityResult = {
@@ -285,6 +287,34 @@ function scanOrphanAtomic(lines) {
   return violations;
 }
 
+function scanHelperTouching(lines) {
+  const violations = [];
+  const blockClosePattern = /^(\}|\};)\s*$/;
+  const anyDeclarationStartPattern =
+    /^(export\s+)?(async\s+function|function|class|const|let|var)\s/;
+  const singleLineConstPattern = /^(export\s+)?(const|let|var)\s+\w+\s*(:[^=]*)?=.*;\s*$/;
+  const functionOrClassStartPattern = /^(export\s+)?(async\s+function|function|class)\s/;
+
+  for (let index = 0; index < lines.length - 1; index++) {
+    const currentLine = lines[index];
+    const nextLine = lines[index + 1];
+    const isBlockClose = blockClosePattern.test(currentLine);
+    const afterBlockTouching = isBlockClose && anyDeclarationStartPattern.test(nextLine);
+
+    const isSingleLineConst = singleLineConstPattern.test(currentLine);
+    const constToFunctionTouching = isSingleLineConst && functionOrClassStartPattern.test(nextLine);
+
+    const isTouchingViolation = afterBlockTouching || constToFunctionTouching;
+    if (!isTouchingViolation) continue;
+
+    violations.push(
+      `line ${index + 2} (helper touching previous declaration — needs blank separator)`
+    );
+  }
+
+  return violations;
+}
+
 function isAtomicDeclaration(line) {
   if (typeof line !== 'string') return false;
   const hasValidShape = ATOMIC_DECLARATION_PATTERN.test(line);
@@ -324,6 +354,7 @@ function isIsolatedBelow(nextLine) {
 
 function validateRevealingModulePattern(content) {
   const hasRevealingObject = /export const \w+ = \{[\s\S]*\};/m.test(content);
+  // self-flag evasion: the literal string 'export default' would make this very file trip its own detector.
   const forbiddenDefaultExport = 'export ' + 'default';
   const hasExportDefault = content.includes(forbiddenDefaultExport);
 

@@ -90,7 +90,7 @@ function updateChangelog(newVersion) {
   }
 
   const content = fileSystem.readFileSync(CHANGELOG_PATH, 'utf8');
-  const today = new Date().toLocaleDateString('en-CA');
+  const today = new Date().toISOString().split('T').at(0);
 
   // Pattern to find the [Unreleased] section
   // It handles both formats: ## [Unreleased] and ## [Unreleased] - YYYY-MM-DD

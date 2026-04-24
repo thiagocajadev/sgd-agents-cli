@@ -74,7 +74,7 @@ function detectIndentation(content) {
 
 function writeJsonAtomic(filePath, data, originalContent = null) {
   const indent = originalContent ? detectIndentation(originalContent) : '  ';
-  const newContent = JSON.stringify(data, null, indent) + '\n';
+  const newContent = `${JSON.stringify(data, null, indent)}\n`;
 
   if (originalContent === newContent) return false;
 

@@ -123,8 +123,8 @@ async function applyAutomaticSync(targetDirectory) {
   try {
     await SpecDrivenGuide.run(targetDirectory, { selections: manifest.selections });
     const successMsg = '\n  ✅ Core instructions synchronized. Agent rules are up-to-date.\n';
-    const divider = '─'.repeat(50) + '\n';
-    const successOutput = successMsg + divider;
+    const divider = `${'─'.repeat(50)}\n`;
+    const successOutput = `${successMsg}${divider}`;
     console.log(successOutput);
   } catch (error) {
     const failureOutput = `\n  ⚠️  Automatic sync failed: ${error.message}\n`;
@@ -230,7 +230,7 @@ async function startInteractiveMode(args) {
       if (isExit) break;
 
       await dispatchMenuAction(menuChoice, args);
-      console.log('\n' + '─'.repeat(50) + '\n');
+      console.log(`\n${'─'.repeat(50)}\n`);
     }
   } catch (error) {
     reportExitError(error);

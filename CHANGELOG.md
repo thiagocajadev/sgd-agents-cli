@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.1.1] - 2026-04-24
+
+### Added
+
+### Fixed
+
+- **Premise sweep (dogfooding pass — magic-date workaround + concat→interpolation)**: eliminated the `toLocaleDateString('en-CA')` magic-locale workaround in four sites — [`scripts/bump.mjs`](scripts/bump.mjs), [`src/engine/bin/lifecycle/auto-bump.mjs`](src/engine/bin/lifecycle/auto-bump.mjs), [`src/engine/bin/audit/audit-bundle.mjs`](src/engine/bin/audit/audit-bundle.mjs), [`src/assets/instructions/templates/bump.mjs`](src/assets/instructions/templates/bump.mjs) — replacing with `new Date().toISOString().split('T').at(0)` whose surface declares the ISO format it produces (no magic locale, no magic slice index). Converted string `+` concatenation to template literals across eleven sites in [`ui-utils.mjs`](src/engine/lib/core/ui-utils.mjs) (seven divider calls), [`audit-bundle.mjs`](src/engine/bin/audit/audit-bundle.mjs) (three header/summary dividers), [`check-narrative.mjs`](src/engine/bin/audit/check-narrative.mjs) (three header/footer dividers), [`index.mjs`](src/engine/bin/index.mjs) (two divider/output composers), [`prompt-utils.mjs`](src/engine/lib/infra/prompt-utils.mjs) (two prompt dividers), [`clear-bundle.mjs`](src/engine/bin/maintenance/clear-bundle.mjs), [`review-bundle.mjs`](src/engine/bin/maintenance/review-bundle.mjs), [`fs-utils.mjs`](src/engine/lib/core/fs-utils.mjs) (trailing newline on atomic JSON write), [`auto-bump.mjs`](src/engine/bin/lifecycle/auto-bump.mjs) (trailing newline on package.json serialize) — with a single documented carve-out preserved at [`narrative-heuristics.mjs:359-360`](src/engine/config/heuristics/narrative-heuristics.mjs#L359-L360) where `'export ' + 'default'` is a self-flag evasion (a literal `'export default'` would make that detector trip its own file). Registered the premise in [`code-style.md`](src/assets/skills/code-style.md) under **Readability → names**: new **Template literals over `+`** rule ("build dynamic or multi-part strings with template literals; `+` reserved for documented self-flag evasion and similar one-line workarounds where the reason is annotated inline") and expanded the **No magic values** rule to cover magic-as-string (e.g. `'en-CA'` for ISO date emission, single-letter locale codes for formatting side-effects — prefer expressions whose surface declares the output). Visual-density exploration (`scanHelperTouching` sub-detector + characterization tests) shipped alongside but **partial**: real-world sweep still shows const-touching-function patterns uncaught; deferred to next `fix:` cycle for full convergence. 193/193 tests green, audit 100%, lint pass, drift 0.
+
 ## [5.1.0] - 2026-04-24
 
 ### Added

@@ -24,9 +24,9 @@ async function orchestrateNarrativeAudit() {
 }
 
 function printHeader() {
-  console.log('\n' + '─'.repeat(50));
+  console.log(`\n${'─'.repeat(50)}`);
   console.log('  📖 SDG NARRATIVE AUDIT — Narrative Cascade Compliance');
-  console.log('─'.repeat(50) + '\n');
+  console.log(`${'─'.repeat(50)}\n`);
 }
 
 function collectTargetFiles() {
@@ -103,7 +103,7 @@ function reportResults(violationsByFile, totalViolations) {
   console.log('─'.repeat(50));
   console.log(`  ⚠️  NARRATIVE DRIFT DETECTED: ${totalViolations} violations found.`);
   console.log('  Recommendation: Apply "Code as Documentation" (see code-style.md).');
-  console.log('─'.repeat(50) + '\n');
+  console.log(`${'─'.repeat(50)}\n`);
 }
 
 export const NarrativeChecker = { check: checkNarrative };

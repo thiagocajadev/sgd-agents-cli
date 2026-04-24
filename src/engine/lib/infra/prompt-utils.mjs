@@ -177,7 +177,7 @@ function renderPromptHeader(title, content) {
     console.log('  🛠️  MAINTAINER MODE DETECTED: Prompt targets the Core Instructions.');
   }
 
-  console.log('  ' + '─'.repeat(60));
+  console.log(`  ${'─'.repeat(60)}`);
 }
 
 function renderCopyStatus(copied) {
@@ -190,7 +190,7 @@ function renderCopyStatus(copied) {
 
 function renderPersistenceInfo() {
   const persistenceMessage = `  💾 SAVED TO: .ai/last-prompt.md`;
-  const separator = '  ' + '─'.repeat(60);
+  const separator = `  ${'─'.repeat(60)}`;
 
   console.log(persistenceMessage);
   console.log(separator);

@@ -228,6 +228,59 @@ describe('governance.validateVerticalDensity (Vertical Density)', () => {
 
     assert.equal(hasOrphanViolation, EXPECT_FAIL);
   });
+
+  it('flags Explaining Return Tight with call-expression prep', () => {
+    const source = 'function pick() {\n  const today = computeToday();\n\n  return today;\n}\n';
+    const result = rule.heuristic(source);
+    const actualPass = result.pass;
+
+    assert.equal(actualPass, EXPECT_FAIL);
+    assert.match(result.reason, /Explaining Return pair must be tight/);
+  });
+
+  it('flags Explaining Return Tight with property-access prep', () => {
+    const source = 'function pick() {\n  const name = user.displayName;\n\n  return name;\n}\n';
+    const result = rule.heuristic(source);
+    const actualPass = result.pass;
+
+    assert.equal(actualPass, EXPECT_FAIL);
+    assert.match(result.reason, /Explaining Return pair must be tight/);
+  });
+
+  it('flags Explaining Return Tight with await-expression prep', () => {
+    const source =
+      'async function pick() {\n  const record = await fetchRow();\n\n  return record;\n}\n';
+    const result = rule.heuristic(source);
+    const actualPass = result.pass;
+
+    assert.equal(actualPass, EXPECT_FAIL);
+    assert.match(result.reason, /Explaining Return pair must be tight/);
+  });
+
+  it('flags top-level helper touching orchestrator without blank separator', () => {
+    const source = 'function run() {\n  step();\n}\nfunction step() {\n  return null;\n}\n';
+    const result = rule.heuristic(source);
+    const actualPass = result.pass;
+
+    assert.equal(actualPass, EXPECT_FAIL);
+    assert.match(result.reason, /helper touching/);
+  });
+
+  it('accepts top-level helpers separated by single blank', () => {
+    const source = 'function run() {\n  step();\n}\n\nfunction step() {\n  return null;\n}\n';
+    const actualPass = rule.heuristic(source).pass;
+
+    assert.equal(actualPass, EXPECT_PASS);
+  });
+
+  it('flags top-level const helper touching previous function', () => {
+    const source = 'function run() {\n  return value;\n}\nconst value = 1;\n';
+    const result = rule.heuristic(source);
+    const actualPass = result.pass;
+
+    assert.equal(actualPass, EXPECT_FAIL);
+    assert.match(result.reason, /helper touching/);
+  });
 });
 
 describe('governance.validateNoSectionBanners (No section banners)', () => {

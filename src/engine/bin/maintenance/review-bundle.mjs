@@ -26,7 +26,7 @@ async function reviewBundle() {
 
 async function orchestrateReview() {
   console.log('\n  Spec Driven Guide — Instructions Reviewer');
-  console.log('  ' + '─'.repeat(50));
+  console.log(`  ${'─'.repeat(50)}`);
 
   const manifest = loadManifest(PROJECT_ROOT);
   if (!manifest) {

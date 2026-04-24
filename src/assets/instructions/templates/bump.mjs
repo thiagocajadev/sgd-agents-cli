@@ -63,7 +63,7 @@ function updateChangelog(newVersion) {
   }
 
   const content = fileSystem.readFileSync(CHANGELOG_PATH, 'utf8');
-  const today = new Date().toLocaleDateString('en-CA');
+  const today = new Date().toISOString().split('T').at(0);
 
   // Pattern to find the [Unreleased] section
   const unreleasedRegex = /##\s*\[Unreleased\](\s*-\s*\d{4}-\d{2}-\d{2})?/i;

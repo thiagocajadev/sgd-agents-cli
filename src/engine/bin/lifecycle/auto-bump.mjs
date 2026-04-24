@@ -81,7 +81,7 @@ function updateChangelog(newVersion) {
   if (!fileSystem.existsSync(CHANGELOG_PATH)) return;
 
   const content = fileSystem.readFileSync(CHANGELOG_PATH, 'utf8');
-  const today = new Date().toLocaleDateString('en-CA');
+  const today = new Date().toISOString().split('T').at(0);
   const unreleasedRegex = /##\s*\[Unreleased\](\s*-\s*\d{4}-\d{2}-\d{2})?/i;
 
   if (!unreleasedRegex.test(content)) return;
@@ -106,7 +106,7 @@ function syncAllPackages(nextVersion) {
     const packageData = JSON.parse(rawContent);
     packageData.version = nextVersion;
 
-    const serialized = JSON.stringify(packageData, null, 2) + '\n';
+    const serialized = `${JSON.stringify(packageData, null, 2)}\n`;
     fileSystem.writeFileSync(packagePath, serialized);
   }
 }

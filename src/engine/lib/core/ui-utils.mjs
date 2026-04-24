@@ -13,7 +13,7 @@ const { safeConfirm } = PromptUtils;
 
 function printWelcome() {
   console.log('\n  Installing instruction set...');
-  console.log('  ' + '─'.repeat(55));
+  console.log(`  ${'─'.repeat(55)}`);
 }
 
 function printStep(step, total, message) {
@@ -41,7 +41,7 @@ function printActivationGuide() {
 
 function printSuccessAgents(targetDir) {
   console.log('\n  ✅ Done.');
-  console.log('  ' + '─'.repeat(55));
+  console.log(`  ${'─'.repeat(55)}`);
   console.log(`  Project: ${targetDir}\n`);
   console.log('  .ai/                     (governance — canonical AGENTS.md lives here)');
   console.log('  .ai/backlog/             (gitignored — local working state + stack.md)');
@@ -51,7 +51,7 @@ function printSuccessAgents(targetDir) {
 
 function printQuickSuccess(targetDir) {
   console.log('\n  ⚡ Done.');
-  console.log('  ' + '─'.repeat(55));
+  console.log(`  ${'─'.repeat(55)}`);
   console.log(`  Project: ${targetDir}\n`);
   console.log('  .ai/                     (governance — canonical AGENTS.md lives here)');
   console.log('  .ai/backlog/             (gitignored — local working state + stack.md)');
@@ -61,7 +61,7 @@ function printQuickSuccess(targetDir) {
 
 function printQuickDryRun(targetDir) {
   console.log(`\n  ⚡ [DRY RUN] Quick setup — nothing will be written.`);
-  console.log('  ' + '─'.repeat(55));
+  console.log(`  ${'─'.repeat(55)}`);
   console.log(`  Project: ${targetDir}\n`);
   console.log(`  [1/5] Would prepare .ai/ structure`);
   console.log(`  [2/5] Would inject rules → .ai/`);
@@ -83,7 +83,7 @@ function printDryRunPreview(selections, targetDir) {
 
 function renderPreviewHeader(targetDir) {
   console.log('\n  📋 DRY RUN — Preview of files that would be created:');
-  console.log('  ' + '─'.repeat(55));
+  console.log(`  ${'─'.repeat(55)}`);
   console.log(`  Project Root: ${targetDir}\n`);
 }
 
@@ -107,7 +107,7 @@ function renderPreviewManifest(mode) {
 }
 
 function renderPreviewFooter() {
-  console.log('\n  ' + '─'.repeat(55));
+  console.log(`\n  ${'─'.repeat(55)}`);
   console.log('  Run without --dry-run to apply.\n');
 }
 
@@ -137,7 +137,7 @@ function renderSummaryFooter() {
 
 function printHeader(version) {
   console.log(`\n  Spec-Driven Guide — Agents v${version}`);
-  console.log('  ' + '─'.repeat(50));
+  console.log(`  ${'─'.repeat(50)}`);
   console.log('  A working protocol and engineering rules for your AI agent.');
   console.log('  Press Ctrl+C to exit.\n');
 }

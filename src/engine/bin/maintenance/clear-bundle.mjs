@@ -19,7 +19,7 @@ async function orchestrateCleanup(targetDirectory, options = {}) {
   const isDryRun = options.isDryRun || process.argv.includes('--dry-run');
 
   console.log('\n  Spec Driven Guide — Clear Generated Content');
-  console.log('  ' + '─'.repeat(50));
+  console.log(`  ${'─'.repeat(50)}`);
 
   const itemsToRemove = ['.ia', '.ai', '.sdg-prompts'];
   let existingItems = [];
