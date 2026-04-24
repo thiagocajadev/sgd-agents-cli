@@ -19,7 +19,9 @@ function collectMatches(diff, entry) {
 function buildMatch(hit, rule) {
   const snippet = hit[0].trim();
   const lineNumber = computeLineNumber(hit.input, hit.index);
-  return { rule, snippet, line: lineNumber };
+
+  const matchEntry = { rule, snippet, line: lineNumber };
+  return matchEntry;
 }
 
 function computeLineNumber(source, index) {
