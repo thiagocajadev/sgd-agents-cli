@@ -71,6 +71,8 @@ Dark mode surfaces get **lighter** as they approach the user (physical elevation
 
 **Hover Law:** Light mode goes darker (L-5%). Dark mode goes lighter (L+10%).
 
+> Implements **FigureGround** (Part 4.0).
+
 </rule>
 
 ### Phase 0.3 — Color Distribution (60-30-10)
@@ -245,6 +247,8 @@ Never call APIs directly in components. Never use Context for server data. Prop 
 |    L3 | Sections | p-8, gap-12 | Blocks, grid spacing         |
 |    L4 | Page     | py-24, px-6 | Page breathing space         |
 
+> Implements **Proximity** (Part 4.0).
+
 </rule>
 
 ---
@@ -286,6 +290,60 @@ Declare: Layout (`default | bento`) + Skin (`clean | glass | brutalism | paper |
 
 ## Part 4 — UX Quality Standards
 
+### Part 4.0 — Gestalt Foundations
+
+> Eight perceptual laws that explain _why_ the rules below work. Apply when two layouts pass token rules equally — the law tells you which one the brain will read correctly. Each rule below points to the existing tokens / presets it governs.
+
+<rule name="Proximity">
+
+**Proximity** — close elements read as one group; distance separates groups. Apply via Spacing L1–L4 (L1/L2 within a group, L3/L4 between groups). Anti-pattern: uniform gaps everywhere — no boundary cues.
+
+</rule>
+
+<rule name="Similarity">
+
+**Similarity** — shared shape / color / size / weight signals shared kind. One semantic token per state, one icon family per project, matching variant per action class. Anti-pattern: identical primary button for save vs delete.
+
+</rule>
+
+<rule name="Continuity">
+
+**Continuity** — eye follows the smoothest line. Align edges to a grid; read order = tab order = DOM order. Break alignment only to mark a phase change. Anti-pattern: zig-zag card grids without anchor column.
+
+</rule>
+
+<rule name="Closure">
+
+**Closure** — the mind completes implied shapes from partial cues. Use spacing and alignment to define boundaries before adding borders or backgrounds. Subtract chrome before adding it. Anti-pattern: border on every cluster when whitespace already groups them.
+
+</rule>
+
+<rule name="FigureGround">
+
+**FigureGround** — foreground emerges from a recessive background. Drives Elevation Stack S0–S3 (lighter surface = higher) and dark-mode chroma reduction (C×0.80–0.90). One focal element per zone. Anti-pattern: equal-elevation modal over content; competing focal points.
+
+</rule>
+
+<rule name="CommonRegion">
+
+**CommonRegion** — a bounded container groups its contents across distance. Cards, sections, fieldsets, panels. Pick this over Proximity when grouping must survive responsive reflow. Anti-pattern: proximity-only grouping that breaks below the `md` breakpoint.
+
+</rule>
+
+<rule name="CommonFate">
+
+**CommonFate** — items moving together belong together. Drives staggered entry (40–80ms), coordinated expand/collapse, list reorder transitions. Independent timing on a grouped set reads as unrelated. Anti-pattern: each card animating on its own clock during a single state change.
+
+</rule>
+
+<rule name="Pragnanz">
+
+**Prägnanz** (good figure) — the simplest interpretation wins. Caps the system: 60-30-10 distribution, 2-Font Rule, 3 hierarchy layers, 4 elevation steps. Each new variant must justify itself against the simplest reading. Anti-pattern: five typefaces, seven elevations, three accents — all "necessary".
+
+</rule>
+
+---
+
 ### Foundational Principles
 
 - **Solution-first**: Every visual decision traces to a user outcome. No justification → remove it.
@@ -308,6 +366,8 @@ Design starts at mobile (<=640px). Desktop extends, not overrides. Touch target 
 <rule name="InteractionMotion">
 
 Entry animations: max 8px translate, 120-200ms, stagger 40-80ms. Easing: `ease-out` or `cubic-bezier(0.16, 1, 0.3, 1)`. Hover feedback within 100ms. Respect `prefers-reduced-motion`.
+
+> Stagger and coordinated transitions implement **CommonFate** (Part 4.0).
 
 </rule>
 

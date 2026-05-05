@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.6.0] - 2026-05-05
+
+### Added
+
+- **`ui-ux.md` — Part 4.0 Gestalt Foundations**: 8 perceptual laws (`Proximity`, `Similarity`, `Continuity`, `Closure`, `FigureGround`, `CommonRegion`, `CommonFate`, `Pragnanz`) inserted as theoretical lens before `Foundational Principles`. Each rule: definition + token/preset application + anti-pattern. Cross-refs added in existing rules: `SpacingHierarchy → Proximity`, `ElevationStack → FigureGround`, `InteractionMotion → CommonFate`. Skill grew 16.4KB → 19.2KB; mirror at `.ai/skills/ui-ux.md` byte-identical. Audit 100%, lint 0 errors.
+
+### Fixed
+
 ## [5.5.2] - 2026-04-25
 
 ### Fixed
