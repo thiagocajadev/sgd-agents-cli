@@ -19,6 +19,8 @@
 
 ## Query Performance & Pagination
 
+> **N+1 detection (canonical)** — referenced by `performance.md` for hot-path discipline. Implementation rules live here.
+
 - No `SELECT *`; project only needed columns
 - Detect and eliminate N+1; use eager loading or batch fetching
 - Cursor-based pagination mandatory for large/real-time datasets; `LIMIT/OFFSET` only for small sets or admin
@@ -39,6 +41,8 @@
 - Actions: `GET_ONE`, `GET_ALL`, `INSERT`, `DELETE`, `UPDATE`, `UPSERT`, `PROC/SP`, `SYNC`, `VALIDATE`
 
 ## Caching
+
+> **Caching SSOT** — referenced by `performance.md`. TTL is mandatory; cache + no invalidation = silent staleness.
 
 - Cache as decorator/interceptor around repository; never mix with business logic
 - Every cache entry must have TTL

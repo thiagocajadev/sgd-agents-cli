@@ -85,6 +85,21 @@ const SKILL_CATALOG = [
     category: "surgical",
     description: "logging, metrics, tracing",
   },
+  {
+    path: ".ai/skills/review.md",
+    category: "surgical",
+    description: "PR craft + reviewer checklist",
+  },
+  {
+    path: ".ai/skills/performance.md",
+    category: "surgical",
+    description: "Big-O budget, hot paths, profiling",
+  },
+  {
+    path: ".ai/skills/domain.md",
+    category: "surgical",
+    description: "DDD-Lite: aggregates, VOs, ubiquitous language",
+  },
 ];
 
 /**

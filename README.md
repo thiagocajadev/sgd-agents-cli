@@ -20,9 +20,9 @@
 
 The instruction set covers:
 
-- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) that structures how the agent handles any task. Includes a **Pre-Code Checklist** (CODE entry), a **Pre-Finish Gate** (TEST), and a 3-strike **Circuit Breaker** (STOP) to prevent regression loops.
-- **Code style & quality gates**: consolidated in `code-style.md` — a single Pre-Code Checklist (Mental Reset, Target Files, Naming, Narrative, Comments, Tests, Security, Blockers) and a Pre-Finish Gate wired to narrative heuristics (Stepdown, SLA, Explaining Returns, banned abbreviations, Boolean prefix, Revealing Module Pattern, etc.).
-- **Skills, on-demand**: code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX — each a self-contained skill unit loaded only when the current cycle needs it.
+- **Working protocol**: a 5-phase cycle (SPEC → PLAN → CODE → TEST → END) that structures how the agent handles any task. Includes a unified **Work Checklist** (Intent recited at CODE entry; Form recited at CODE entry **and** verified at TEST) and a 3-strike **Circuit Breaker** (STOP) to prevent regression loops.
+- **Code style & quality gates**: consolidated in `code-style.md` — a single `WorkChecklist` rule with two binary sections: **Intent** (Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers) and **Form** (Pure entry point, Narrative Siblings, Explaining Returns, Revealing Module Pattern, Vertical Density, Boolean prefix, No framework abbreviations, No section banners) wired to narrative heuristics in `governance.mjs`.
+- **Skills, on-demand**: code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX, code review, performance, domain modeling — each a self-contained skill unit loaded only when the current cycle needs it.
 - **Dynamic stack context**: the `land:` cycle elicits the project's languages and versions from the developer, optionally enriches them via an allow-listed doc fetch, and persists the result in `.ai/backlog/stack.md`. Phase CODE reads that file as the single source of truth — no static idiom catalog, no version registry to maintain.
 - **Delivery contract**: BFF response envelope (server-side) and UI contract execution (client-side) fused into one self-gated `competencies/delivery.md`, loaded when the task touches delivery logic.
 - **Architectural flavors**: rules for your project's structural pattern (vertical slice, MVC, lite, legacy).
@@ -69,7 +69,7 @@ your-project/
 ├── .ai/                         ← Instruction set (committed)
 │   ├── skills/                  ← Engineering skills (loaded on-demand per cycle phase)
 │   │   ├── AGENTS.md            ← Main entry point + skill registry
-│   │   ├── code-style.md        ← Code style + Pre-Code Checklist + Pre-Finish Gate (Phase CODE core)
+│   │   ├── code-style.md        ← Code style + Work Checklist (Intent + Form) — Phase CODE core
 │   │   ├── testing.md
 │   │   ├── security.md
 │   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)

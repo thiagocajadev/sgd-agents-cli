@@ -20,9 +20,9 @@
 
 O conjunto de instruções cobre:
 
-- **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END) que estrutura como o agente conduz qualquer tarefa. Inclui **Pre-Code Checklist** (entrada na CODE), **Pre-Finish Gate** (TEST) e um **Circuit Breaker** de 3 tentativas (STOP) para evitar loops de regressão.
-- **Estilo de código e quality gates**: consolidados em `code-style.md` — um único Pre-Code Checklist (Mental Reset, Target Files, Naming, Narrative, Comments, Tests, Security, Blockers) e um Pre-Finish Gate conectado a heurísticas de narrativa (Stepdown, SLA, Explaining Returns, abreviações proibidas, prefixo booleano, Revealing Module Pattern, etc.).
-- **Skills sob demanda**: code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX — cada uma é uma unidade auto-contida carregada somente quando o ciclo atual precisa.
+- **Protocolo de trabalho**: um ciclo de 5 fases (SPEC → PLAN → CODE → TEST → END) que estrutura como o agente conduz qualquer tarefa. Inclui um **Work Checklist** unificado (Intent recitado na entrada da CODE; Form recitado na entrada da CODE **e** verificado no TEST) e um **Circuit Breaker** de 3 tentativas (STOP) para evitar loops de regressão.
+- **Estilo de código e quality gates**: consolidados em `code-style.md` — uma única regra `WorkChecklist` com duas seções binárias: **Intent** (Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers) e **Form** (Pure entry point, Narrative Siblings, Explaining Returns, Revealing Module Pattern, Vertical Density, Boolean prefix, No framework abbreviations, No section banners) conectada a heurísticas de narrativa em `governance.mjs`.
+- **Skills sob demanda**: code style, testing, security, API design, data access, observability, CI/CD, cloud, SQL style, UI/UX, code review, performance, domain modeling — cada uma é uma unidade auto-contida carregada somente quando o ciclo atual precisa.
 - **Contexto de stack dinâmico**: o ciclo `land:` elicita as linguagens e versões do projeto do desenvolvedor, opcionalmente as enriquece via uma lista de fontes de documentação canônicas, e persiste o resultado em `.ai/backlog/stack.md`. A fase CODE carrega esse arquivo como fonte única de verdade — sem catálogo estático de idiomas, sem flag `--idiom` para manter.
 - **Contrato de entrega**: envelope de resposta BFF (server-side) e execução de contrato UI (client-side) fundidos em um único `competencies/delivery.md` auto-gateado, carregado quando a tarefa toca lógica de entrega.
 - **Flavors arquiteturais**: regras para o padrão estrutural do projeto (vertical slice, MVC, lite, legacy).
@@ -69,7 +69,7 @@ seu-projeto/
 ├── .ai/                         ← Conjuntos de instruções (commitado)
 │   ├── skills/                  ← Skills de engenharia (carregadas sob demanda por fase do ciclo)
 │   │   ├── AGENTS.md            ← Ponto de entrada + registro de skills
-│   │   ├── code-style.md        ← Code style + Pre-Code Checklist + Pre-Finish Gate (núcleo da Phase CODE)
+│   │   ├── code-style.md        ← Code style + Work Checklist (Intent + Form) — núcleo da Phase CODE
 │   │   ├── testing.md
 │   │   ├── security.md
 │   │   └── ... (api-design, data-access, observability, ci-cd, cloud, sql-style, ui-ux)

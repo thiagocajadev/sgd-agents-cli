@@ -9,7 +9,7 @@ your-project/
 ├── .ai/                         ← Instruction set (committed)
 │   ├── skills/                  ← Engineering skills (loaded on-demand per cycle phase)
 │   │   ├── AGENTS.md            ← Main entry point + skill registry
-│   │   ├── code-style.md        ← Code style + Pre-Code Checklist + Pre-Finish Gate (Phase CODE core)
+│   │   ├── code-style.md        ← Code style + Work Checklist (Intent + Form) — Phase CODE core
 │   │   ├── testing.md           ← Test principles (loaded in Phase CODE/TEST)
 │   │   ├── security.md          ← Security boundaries + pipeline rules
 │   │   ├── api-design.md        ← API contracts and envelopes
@@ -18,7 +18,10 @@ your-project/
 │   │   ├── ci-cd.md             ← Pipelines and deployment
 │   │   ├── cloud.md             ← Cloud & containers
 │   │   ├── sql-style.md         ← SQL query rules
-│   │   └── ui-ux.md             ← Design thinking, presets, standards, architecture
+│   │   ├── ui-ux.md             ← Design thinking, presets, standards, architecture
+│   │   ├── review.md            ← PR craft + reviewer checklist
+│   │   ├── performance.md       ← Big-O budget, hot paths, profiling
+│   │   └── domain.md            ← DDD-Lite: aggregates, VOs, ubiquitous language
 │   ├── instructions/
 │   │   ├── templates/           ← Working protocol (workflow.md), agent roles, context + stack + tasks seeds
 │   │   ├── flavors/             ← Architectural patterns (vertical-slice, mvc, lite, legacy)
@@ -48,10 +51,10 @@ The main entry point. Referenced by `CLAUDE.md` (and equivalent files for other 
 
 ### skills/code-style.md
 
-The **Phase CODE core**. Two-line Security-First block, code-style rules (naming, narrative, comments, tests, dependencies, structure, formatting, logging), and the two gates the agent must recite:
+The **Phase CODE core**. Two-line Security-First block, code-style rules (organized as compact tables: Form, Readability, Quality Control), and the unified `WorkChecklist` rule the agent must recite at CODE entry:
 
-- **Pre-Code Checklist** (Phase CODE entry, before the first `Edit` / `Write`) — Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers.
-- **Pre-Finish Gate** (Phase TEST) — eight binary items wired to narrative heuristic validators in `governance.mjs` (Stepdown, SLA, Explaining Returns, banned abbreviations, Boolean prefix, Revealing Module Pattern, Vertical Density, No section banners).
+- **Intent** (Phase CODE entry, before the first `Edit` / `Write`) — Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers.
+- **Form** (Phase CODE entry **and** verified at Phase TEST) — eight binary items wired to narrative heuristic validators in `governance.mjs` (Pure entry point, Narrative Siblings, Explaining Returns, Revealing Module Pattern, Vertical Density, Boolean prefix, No framework abbreviations, No section banners). Recited at CODE entry to avoid the CODE → TEST → CODE rework loop; verified at TEST to gate the cycle.
 
 ### skills/testing.md
 
@@ -61,9 +64,9 @@ Test principles: structure, regression requirements, red-green-refactor, integra
 
 Security rules: configuration isolation, PII handling, secret management, and the security pipeline (pre-commit hooks, dependency scanning, static analysis).
 
-### skills/api-design.md · data-access.md · observability.md · ci-cd.md · cloud.md · sql-style.md · ui-ux.md
+### skills/api-design.md · data-access.md · observability.md · ci-cd.md · cloud.md · sql-style.md · ui-ux.md · review.md · performance.md · domain.md
 
-Domain skills. Each covers its concern end-to-end — for example, `api-design.md` defines the response envelope, error code table, REST hierarchy, and standardization protocols. Loaded only when the current task touches the relevant domain.
+Domain skills. Each covers its concern end-to-end — for example, `api-design.md` defines the response envelope, error code table, REST hierarchy, and standardization protocols. Loaded only when the current task touches the relevant domain. The operational trio (`review.md`, `performance.md`, `domain.md`) covers PR/review craft, complexity budget + hot-path discipline, and DDD-Lite vocabulary.
 
 ---
 

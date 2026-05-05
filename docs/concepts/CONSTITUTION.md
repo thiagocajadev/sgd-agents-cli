@@ -6,7 +6,7 @@ This document defines the philosophical and technical foundation of `sdg-agents`
 
 The developer sets direction and approves decisions. The agent handles execution — reading the codebase, proposing a structured plan, writing the code, and running the tests. The agent stops at SPEC and PLAN for explicit approval before proceeding.
 
-This document is the mental model for developers. The operational rules the agent follows live in [`.ai/skills/code-style.md`](../../src/assets/skills/code-style.md) (Pre-Code Checklist + Pre-Finish Gate) and [`.ai/instructions/templates/workflow.md`](../../src/assets/instructions/templates/workflow.md) (5-phase cycle protocol).
+This document is the mental model for developers. The operational rules the agent follows live in [`.ai/skills/code-style.md`](../../src/assets/skills/code-style.md) (`WorkChecklist`: Intent + Form sections) and [`.ai/instructions/templates/workflow.md`](../../src/assets/instructions/templates/workflow.md) (5-phase cycle protocol).
 
 ---
 
@@ -14,7 +14,7 @@ This document is the mental model for developers. The operational rules the agen
 
 **Project-specific rules override general AI training.**
 
-Before any code is written, the agent recites a Pre-Code Checklist: names the training default being suspended, re-grounds in the project's code-style rules, and confirms target files and blockers. Training bias is purged at every phase transition (SPEC → PLAN → CODE → TEST → END).
+Before any code is written, the agent recites the `WorkChecklist`: the **Intent** section (Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers) names the training default being suspended and confirms targets, while the **Form** section primes the agent on what the result must look like (Pure entry point, Explaining Returns, Vertical Density, Boolean prefix, etc.). Training bias is purged at every phase transition (SPEC → PLAN → CODE → TEST → END).
 
 ## 2. Hardening (Security Execution)
 
