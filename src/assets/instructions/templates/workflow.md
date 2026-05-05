@@ -58,12 +58,12 @@
 
 <rule name="PhaseCODE">
 
-1. **Pre-Code Checklist (BLOCKING)**: Recite `PreCodeChecklist` from `code-style.md` BEFORE the first `Edit` / `Write` / `NotebookEdit` call. No write tool fires without it. Items are binary (Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers).
+1. **Work Checklist (BLOCKING)**: Recite `WorkChecklist` from `code-style.md` BEFORE the first `Edit` / `Write` / `NotebookEdit` call. Both sections cited at CODE entry. No write tool fires without it. **Intent** items (binary): Mental Reset, Target Files, Naming, Narrative, Comments, Tests planned, Security, Blockers. **Form** items (binary, verified at TEST): Pure entry point, Narrative Siblings, Explaining Returns, Revealing Module Pattern, Vertical Density, Boolean prefix, No framework abbreviations, No section banners.
 2. **Context Load**: Read `code-style.md` + domain skills relevant to the task.
 3. **Plan Adherence**: Follow plan. No extras.
 4. **Blocker Surface**: Raise blockers immediately. Never work around silently.
 
-> **Circuit Breaker**: Any write tool call without a preceding `Pre-Code Checklist` recitation auto-fails Phase TEST; remediation is re-entry into Phase CODE with the checklist emitted.
+> **Circuit Breaker**: Any write tool call without a preceding `Work Checklist` recitation auto-fails Phase TEST; remediation is re-entry into Phase CODE with the checklist emitted.
 
 </rule>
 
@@ -73,7 +73,7 @@
 
 1. **Checklist Verification**: Every item from Spec's checklist.
 2. **Regression Check**: For `fix:` — bug gone, nothing else broke.
-3. **Audit Gate**: Modified files vs `PreFinishGate` from `code-style.md`.
+3. **Audit Gate**: Modified files vs **Form** section of `WorkChecklist` (`code-style.md`).
 4. **Lint Fix**: Run linter, fix what's possible.
 5. **Circuit Breaker**: Fail → Phase CODE → re-TEST. Max 3 attempts. 3rd failure → stop + Failure Report.
 6. **Report**: Result per checklist item + lint + audit status.

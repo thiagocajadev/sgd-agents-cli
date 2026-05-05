@@ -58,21 +58,20 @@ describe("Skill Content — Governance Layer", () => {
       );
     });
 
-    it("should expose a PreCodeChecklist rule before PreFinishGate", () => {
+    it("should expose a WorkChecklist rule with Intent before Form sections", () => {
       const input = readAsset(CODE_STYLE);
 
-      const preCodeIndex = input.indexOf('<rule name="PreCodeChecklist">');
+      const ruleIndex = input.indexOf('<rule name="WorkChecklist">');
+      const intentIndex = input.indexOf("### Intent");
+      const formIndex = input.indexOf("### Form");
+      const actualRuleExists = ruleIndex !== -1;
+      const actualOrdered = intentIndex > ruleIndex && formIndex > intentIndex;
+      const actual = actualRuleExists && actualOrdered;
 
-      const preFinishIndex = input.indexOf('<rule name="PreFinishGate">');
-      const actual = preCodeIndex !== -1 && preCodeIndex < preFinishIndex;
-
-      assert.ok(
-        actual,
-        "PreCodeChecklist must exist and precede PreFinishGate"
-      );
+      assert.ok(actual, "WorkChecklist must exist with Intent before Form");
     });
 
-    it("should enumerate the eight Pre-Code Checklist concerns", () => {
+    it("should enumerate the eight Intent concerns", () => {
       const input = readAsset(CODE_STYLE);
 
       const expectedFragments = [
@@ -95,11 +94,11 @@ describe("Skill Content — Governance Layer", () => {
       assert.deepEqual(
         actualMissing,
         expectedEmpty,
-        "Pre-Code Checklist must cover all eight concerns"
+        "Intent section must cover all eight concerns"
       );
     });
 
-    it("should enumerate the eight Pre-Finish Gate items wired to heuristics", () => {
+    it("should enumerate the eight Form items wired to heuristics", () => {
       const input = readAsset(CODE_STYLE);
 
       const expectedFragments = [
@@ -122,7 +121,7 @@ describe("Skill Content — Governance Layer", () => {
       assert.deepEqual(
         actualMissing,
         expectedEmpty,
-        "Pre-Finish Gate must match heuristic strategy keys"
+        "Form section must match heuristic strategy keys"
       );
     });
 
@@ -262,14 +261,14 @@ describe("Skill Content — Governance Layer", () => {
   });
 
   describe("workflow.md Phase CODE", () => {
-    it("should route Phase CODE through the Pre-Code Checklist", () => {
+    it("should route Phase CODE through the Work Checklist", () => {
       const input = readAsset(WORKFLOW);
 
-      const expectedMarker = "Pre-Code Checklist (BLOCKING)";
+      const expectedMarker = "Work Checklist (BLOCKING)";
 
       const actual = input.includes(expectedMarker);
 
-      assert.ok(actual, "Phase CODE step 1 must be the Pre-Code Checklist");
+      assert.ok(actual, "Phase CODE step 1 must be the Work Checklist");
     });
 
     it("should still name the blocked write tools", () => {

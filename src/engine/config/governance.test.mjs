@@ -11,12 +11,11 @@ function findRule(label) {
 }
 
 describe("governance.NARRATIVE_CHECKLIST", () => {
-  it("parses all 8 Pre-Finish Gate items from code-style.md", () => {
+  it("parses all 8 Form items from WorkChecklist in code-style.md", () => {
     const expectedChecklistSize = 8;
     const actualChecklistSize = NARRATIVE_CHECKLIST.length;
 
-    const failureMessage =
-      "parser regex must capture every Pre-Finish Gate item";
+    const failureMessage = "parser regex must capture every Form item";
 
     assert.equal(actualChecklistSize, expectedChecklistSize, failureMessage);
   });

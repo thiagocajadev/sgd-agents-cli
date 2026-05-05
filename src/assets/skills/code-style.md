@@ -22,82 +22,92 @@
 
 ## Form — function structure and narrative
 
-- **English source** — code is universal; short unambiguous names in English.
-- **Narrative code** — the code tells the story; if it needs a comment to be understood, naming failed.
-- **Clean entry point** — `run()` / `start()` / `init()` as headline caller: single-statement side-effect form (`await call();`) OR canonical 2-statement form (`const result = call(); return result;`). Forbidden: ternary on return line, any logic.
-- **Vertical signature** — up to 3 parameters per line; 4+ must use an object. Destructuring inside function body, not in the signature.
-- **Orchestrator on top** — the caller is visible before the details (top-down).
-- **Details below** — helpers sit below the caller (Stepdown Rule). One-use helpers as **Narrative Siblings**: directly below their caller, nowhere else.
-- **No logic in return** — **Explaining Returns**: assign to a named `const` before every meaningful `return`; no logic / ternary / anonymous object on the return line. Void-terminator form is exempt — a side-effect call (`console.log(message);`) ends the function with an implicit return. Never ceremonialize into `const X = sideEffect(); return X;`.
+| Principle           | Rule                                                                                                  |
+| :------------------ | :---------------------------------------------------------------------------------------------------- |
+| English source      | Code is universal; short, unambiguous English names                                                   |
+| Narrative code      | Code tells the story; if it needs a comment to be understood, naming failed                           |
+| Clean entry point   | `run()` / `start()` / `init()` as headline caller — single-statement OR `const x = call(); return x;` |
+| Vertical signature  | ≤3 params per line; 4+ → object. Destructure in body, not in signature                                |
+| Orchestrator on top | Caller visible before details (top-down)                                                              |
+| Narrative Siblings  | One-use helpers directly below their caller (Stepdown Rule)                                           |
+| Explaining Returns  | Named `const` before every meaningful `return`; void-terminator (`console.log(msg);`) exempt          |
+
+**Anchors**
+
+- **Forbidden in `return`**: ternary, arithmetic, template literal, anonymous object, constructor, logic of any kind. Lift to a named `const`.
+- **Void-terminator**: a side-effect call (`console.log(message);`) ends the function with an implicit return. Never ceremonialize into `const X = sideEffect(); return X;`.
 
 ---
 
 ## Readability — flow, visual density, and names
 
-- **Early return** — exit early on failure; no `else` after `return`. Max 2 indent levels.
-- **Control flow** — match tool to shape: guards for failure exits • lookup table for value mapping (`const MAP = {...}; return MAP[key] ?? default`) • `switch` for action dispatch (side-effects) • `Map` for non-string / dynamic keys • ternary only for 2-value assignment • `===` / `!==` always (never `==`). Each function orchestrates OR implements (SLA) — never both.
-  - **Braced guards** — every `if` / `else if` / `else` / `for` / `while` body wrapped in `{ }`, body on its own line. Applies to any single-instruction body: `return`, `throw`, `break`, `continue`, assignment. Enforced by `curly: all` ESLint rule (auto-fix on save).
-    - ❌ `if (isEmpty) return null;`
-    - ✅ `if (isEmpty) {\n  return null;\n}`
-- **Low visual density** — **Paragraphs of Intent**: 1 blank line between logical groups, 0 within a group, never 2+ consecutive. Wall of tight code and double-blank noise are equal violations. Blank lines after multiline statements and between top-level function declarations are enforced by ESLint (auto-fix on save).
-- **Expressive names** — names reveal domain intent, not storage or implementation detail.
-  - Banned verbs: `handle`, `do`, `run`, `execute`, `perform`; `get` for computations (use `compute` / `calculate` / `derive`).
-  - Banned nouns: `data`, `info`, `obj`, `item`, `thing`, `helpers`, `utils`, `common`, `shared`, `misc`.
-  - Banned abbreviations: `req` → `request`, `res` → `response`, `ctx` → `context`, plus `idx`, `prev`, `arr`, `val`, `tmp`, `cb`, `fn`, `mgr`, `ctrl`, `svc`.
-  - **Booleans** carry semantic prefix: `is` / `has` / `can` / `should` / `did` / `needs` / `supports` / `allows`. Never bare `loading`, `error`, `active`.
-  - **Import aliasing** — imports whose public symbol is single-letter or a meaningless acronym must be aliased with an intent name at the import site.
-    - `import z from 'zod'` → `import { z as validate } from 'zod'`
-    - `import fs from 'node:fs'` → `import fileSystem from 'node:fs'`
-    - `import { t } from 'node:test'` → `import { test as testCase } from 'node:test'`
-    - Carve-outs: identifiers ≥3 chars that are already English words or established acronyms (`path`, `os`, `url`, `http`, `crypto`) stay as-is.
-- **Code as documentation** — names replace comments. WHY over WHAT; skip `// increment counter` above `i++`. `// why:` permitted only for hidden constraints (invariants, workarounds, bug references). **WHY is a one-liner** — multi-line WHY signals refactor (extract named const / function or move to docstring). On drift (maintenance, evolution, fix-on-fix): **comments compact, never accumulate** — replace stale WHY, never stack `// update:` / `// 2026:` / `// also:` chains. Stale WHY is worse than no comment. Docstrings on public functions: intent + one usage example. Reference issue numbers / commit SHAs when a line exists because of a specific bug. No section banners (`// --- Section ---`). Keep your own comments on refactor — they carry intent and provenance.
-- **Template literals over `+`** — build dynamic or multi-part strings with template literals (`` `${a}-${b}` ``), not `+` concatenation. `+` is reserved for documented self-flag evasion and similar one-line workarounds where the reason is annotated inline.
-- **No magic values** — named constants instead of loose numbers and strings. Magic extends beyond numbers: any string whose visible form does not match its purpose is magic — `'en-CA'` used to emit ISO dates, single-letter locale codes for formatting side-effects, etc. Prefer expressions whose surface declares the output (`new Date().toISOString().split('T').at(0)`). Exception messages include the offending value and the expected shape.
+| Principle             | Rule                                                                                                     |
+| :-------------------- | :------------------------------------------------------------------------------------------------------- |
+| Early return          | Exit early on failure; no `else` after `return`; max 2 indent levels                                     |
+| Control flow          | Tool matches shape: guards / lookup table / `switch` / `Map` / ternary. `===` always; SLA per function   |
+| Braced guards         | Every `if` / `else` / `for` / `while` body wrapped in `{ }` (enforced by `curly: all`)                   |
+| Visual density        | 1 blank between groups, 0 within, never 2+. Wall-of-tight and double-blank are equal violations          |
+| Expressive names      | Domain intent over storage detail — banned verbs / nouns / abbreviations (see anchors)                   |
+| Boolean prefix        | `is` / `has` / `can` / `should` / `did` / `needs` / `supports` / `allows`                                |
+| Import aliasing       | Single-letter or meaningless imports renamed at the import site                                          |
+| Code as documentation | WHY-only one-liner; multi-line WHY = refactor signal; drift compacts, never accumulates                  |
+| Template literals     | `` `${a}-${b}` `` over `+` for dynamic strings                                                           |
+| No magic values       | Named constants; expressions whose surface declares output (`new Date().toISOString().split('T').at(0)`) |
+
+**Anchors**
+
+- **Banned verbs**: `handle`, `do`, `run`, `execute`, `perform`; `get` for computations (use `compute` / `calculate` / `derive`).
+- **Banned nouns**: `data`, `info`, `obj`, `item`, `thing`, `helpers`, `utils`, `common`, `shared`, `misc`.
+- **Banned abbreviations**: `req` → `request`, `res` → `response`, `ctx` → `context`, plus `idx`, `prev`, `arr`, `val`, `tmp`, `cb`, `fn`, `mgr`, `ctrl`, `svc`.
+- **Braced guards** examples: ❌ `if (isEmpty) return null;` ✅ `if (isEmpty) {\n  return null;\n}`.
+- **Import aliasing** examples: `import z from 'zod'` → `import { z as validate } from 'zod'`; `import fs from 'node:fs'` → `import fileSystem from 'node:fs'`. Carve-out: identifiers ≥3 chars that are English words or established acronyms (`path`, `os`, `url`, `http`, `crypto`) stay as-is.
+- **WHY discipline**: `// why:` permitted only for hidden constraints (invariants, workarounds, bug references). Multi-line WHY → extract named const / function or move to docstring. On drift (maintenance, evolution, fix-on-fix): replace stale WHY, never stack `// update:` / `// 2026:` / `// also:` chains. Stale WHY ≥ no comment. No section banners (`// --- Section ---`).
+- **Magic values**: any string whose visible form does not match its purpose is magic — `'en-CA'` used to emit ISO dates, single-letter locale codes for formatting side-effects. Exception messages include the offending value and the expected shape.
 
 ---
 
 ## Quality Control — state, errors, async, and tests
 
-- **Small functions** — 4–30 **logical statements** (not raw LoC). Vertical dot-chain breaks, density blanks, and multi-line signature expansions don't count toward the ceiling — one expression split across lines is one statement. Name needs "and" → split. One responsibility, one level of abstraction.
-- **Compute vs format** — compute data and format output in separate functions.
-- **Immutability by default** — `const` / readonly first; `let` only when necessary. Mutation crosses boundaries explicitly.
-- **CQS** — function mutates (command) OR reads (query, pure) — never both.
-- **Explicit dependencies** — inject via constructor / parameter; no hidden globals, no module-level singletons for mutable state. Wrap third-party libs behind a thin interface owned by this project.
-- **Fail fast** — validate early; abort invalid flow at the boundary.
-- **Explicit return** — exceptions are not control flow. Return `Result` / discriminated union / explicit `null` for expected absence.
-- **Consistent contracts** — standardized response shapes; the same format every time.
-- **Centralized error handling** — typed error classes; `try/catch` at boundaries, not scattered.
-- **Async I/O** — `async/await`, never block.
-- **Explicit types** where the language supports them — no `any`, no untyped public function.
-- **No duplication** — extract shared logic when the pattern repeats three times (Rule of Three), not sooner.
-- **Structured tests** — F.I.R.S.T (Fast, Independent, Repeatable, Self-validating, Timely). **AAA** phases explicit: Arrange / Act / Assert, clean asserts without inline expressions. Every new function gets a test; bug fixes get a regression test. Mock external I/O (API, DB, filesystem) with named fake classes — not inline stubs. Each suite covers happy path + edge case + expected failure.
+| Principle             | Rule                                                                                     |
+| :-------------------- | :--------------------------------------------------------------------------------------- |
+| Small functions       | 4–30 logical statements (not raw LoC); one responsibility, one abstraction level         |
+| Compute vs format     | Computing data and formatting output live in separate functions                          |
+| Immutability          | `const` first; `let` only when necessary; mutation crosses boundaries explicitly         |
+| CQS                   | Function mutates (command) OR reads (query) — never both                                 |
+| Explicit dependencies | Inject via parameter / constructor; no hidden globals; wrap third-party libs             |
+| Fail fast             | Validate early; abort invalid flow at the boundary                                       |
+| Explicit return       | Exceptions are not control flow; return `Result` / discriminated union / explicit `null` |
+| Consistent contracts  | Standardized response shapes; the same format every time                                 |
+| Centralized errors    | Typed error classes; `try` / `catch` at boundaries, not scattered                        |
+| Async I/O             | `async` / `await`, never block                                                           |
+| Explicit types        | No `any`; no untyped public function (where the language supports types)                 |
+| No duplication        | Rule of Three — extract on the third occurrence, not sooner                              |
+| Structured tests      | F.I.R.S.T + AAA explicit; mock external I/O with named fakes; happy + edge + failure     |
 
 ---
 
-<rule name="PreCodeChecklist">
+<rule name="WorkChecklist">
 
-## Pre-Code Checklist
+## Work Checklist
 
-> Recite before the first `Edit` / `Write` / `NotebookEdit` in Phase CODE. Binary — no partial credit. If any item is uncertain, re-read the relevant section above before writing.
+> Recite at Phase CODE entry, **before** the first `Edit` / `Write` / `NotebookEdit`. Both sections are binary — no partial credit.
 >
-> **Form awareness at CODE entry**: also load `PreFinishGate` items (Pure entry, Explaining Returns, Vertical Density, Boolean prefix, etc.) into working memory **now**, not at TEST. Code aware of final form avoids the CODE → TEST → CODE rework loop. TEST verifies; it should not discover.
+> **Intent** establishes what you are about to do. **Form** establishes what the result must look like — code aware of the final form avoids the CODE → TEST → CODE rework loop.
+>
+> Phase TEST verifies the **Form** section against `governance.mjs` heuristics. TEST verifies; it should not discover.
+
+### Intent (recite at CODE entry)
 
 - [ ] **Mental Reset** — named which training default is being suspended for this task (verbose prose, dense walls, auto-summarize, taboo verbs).
 - [ ] **Target Files** — explicit path list from approved Plan; no drift.
 - [ ] **Naming** — no banned verbs / nouns / abbreviations; booleans carry semantic prefix; files follow `domain.operation.ext`; single-letter imports aliased with intent name.
 - [ ] **Narrative** — Stepdown, SLA, Explaining Returns, control-flow tool matches shape, ≤2 indent levels.
-- [ ] **Comments** — WHY only; no what-comments; docstring on public surfaces.
+- [ ] **Comments** — WHY only; one-liner; no what-comments; docstring on public surfaces; drift compacts.
 - [ ] **Tests planned** — new function → test; bug fix → regression test; external I/O mocked; AAA phases explicit.
 - [ ] **Security** — boundary inputs validated; no string-concat into queries / commands / paths.
 - [ ] **Blockers** — `none` or enumerated.
 
-</rule>
-
-<rule name="PreFinishGate">
-
-## Pre-Finish Gate
-
-> Recite at Phase TEST. Binary pass / fail — no partial credit. Each item is wired to a narrative heuristic validator in `governance.mjs`.
+### Form (recite at CODE entry; verified at Phase TEST)
 
 - [ ] **Pure entry point**: `run()` as headline caller only (single-statement or canonical 2-statement form).
 - [ ] **Narrative Siblings**: one-use helpers as siblings below callers.
@@ -107,6 +117,8 @@
 - [ ] **Boolean prefix**: `is` / `has` / `can` / `should` / `did` / `needs` / `supports` / `allows`.
 - [ ] **No framework abbreviations**: `req` / `res` / `ctx` forbidden; plus SDG taboos (banned verbs / nouns / abbrs).
 - [ ] **No section banners**: no `// --- Section ---` dividers.
+
+> **Circuit Breaker**: any write tool call without a preceding Work Checklist recitation auto-fails Phase TEST; remediation is re-entry into Phase CODE with the checklist emitted.
 
 </rule>
 

@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 import { NarrativeHeuristics } from "./heuristics/narrative-heuristics.mjs";
 
 /**
- * Governance SSOT — extracts the Pre-Finish Gate checklist from code-style.md
- * and wires each labeled item to its narrative-heuristic validator.
+ * Governance SSOT — extracts the Form section of the Work Checklist from
+ * code-style.md and wires each labeled item to its narrative-heuristic validator.
  */
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -28,19 +28,25 @@ const NARRATIVE_VALIDATION_STRATEGIES = {
 
 function loadDynamicRules() {
   const content = fileSystem.readFileSync(STANDARDS_PATH, "utf8");
-  const checklistSection = content.match(
-    /<rule name="PreFinishGate">([\s\S]*?)<\/rule>/
+  const ruleSection = content.match(
+    /<rule name="WorkChecklist">([\s\S]*?)<\/rule>/
   );
 
-  if (!checklistSection) {
+  if (!ruleSection) {
     const emptyChecklist = [];
     return emptyChecklist;
+  }
+
+  const formSection = ruleSection[1].match(/### Form[^\n]*\n([\s\S]+)/);
+  if (!formSection) {
+    const noFormSection = [];
+    return noFormSection;
   }
 
   const checklistItemRegex =
     /- \[\s\] (?:\*\*)?(.+?)(?:\*\*)?(?:\s*:\s*(.*)|\s*\(.*\))?$/gm;
 
-  const ruleLines = checklistSection[1].match(checklistItemRegex);
+  const ruleLines = formSection[1].match(checklistItemRegex);
   if (!ruleLines) {
     const noRulesFound = [];
     return noRulesFound;
@@ -53,14 +59,14 @@ function loadDynamicRules() {
     const [, label, description] = ruleLine.match(singleItemRegex) || [];
     const id = label.toLowerCase().replace(/ /g, "-");
 
-    const ruleObj = {
+    const ruleEntry = {
       id,
       label,
       description: description || "",
       heuristic: NARRATIVE_VALIDATION_STRATEGIES[label] || null,
     };
 
-    return ruleObj;
+    return ruleEntry;
   });
 
   const finalDynamicRules = dynamicRules;

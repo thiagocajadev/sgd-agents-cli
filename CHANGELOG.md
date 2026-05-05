@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.6.2] - 2026-05-05
+
+### Added
+
+### Fixed
+
+- **`code-style.md` — table reorganization (Form / Readability / Quality Control)**: ~33 prose bullets converted into 3 compact tables (`Principle | Rule`) aligned with the upstream taxonomy in `thiagocajadev/code-style`. Anchors block under each table preserves irreducible details (banned verbs/nouns/abbrs, braced-guards examples, import aliasing carve-outs, WHY discipline, magic values). Skill 12.5KB → 12.1KB; reading density up.
+- **`code-style.md` — `WorkChecklist` fusion**: `<rule name="PreCodeChecklist">` and `<rule name="PreFinishGate">` merged into single `<rule name="WorkChecklist">` with two binary sections — **Intent** (8 items) recited at CODE entry; **Form** (8 items) recited at CODE entry **and** verified at TEST. Closes the CODE → TEST → CODE rework loop.
+- **Cascade**: `governance.mjs` regex now extracts the Form section of WorkChecklist (`### Form` heading anchor); `governance.test.mjs` and `skill-content.test.mjs` updated to the new vocabulary; `workflow.md` Phase CODE step 1 + Circuit Breaker + Phase TEST step 3 references re-pointed. 235/235 tests green, lint 0 errors, audit 100%.
+
 ## [5.6.1] - 2026-05-05
 
 ### Added
