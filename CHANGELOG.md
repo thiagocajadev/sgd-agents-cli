@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.6.1] - 2026-05-05
+
+### Added
+
+### Fixed
+
+- **`code-style.md` — WHY-comment one-liner + drift compaction**: `Code as documentation` rule now bans multi-line WHY (refactor signal — extract named const/function or move to docstring) and forbids stacked drift chains (`// update:`, `// 2026:`, `// also:`); maintenance must replace stale WHY, never accumulate. Stale WHY ≥ no comment.
+- **`code-style.md` — `PreCodeChecklist` form awareness**: cross-link added at top of Pre-Code Checklist directing the agent to load `PreFinishGate` items (Pure entry, Explaining Returns, Vertical Density, etc.) into working memory at CODE entry — not at TEST. Reduces CODE → TEST → CODE rework loop. TEST verifies; it should not discover.
+
 ## [5.6.0] - 2026-05-05
 
 ### Added

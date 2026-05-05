@@ -50,7 +50,7 @@
     - `import fs from 'node:fs'` → `import fileSystem from 'node:fs'`
     - `import { t } from 'node:test'` → `import { test as testCase } from 'node:test'`
     - Carve-outs: identifiers ≥3 chars that are already English words or established acronyms (`path`, `os`, `url`, `http`, `crypto`) stay as-is.
-- **Code as documentation** — names replace comments. WHY over WHAT; skip `// increment counter` above `i++`. `// why:` permitted only for hidden constraints (invariants, workarounds, bug references). Docstrings on public functions: intent + one usage example. Reference issue numbers / commit SHAs when a line exists because of a specific bug. No section banners (`// --- Section ---`). Keep your own comments on refactor — they carry intent and provenance.
+- **Code as documentation** — names replace comments. WHY over WHAT; skip `// increment counter` above `i++`. `// why:` permitted only for hidden constraints (invariants, workarounds, bug references). **WHY is a one-liner** — multi-line WHY signals refactor (extract named const / function or move to docstring). On drift (maintenance, evolution, fix-on-fix): **comments compact, never accumulate** — replace stale WHY, never stack `// update:` / `// 2026:` / `// also:` chains. Stale WHY is worse than no comment. Docstrings on public functions: intent + one usage example. Reference issue numbers / commit SHAs when a line exists because of a specific bug. No section banners (`// --- Section ---`). Keep your own comments on refactor — they carry intent and provenance.
 - **Template literals over `+`** — build dynamic or multi-part strings with template literals (`` `${a}-${b}` ``), not `+` concatenation. `+` is reserved for documented self-flag evasion and similar one-line workarounds where the reason is annotated inline.
 - **No magic values** — named constants instead of loose numbers and strings. Magic extends beyond numbers: any string whose visible form does not match its purpose is magic — `'en-CA'` used to emit ISO dates, single-letter locale codes for formatting side-effects, etc. Prefer expressions whose surface declares the output (`new Date().toISOString().split('T').at(0)`). Exception messages include the offending value and the expected shape.
 
@@ -79,6 +79,8 @@
 ## Pre-Code Checklist
 
 > Recite before the first `Edit` / `Write` / `NotebookEdit` in Phase CODE. Binary — no partial credit. If any item is uncertain, re-read the relevant section above before writing.
+>
+> **Form awareness at CODE entry**: also load `PreFinishGate` items (Pure entry, Explaining Returns, Vertical Density, Boolean prefix, etc.) into working memory **now**, not at TEST. Code aware of final form avoids the CODE → TEST → CODE rework loop. TEST verifies; it should not discover.
 
 - [ ] **Mental Reset** — named which training default is being suspended for this task (verbose prose, dense walls, auto-summarize, taboo verbs).
 - [ ] **Target Files** — explicit path list from approved Plan; no drift.
